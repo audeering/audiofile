@@ -182,11 +182,14 @@ def samples(file):
         return int(soundfile.info(file).duration
                    * soundfile.info(file).samplerate)
     else:
-        with TemporaryDirectory(prefix='audiofile') as tmpdir:
-            tmpfile = os.path.join(tmpdir, 'tmp.wav')
-            convert_to_wav(file, tmpfile)
-            return int(soundfile.info(tmpfile).duration
-                       * soundfile.info(tmpfile).samplerate)
+        try:
+            return sox.file_info.num_samples(file)
+        except sox.core.SoxiError:
+            with TemporaryDirectory(prefix='audiofile') as tmpdir:
+                tmpfile = os.path.join(tmpdir, 'tmp.wav')
+                convert_to_wav(file, tmpfile)
+                return int(soundfile.info(tmpfile).duration
+                           * soundfile.info(tmpfile).samplerate)
 
 
 def channels(file):
