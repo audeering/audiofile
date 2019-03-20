@@ -25,6 +25,13 @@ Afterwards install ``audiofile`` with
 In order to handle all possible audio files, please make sure ffmpeg_ and
 mediainfo_ are installed on your system.
 
+If you want to use Python 2.7 make sure you install the following backports
+package as well:
+
+.. code-block:: bash
+
+    pip install backports.tempfile
+
 .. _virtualenv: https://virtualenv.pypa.io/
 .. _ffmpeg: https://www.ffmpeg.org/
 .. _mediainfo: https://mediaarea.net/en/MediaInfo/
