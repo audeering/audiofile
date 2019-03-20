@@ -1,22 +1,4 @@
-"""Read, write, and get information about audio files.
-
-It uses `soundfile`_ for writing and reading WAV, OGG, and FLAC files. Other
-audio files are first converted to WAV by `pysox`_ or the external program
-`ffmpeg`_.
-`librosa`_ is not used for reading as it has issues with the precission
-(`librosa/librosa#811`_) and is very slow.
-
-Information about an audio file without loading it into memory is provided
-by `soundfile`_, `pysox`_ and the external program `mediainfo`_.
-
-.. _soundfile: https://pysoundfile.readthedocs.io/
-.. _pysox: http://pysox.readthedocs.org/
-.. _ffmpeg: https://www.ffmpeg.org
-.. _librosa: https://librosa.github.io/
-.. _librosa/librosa#811: https://github.com/librosa/librosa/issues/811
-.. _mediainfo: https://mediaarea.net/en/MediaInfo
-
-"""
+"""Read, write, and get information about audio files."""
 from __future__ import division
 import os
 import sys
