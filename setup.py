@@ -1,15 +1,4 @@
 from setuptools import setup, find_packages
-from io import open
-
-
-def read_file(file_name):
-    with open(file_name, encoding="utf-8") as stream:
-        return stream.read().split("\n")[:-1]
-
-
-readme = read_file('README.rst')
-description = readme[1]
-long_description = '\n'.join(readme)
 
 setup(
     name='audiofile',
@@ -23,14 +12,18 @@ setup(
     ],
     author='Hagen Wierstorf',
     author_email='hwierstorf@audeering.com',
-    description=description,
+    description='Fast reading of all kind of audio files',
+    long_description=open('README.rst').read(),
     long_description_content_type='text/x-rst',
-    license='MIT',
+    license='MIT License',
     keywords=['audio tools'],
     url='https://github.com/audeering/audiofile',
     platforms='any',
+    tests_require=['pytest'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
@@ -40,6 +33,6 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Topic :: Scientific/Engineering',
+        'Topic :: Multimedia :: Sound/Audio',
     ],
 )
