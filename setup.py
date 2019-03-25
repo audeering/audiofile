@@ -27,7 +27,7 @@ setup(
     long_description_content_type='text/x-rst',
     license='MIT',
     keywords=['audio tools'],
-    url='',
+    url='https://github.com/audeering/audiofile',
     platforms='any',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
