@@ -1,3 +1,5 @@
+import sys
+import os
 from subprocess import check_output
 from datetime import datetime
 
@@ -60,3 +62,10 @@ latex_documents = [
     (master_doc, '{}-{}.tex'.format(project, version),
      title, author, 'manual'),
 ]
+
+
+# Build dependencies
+# Fake imports to avoid actually loading libsndfile
+sys.path.insert(0, os.path.abspath('.'))
+import fake__soundfile
+sys.modules['_soundfile'] = sys.modules['fake__soundfile']
