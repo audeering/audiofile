@@ -31,7 +31,7 @@ setup(
     platforms='any',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
-        'License :: MIT',
+        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Scientific/Engineering',
