@@ -10,8 +10,8 @@ audio files under Python with a focus on reading speed.
 Documentation: https://audiofile.readthedocs.io/
 
 .. |tests| image::
-    https://travis-ci.com/hagenw/audiofile.svg?token=fZTrhos7q5jTzFhs65MQ&branch=master
-        :target: https://travis-ci.com/hagenw/audiofile
+    https://travis-ci.org/audeering/audiofile.svg?branch=master
+        :target: https://travis-ci.org/audeering/audiofile
 .. |docs| image:: https://readthedocs.org/projects/audiofile/badge/
 
 Installation
