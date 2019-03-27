@@ -162,10 +162,7 @@ def duration(file):
     if _file_extension(file) in SNDFORMATS:
         return soundfile.info(file).duration
     else:
-        try:
-            return sox.file_info.duration(file)
-        except sox.core.SoxiError:
-            return samples(file) / sampling_rate(file)
+        return samples(file) / sampling_rate(file)
 
 
 def samples(file):
@@ -182,14 +179,11 @@ def samples(file):
         return int(soundfile.info(file).duration
                    * soundfile.info(file).samplerate)
     else:
-        try:
-            return sox.file_info.num_samples(file)
-        except sox.core.SoxiError:
-            with TemporaryDirectory(prefix='audiofile') as tmpdir:
-                tmpfile = os.path.join(tmpdir, 'tmp.wav')
-                convert_to_wav(file, tmpfile)
-                return int(soundfile.info(tmpfile).duration
-                           * soundfile.info(tmpfile).samplerate)
+        with TemporaryDirectory(prefix='audiofile') as tmpdir:
+            tmpfile = os.path.join(tmpdir, 'tmp.wav')
+            convert_to_wav(file, tmpfile)
+            return int(soundfile.info(tmpfile).duration
+                       * soundfile.info(tmpfile).samplerate)
 
 
 def channels(file):
