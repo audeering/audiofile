@@ -2,7 +2,7 @@ Version History
 ===============
 
 Version 0.1.3 (2019-03-27):
-* Fix metadata samples and duration for MP3 files
+ * Fix metadata samples and duration for MP3 files
 
 Version 0.1.2 (2019-03-25):
  * Fix metadata for pypi.org
