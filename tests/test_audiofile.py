@@ -196,6 +196,10 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
         assert sig.ndim == 1
     else:
         assert sig.ndim == 2
+    assert af.channels(mp3_file) == _channels(sig)
+    assert af.sampling_rate(mp3_file) == sampling_rate
+    assert af.samples(mp3_file) == _samples(sig)
+    assert af.duration(mp3_file) == _duration(sig, sampling_rate)
 
 
 def test_movies(tmpdir):
