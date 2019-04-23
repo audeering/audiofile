@@ -105,7 +105,7 @@ def read(file, duration=None, offset=0, always_2d=False, **kwargs):
         kwargs: pass on further arguments to :py:func:`soundfile.read`
 
     Returns:
-        (tuple):
+        tuple:
 
             * **numpy.ndarray**: a two-dimensional array in the form
               `[channels, samples]`. If the sound file has only one channel,
