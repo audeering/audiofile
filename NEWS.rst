@@ -1,6 +1,11 @@
 Version History
 ===============
 
+Version 0.2.0 (2019-05-02):
+ * Improve documentation
+ * Switch to single audiofile.py module
+ * Skip tests if download fails
+
 Version 0.1.3 (2019-03-27):
  * Fix metadata samples and duration for MP3 files
 
