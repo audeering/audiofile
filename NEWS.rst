@@ -1,6 +1,9 @@
 Version History
 ===============
 
+Version 0.1.4 (2019-05-02):
+ * Improve documentation
+
 Version 0.1.3 (2019-03-27):
  * Fix metadata samples and duration for MP3 files
 
