@@ -1,8 +1,8 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='audiofile',
-    packages=find_packages(),
+    py_modules=['audiofile'],
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     install_requires=[
@@ -10,6 +10,7 @@ setup(
         'soundfile',
         'sox',
     ],
+    tests_require=['pytest'],
     author='Hagen Wierstorf',
     author_email='hwierstorf@audeering.com',
     description='Fast reading of all kind of audio files',
@@ -19,7 +20,6 @@ setup(
     keywords=['audio tools'],
     url='https://github.com/audeering/audiofile',
     platforms='any',
-    tests_require=['pytest'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
