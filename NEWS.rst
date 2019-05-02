@@ -1,6 +1,9 @@
 Version History
 ===============
 
+Version 0.2.1 (2019-05-02):
+ * Fix module only package
+
 Version 0.2.0 (2019-05-02):
  * Improve documentation
  * Switch to single audiofile.py module
