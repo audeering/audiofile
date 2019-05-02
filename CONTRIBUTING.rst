@@ -42,7 +42,7 @@ If you make changes to the documentation, you can re-create the HTML pages
 using Sphinx_.
 You can install it and a few other necessary packages with::
 
-   pip install -r doc/requirements.txt
+   pip install -r docs/requirements.txt
 
 To create the HTML pages, use::
 
