@@ -210,7 +210,10 @@ def test_movies(tmpdir):
               '3gp/240/big_buck_bunny_240p_1mb.3gp']
     urls = [base_url + m for m in movies]
     for url in urls:
-        file = download_url(url, str(tmpdir))
+        try:
+            file = download_url(url, str(tmpdir))
+        except (urllib.error.ContentTooShortError, urllib.error.HTTPError):
+            pytest.skip("Skip unavailable file")
         signal, sampling_rate = af.read(file)
         assert af.channels(file) == _channels(signal)
         assert af.sampling_rate(file) == sampling_rate
