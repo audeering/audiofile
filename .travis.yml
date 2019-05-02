@@ -15,7 +15,9 @@ addons:
       - mediainfo
 install:
   - pip install -r requirements.txt
+  - pip install -r docs/requirements.txt
   - pip install -r tests/requirements.txt
   - pip install backports.tempfile  # Python 2.7
 script:
   - python -m pytest
+  - python -m sphinx -W docs/ docs/_build/ -b html
