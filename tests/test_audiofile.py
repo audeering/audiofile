@@ -14,13 +14,13 @@ import audiofile as af
 def tolerance(condition, sampling_rate=0):
     """Absolute tolerance for different condition."""
     tol = 0
-    if condition is '16bit':
+    if condition == '16bit':
         tol = 2 ** -11  # half precision
-    elif condition is '24bit':
+    elif condition == '24bit':
         tol = 2 ** -17  # to be checked
-    elif condition is '32bit':
+    elif condition == '32bit':
         tol = 2 ** -24  # single precision
-    elif condition is 'duration':
+    elif condition == 'duration':
         tol = 1 / sampling_rate
     return tol
 
@@ -157,7 +157,7 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     # Allowed combinations
     sig, fs = write_and_read(file, signal, sampling_rate)
     # Test file type
-    if file_type is 'ogg':
+    if file_type == 'ogg':
         file_type = 'vorbis'
     assert sox.file_info.file_type(file) == file_type
     # Test magnitude
