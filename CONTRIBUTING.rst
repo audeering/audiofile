@@ -75,7 +75,7 @@ Creating a New Release
 
 New releases are made using the following steps:
 
-#. Update ``NEWS.rst``
+#. Update ``CHANGELOG.rst``
 #. Commit those changes as "Release x.y.z"
 #. Create an (annotated) tag with ``git tag -a x.y.z``
 #. Clear the ``dist/`` directory
