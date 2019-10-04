@@ -1,38 +1,3 @@
 from setuptools import setup
 
-setup(
-    name='audiofile',
-    py_modules=['audiofile'],
-    use_scm_version=True,
-    setup_requires=['setuptools_scm'],
-    install_requires=[
-        'numpy',
-        'soundfile',
-        'sox',
-    ],
-    tests_require=['pytest'],
-    author='Hagen Wierstorf',
-    author_email='hwierstorf@audeering.com',
-    description='Fast reading of all kind of audio files',
-    long_description=open('README.rst').read(),
-    long_description_content_type='text/x-rst',
-    license='MIT License',
-    keywords=['audio tools'],
-    url='https://github.com/audeering/audiofile',
-    platforms='any',
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Topic :: Multimedia :: Sound/Audio',
-    ],
-)
+setup(use_scm_version=True)
