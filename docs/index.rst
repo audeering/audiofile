@@ -9,7 +9,7 @@
     installation
     usage
     contributing
-    version-history
+    changelog
 
 .. toctree::
     :caption: API Documentation
