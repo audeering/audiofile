@@ -1,6 +1,7 @@
 from __future__ import division
 import os
 import subprocess
+import socket
 
 import pytest
 import numpy as np
@@ -212,7 +213,9 @@ def test_movies(tmpdir):
     for url in urls:
         try:
             file = download_url(url, str(tmpdir))
-        except (urllib.error.ContentTooShortError, urllib.error.HTTPError):
+        except (urllib.error.ContentTooShortError,
+                urllib.error.HTTPError,
+                socket.gaierror):
             pytest.skip("Skip unavailable file")
         signal, sampling_rate = af.read(file)
         assert af.channels(file) == _channels(signal)
