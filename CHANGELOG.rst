@@ -10,7 +10,7 @@ and this project adheres to `Semantic Versioning`_.
 Version 0.2.3 (2020-08-31)
 --------------------------
 
-* Fixed: catch ``SoxiError`` in :func:`audiofile.read`
+* Fixed: catch ``SoxiError`` in ``audiofile.read()``
 * Fixed: test for more advanced audio files like OPUS, AMR, ...
 
 
