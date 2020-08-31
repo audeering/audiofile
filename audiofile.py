@@ -251,7 +251,7 @@ def convert_to_wav(infile, outfile, offset=0, duration=None):
     try:
         # Convert to WAV file with sox
         _sox(infile, outfile, offset, duration)
-    except sox.core.SoxError:
+    except (sox.core.SoxError, sox.core.SoxiError):
         # Convert to WAV file with ffmpeg
         _ffmpeg(infile, outfile, offset, duration)
 
