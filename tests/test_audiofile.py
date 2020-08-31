@@ -204,7 +204,7 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
 
 
 def test_movies(tmpdir):
-    base_url = 'https://sample-videos.com/video123/'
+    base_url = 'http://sample-videos.com/video123/'
     movies = ['mp4/240/big_buck_bunny_240p_1mb.mp4',
               'mkv/240/big_buck_bunny_240p_1mb.mkv',
               'flv/240/big_buck_bunny_240p_1mb.flv',
