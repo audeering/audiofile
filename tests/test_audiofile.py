@@ -203,14 +203,17 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     assert af.duration(mp3_file) == _duration(sig, sampling_rate)
 
 
-def test_movies(tmpdir):
-    base_url = 'http://sample-videos.com/video123/'
-    movies = ['mp4/240/big_buck_bunny_240p_1mb.mp4',
-              'mkv/240/big_buck_bunny_240p_1mb.mkv',
-              'flv/240/big_buck_bunny_240p_1mb.flv',
-              '3gp/240/big_buck_bunny_240p_1mb.3gp']
-    urls = [base_url + m for m in movies]
+def test_formats(tmpdir):
+    base_url = 'https://dl.espressif.com/dl/audio/'
+    files = [
+        'gs-16b-1c-44100hz.opus',
+        'gs-16b-1c-8000hz.amr',
+        'gs-16b-1c-44100hz.m4a',
+        'gs-16b-1c-44100hz.aac',
+    ]
+    urls = [base_url + f for f in files]
     for url in urls:
+        print(url)
         try:
             file = download_url(url, str(tmpdir))
         except (urllib.error.ContentTooShortError,
