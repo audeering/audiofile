@@ -1,7 +1,7 @@
 .. audiofile documentation master file
 
 .. include:: ../README.rst
-    :end-line: 21
+    :end-line: 24
 
 .. toctree::
     :caption: Getting started

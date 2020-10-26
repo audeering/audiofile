@@ -2,7 +2,7 @@
 audiofile
 =========
 
-|tests| |docs| |license|
+|tests| |coverage| |docs| |license|
 
 The python package ``audiofile`` provides a meta package to handle all kind of
 audio files under Python with a focus on reading speed.
@@ -12,6 +12,9 @@ Documentation: https://audiofile.readthedocs.io/
 .. |tests| image:: https://github.com/audeering/audiofile/workflows/Test/badge.svg
     :target: https://github.com/audeering/audiofile/actions?query=workflow%3ATest
     :alt: Test status
+.. |coverage| image:: https://codecov.io/gh/audeering/audiofile/branch/master/graph/badge.svg?token=LVF0621BKR
+    :target: https://codecov.io/gh/audeering/audiofile/
+    :alt: code coverage
 .. |docs| image:: https://readthedocs.org/projects/audiofile/badge/
     :target: https://audiofile.readthedocs.io/
     :alt: audiofile's documentation on Read the Docs
