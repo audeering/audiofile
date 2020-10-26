@@ -9,9 +9,9 @@ audio files under Python with a focus on reading speed.
 
 Documentation: https://audiofile.readthedocs.io/
 
-.. |tests| image:: https://travis-ci.org/audeering/audiofile.svg?branch=master
-    :target: https://travis-ci.org/audeering/audiofile/
-    :alt: audiofile on TravisCI
+.. |tests| image:: https://github.com/audeering/audiofile/workflows/Test/badge.svg
+    :target: https://github.com/audeering/audiofile/actions?query=workflow%3ATest
+    :alt: Test status
 .. |docs| image:: https://readthedocs.org/projects/audiofile/badge/
     :target: https://audiofile.readthedocs.io/
     :alt: audiofile's documentation on Read the Docs
