@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [2.7, 3.6, 3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -31,6 +31,9 @@ jobs:
         pip install -r requirements.txt
         pip install -r docs/requirements.txt
         pip install -r tests/requirements.txt
+    - name: Install additional dependencies for Python 2.7
+      run: pip install backports.tempfile
+      if: matrix.python-version == '2.7'
     - name: Test with pytest
       run: python -m pytest
     - name: Upload coverage to Codecov
