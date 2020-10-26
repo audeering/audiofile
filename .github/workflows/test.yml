@@ -33,9 +33,13 @@ jobs:
         pip install -r tests/requirements.txt
     - name: Test with pytest
       run: python -m pytest
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
     - name: Test building documentation
       run: python -m sphinx docs/ docs/_build/ -b html -W
-      if: matrix.os == 'ubuntu-latest'
     - name: Test links in documentation
       run: python -m sphinx docs/ docs/_build/ -b linkcheck -W
       if: matrix.python-version == '3.6'
