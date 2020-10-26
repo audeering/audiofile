@@ -1,10 +1,22 @@
 Usage
 =====
 
-Import the package and use it to write or read an audio file,
-or get information about its metadata:
+:mod:`audiofile` can read and get metadata information
+for all files that are supported by
+ffmpeg_,
+sox_,
+and mediainfo_,
+if those are available on your system.
+In addition, it can create WAV, FLAC, or OGG files.
 
-.. code-block:: python
+
+Write a file
+------------
+
+First,
+let's create a dummy signal containing noise:
+
+.. jupyter-execute::
 
     import numpy as np
     import audiofile as af
@@ -12,18 +24,79 @@ or get information about its metadata:
     sampling_rate = 8000  # in Hz
     noise = np.random.normal(0, 1, sampling_rate)
     noise /= np.amax(np.abs(noise))
-    af.write('noise.wav', noise, sampling_rate)
-    af.channels('noise.wav')
-    af.duration('noise.wav')
-    sig, fs = af.read('noise.wav')
+    af.write('noise.flac', noise, sampling_rate)
 
-It should work with every audio file you will work with.
-WAV, FLAC, and OGG files are handled by soundfile_.
-The reading of all other audio files
-is managed by converting them to a temporary WAV file
-by pysox_ or ffmpeg_,
-which means it can handle audio from video files as well.
+
+File information
+----------------
+
+Now you can get metadata information on that signal:
+
+.. jupyter-execute::
+
+    af.channels('noise.flac')
+
+.. jupyter-execute::
+
+    af.duration('noise.flac')
+
+.. jupyter-execute::
+
+    af.samples('noise.flac')
+
+.. jupyter-execute::
+
+    af.sampling_rate('noise.flac')
+
+
+Read a file
+-----------
+
+You can read the signal:
+
+.. jupyter-execute::
+
+    sig, fs = af.read('noise.flac')
+    print('sampling rate: {}, signal shape: {}'.format(fs, sig.shape))
+
+If you prefer a workflow
+that returns a 2D signal with channel as the first dimension,
+enforce it with:
+
+.. jupyter-execute::
+
+    sig, fs = af.read('noise.flac', always_2d=True)
+    print('sampling rate: {}, signal shape: {}'.format(fs, sig.shape))
+
+If you just want to read from 500 ms to 900 ms of the signal:
+
+.. jupyter-execute::
+
+    sig, fs = af.read('noise.flac', offset=0.5, duration=0.4)
+    print('sampling rate: {}, signal shape: {}'.format(fs, sig.shape))
+
+
+Convert a file
+--------------
+
+You can convert any file to WAV using:
+
+.. jupyter-execute::
+
+    af.convert_to_wav('noise.flac', 'noise.wav')
+    af.samples('noise.wav')
+
+
+.. jupyter-execute::
+    :hide-code:
+    :hide-output:
+
+    import os
+    os.remove('noise.wav')
+    os.remove('noise.flac')
+
 
 .. _soundfile: https://pysoundfile.readthedocs.io/
-.. _pysox: http://pysox.readthedocs.org/
 .. _ffmpeg: https://www.ffmpeg.org/
+.. _sox: http://sox.sourceforge.net/
+.. _mediainfo: https://mediaarea.net/en/MediaInfo/

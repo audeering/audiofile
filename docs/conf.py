@@ -1,12 +1,18 @@
-from subprocess import check_output
+import configparser
 from datetime import datetime
+import os
+from subprocess import check_output
+
+
+config = configparser.ConfigParser()
+config.read(os.path.join('..', 'setup.cfg'))
 
 
 # Project -----------------------------------------------------------------
 
-project = 'audiofile'
+project = config['metadata']['name']
 copyright = '2018-{} audEERING GmbH'.format(datetime.now().year)
-author = 'Hagen Wierstorf'
+author = config['metadata']['author']
 # The x.y.z version read from tags
 try:
     version = check_output(['git', 'describe', '--tags', '--always'])
@@ -24,8 +30,11 @@ source_suffix = '.rst'
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 pygments_style = None
 extensions = [
+    'jupyter_sphinx',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',  # support for Google-style docstrings
+    'sphinx_autodoc_typehints',
+    'sphinx_copybutton',
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
 ]
@@ -42,24 +51,13 @@ autodoc_mock_imports = ['soundfile']
 
 # HTML --------------------------------------------------------------------
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_audeering_theme'
 html_theme_options = {
     'display_version': True,
+    'footer_links': False,
     'logo_only': False,
 }
-html_title = title
-
-
-# LaTeX -------------------------------------------------------------------
-
-latex_elements = {
-    'papersize': 'a4paper',
+html_context = {
+    'display_github': True,
 }
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, '{}-{}.tex'.format(project, version),
-     title, author, 'manual'),
-]
+html_title = title

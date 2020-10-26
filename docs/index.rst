@@ -2,6 +2,7 @@
 
 .. toctree::
     :caption: Getting started
+    :hidden:
     
     installation
     usage
@@ -10,5 +11,6 @@
 
 .. toctree::
     :caption: API Documentation
+    :hidden:
 
     api
