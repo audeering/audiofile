@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>audiofile.core.io &mdash; audiofile Documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/audeering.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/jupyter-sphinx.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/thebelab.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    
+  
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          <a href="../../../index.html">
+          
+            <img src="../../../_static/images/audeering.png" class="logo" alt="audEERING"/>
+          
+          
+            <span> audiofile</span>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                v0.3.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">audiofile</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">audiofile</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>audiofile.core.io</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for audiofile.core.io</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">soundfile</span>
+
+<span class="kn">from</span> <span class="nn">audiofile.core.convert</span> <span class="kn">import</span> <span class="n">convert_to_wav</span>
+<span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">sampling_rate</span>
+<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">file_extension</span><span class="p">,</span>
+    <span class="n">SNDFORMATS</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../api.html#audiofile.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span>
+        <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">always_2d</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Read audio file.</span>
+
+<span class="sd">    It uses :func:`soundfile.read` for WAV, FLAC, and OGG files.</span>
+<span class="sd">    All other audio files are</span>
+<span class="sd">    first converted to WAV by sox or ffmpeg.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file: file name of input audio file</span>
+<span class="sd">        duration: return only a specified duration in seconds</span>
+<span class="sd">        offset: start reading at offset in seconds</span>
+<span class="sd">        always_2d: if `True` it always returns a two-dimensional signal</span>
+<span class="sd">            even for mono sound files</span>
+<span class="sd">        kwargs: pass on further arguments to :func:`soundfile.read`</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        * a two-dimensional array in the form</span>
+<span class="sd">          ``[channels, samples]``.</span>
+<span class="sd">          If the sound file has only one channel,</span>
+<span class="sd">          a one-dimensional array is returned</span>
+<span class="sd">        * sample rate of the audio file</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        OGG file handling will not work properly under Ubuntu 16.04</span>
+<span class="sd">        due to a bug in its libsndfile version.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tmpdir</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
+        <span class="c1"># Convert file formats not recognized by soundfile to WAV first.</span>
+        <span class="c1">#</span>
+        <span class="c1"># NOTE: this is faster than loading them with librosa directly.</span>
+        <span class="c1"># In addition, librosa seems to have an issue with the precission of</span>
+        <span class="c1"># the returned magnitude</span>
+        <span class="c1"># (https://github.com/librosa/librosa/issues/811).</span>
+        <span class="c1">#</span>
+        <span class="c1"># It might be the case that MP3 files will be supported by soundfile in</span>
+        <span class="c1"># the future as well. For a discussion on MP3 support in the underlying</span>
+        <span class="c1"># libsndfile see https://github.com/erikd/libsndfile/issues/258.</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;audiofile&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+            <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;tmp.wav&#39;</span><span class="p">)</span>
+            <span class="n">convert_to_wav</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">tmpfile</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+            <span class="n">signal</span><span class="p">,</span> <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+                <span class="n">tmpfile</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span>
+                <span class="n">always_2d</span><span class="o">=</span><span class="n">always_2d</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">duration</span> <span class="ow">or</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">offset</span> <span class="o">*</span> <span class="n">sample_rate</span><span class="p">)</span>  <span class="c1"># samples</span>
+        <span class="k">if</span> <span class="n">duration</span><span class="p">:</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">duration</span> <span class="o">*</span> <span class="n">sample_rate</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span>  <span class="c1"># samples</span>
+        <span class="n">signal</span><span class="p">,</span> <span class="n">sample_rate</span> <span class="o">=</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+            <span class="n">file</span><span class="p">,</span>
+            <span class="n">start</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">offset</span><span class="p">),</span>
+            <span class="n">stop</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float32&#39;</span><span class="p">,</span>
+            <span class="n">always_2d</span><span class="o">=</span><span class="n">always_2d</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="c1"># [samples, channels] =&gt; [channels, samples]</span>
+    <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">signal</span><span class="p">,</span> <span class="n">sample_rate</span></div>
+
+
+<div class="viewcode-block" id="write"><a class="viewcode-back" href="../../../api.html#audiofile.write">[docs]</a><span class="k">def</span> <span class="nf">write</span><span class="p">(</span>
+        <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">signal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+        <span class="n">sampling_rate</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">precision</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;16bit&#39;</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write (normalized) audio files.</span>
+
+<span class="sd">    Save audio data provided as an array of shape ``[channels, samples]``</span>
+<span class="sd">    to a WAV, FLAC, or OGG file.</span>
+<span class="sd">    ``channels`` can be up to 65535 for WAV,</span>
+<span class="sd">    255 for OGG,</span>
+<span class="sd">    and 8 for FLAC.</span>
+<span class="sd">    For monaural audio the array can be one-dimensional.</span>
+
+<span class="sd">    It uses :func:`soundfile.write` to write the audio files.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file: file name of output audio file.</span>
+<span class="sd">            The format (WAV, FLAC, OGG) will be inferred from the file name</span>
+<span class="sd">        signal: audio data to write</span>
+<span class="sd">        sampling_rate: sample rate of the audio data</span>
+<span class="sd">        precision: precision of writen file,</span>
+<span class="sd">            can be `&#39;16bit&#39;`,</span>
+<span class="sd">            `&#39;24bit&#39;`,</span>
+<span class="sd">            `&#39;32bit&#39;`.</span>
+<span class="sd">            Only available for WAV files</span>
+<span class="sd">        normalize: normalize audio data before writing</span>
+<span class="sd">        kwargs: pass on further arguments to :func:`soundfile.write`</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        OGG file handling does not work properly under Ubuntu 16.04</span>
+<span class="sd">        due to a bug in its libsndfile version.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">precision_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;16bit&#39;</span><span class="p">:</span> <span class="s1">&#39;PCM_16&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;24bit&#39;</span><span class="p">:</span> <span class="s1">&#39;PCM_24&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;32bit&#39;</span><span class="p">:</span> <span class="s1">&#39;PCM_32&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">max_channels</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;wav&#39;</span><span class="p">:</span> <span class="mi">65535</span><span class="p">,</span>
+        <span class="s1">&#39;ogg&#39;</span><span class="p">:</span> <span class="mi">255</span><span class="p">,</span>
+        <span class="s1">&#39;flac&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="c1"># Check for allowed precisions</span>
+    <span class="n">allowed_precissions</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">precision_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="n">precision</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_precissions</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;&quot;precision&quot; has to be one of </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_precissions</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span>
+        <span class="p">)</span>
+    <span class="c1"># Check if number of channels is allowed for chosen file type</span>
+    <span class="n">file_type</span> <span class="o">=</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">signal</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">channels</span> <span class="o">&gt;</span> <span class="n">max_channels</span><span class="p">[</span><span class="n">file_type</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">file_type</span> <span class="o">!=</span> <span class="s1">&#39;wav&#39;</span><span class="p">:</span>
+            <span class="n">hint</span> <span class="o">=</span> <span class="s1">&#39;Consider using &quot;wav&quot; instead.&#39;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span>
+            <span class="s1">&#39;The maximum number of allowed channels &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;for </span><span class="si">{</span><span class="n">file_type</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">max_channels</span><span class="p">[</span><span class="n">file_type</span><span class="p">]</span><span class="si">}</span><span class="s1">. </span><span class="si">{</span><span class="n">hint</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+    <span class="c1"># Precision setting is only available for WAV files</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;wav&#39;</span><span class="p">:</span>
+        <span class="n">subtype</span> <span class="o">=</span> <span class="n">precision_mapping</span><span class="p">[</span><span class="n">precision</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">subtype</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+        <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span>
+    <span class="n">soundfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="n">subtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div>
+    <p>
+        
+        
+        
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2020/10/27 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+        
+    </p>
+  </div>
+
+  <div role="contentinfo">
+    <p>
+        
+      &copy; 2018-2020 audEERING GmbH
+    </p>
+  </div> 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/thebelab-helper.js"></script>
+        <script src="../../../_static/clipboard.min.js"></script>
+        <script src="../../../_static/copybutton.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.18.0/dist/embed-amd.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
