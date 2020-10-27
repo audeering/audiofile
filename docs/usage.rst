@@ -57,7 +57,7 @@ You can read the signal:
 .. jupyter-execute::
 
     sig, fs = af.read('noise.flac')
-    print('sampling rate: {}, signal shape: {}'.format(fs, sig.shape))
+    print(f'sampling rate: {fs}, signal shape: {sig.shape}')
 
 If you prefer a workflow
 that returns a 2D signal with channel as the first dimension,
@@ -66,14 +66,14 @@ enforce it with:
 .. jupyter-execute::
 
     sig, fs = af.read('noise.flac', always_2d=True)
-    print('sampling rate: {}, signal shape: {}'.format(fs, sig.shape))
+    print(f'sampling rate: {fs}, signal shape: {sig.shape}')
 
 If you just want to read from 500 ms to 900 ms of the signal:
 
 .. jupyter-execute::
 
     sig, fs = af.read('noise.flac', offset=0.5, duration=0.4)
-    print('sampling rate: {}, signal shape: {}'.format(fs, sig.shape))
+    print(f'sampling rate: {fs}, signal shape: {sig.shape}')
 
 
 Convert a file

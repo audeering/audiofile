@@ -25,15 +25,9 @@ def run(shell_command):
 def run_ffmpeg(infile, outfile, offset, duration):
     """Convert audio file to WAV file."""
     if duration:
-        cmd = (
-            'ffmpeg -ss {} -i "{}" -t {} "{}"'
-            .format(offset, infile, duration, outfile)
-        )
+        cmd = f'ffmpeg -ss {offset} -i "{infile}" -t {duration} "{outfile}"'
     else:
-        cmd = (
-            'ffmpeg -ss {} -i "{}" "{}"'
-            .format(offset, infile, outfile)
-        )
+        cmd = f'ffmpeg -ss {offset} -i "{infile}" "{outfile}"'
     run(cmd)
 
 

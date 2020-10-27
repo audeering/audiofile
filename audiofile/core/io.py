@@ -140,8 +140,7 @@ def write(
     allowed_precissions = sorted(list(precision_mapping.keys()))
     if precision not in allowed_precissions:
         sys.exit(
-            '"precision" has to be one of {}.'
-            .format(', '.join(allowed_precissions))
+            f'"precision" has to be one of {", ".join(allowed_precissions)}.'
         )
     # Check if number of channels is allowed for chosen file type
     file_type = file_extension(file)
@@ -154,8 +153,7 @@ def write(
             hint = 'Consider using "wav" instead.'
         sys.exit(
             'The maximum number of allowed channels '
-            'for {} is {}. {}'
-            .format(file_type, max_channels[file_type], hint)
+            f'for {file_type} is {max_channels[file_type]}. {hint}'
         )
     # Precision setting is only available for WAV files
     if file_type == 'wav':

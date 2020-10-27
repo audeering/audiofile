@@ -36,14 +36,8 @@ def channels(file: str) -> int:
             return int(sox.file_info.channels(file))
         except sox.core.SoxiError:
             # For MP4 stored and returned number of channels can be different
-            cmd1 = (
-                'mediainfo --Inform="Audio;%Channel(s)_Original%" {}'
-                .format(file)
-            )
-            cmd2 = (
-                'mediainfo --Inform="Audio;%Channel(s)%" {}'
-                .format(file)
-            )
+            cmd1 = f'mediainfo --Inform="Audio;%Channel(s)_Original%" {file}'
+            cmd2 = f'mediainfo --Inform="Audio;%Channel(s)%" {file}'
             try:
                 return int(run(cmd1))
             except ValueError:
@@ -107,5 +101,5 @@ def sampling_rate(file: str) -> int:
         try:
             return int(sox.file_info.sample_rate(file))
         except sox.core.SoxiError:
-            cmd = 'mediainfo --Inform="Audio;%SamplingRate%" {}'.format(file)
+            cmd = f'mediainfo --Inform="Audio;%SamplingRate%" {file}'
             return int(run(cmd))
