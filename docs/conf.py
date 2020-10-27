@@ -11,7 +11,7 @@ config.read(os.path.join('..', 'setup.cfg'))
 # Project -----------------------------------------------------------------
 
 project = config['metadata']['name']
-copyright = '2018-{} audEERING GmbH'.format(datetime.now().year)
+copyright = f'2018-{datetime.now().year} audEERING GmbH'
 author = config['metadata']['author']
 # The x.y.z version read from tags
 try:
