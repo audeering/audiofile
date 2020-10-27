@@ -5,7 +5,7 @@ audiofile
 |tests| |coverage| |docs| |python-versions| |license|
 
 The Python package **audiofile** handles all kind of audio files
-with a focus on reading speed.
+with a focus on `reading speed`_.
 
 It can read and get metadata information
 for all files that are supported by
@@ -26,12 +26,13 @@ Code example for reading a file:
     signal, sampling_rate = af.read('signal.wav')
 
 
-.. _virtualenv: https://virtualenv.pypa.io/
 .. _ffmpeg: https://www.ffmpeg.org/
-.. _sox: http://sox.sourceforge.net/
-.. _mediainfo: https://mediaarea.net/en/MediaInfo/
 .. _installation: https://audeering.github.io/audiofile/installation.html
+.. _mediainfo: https://mediaarea.net/en/MediaInfo/
 .. _usage: https://audeering.github.io/audiofile/usage.html
+.. _reading speed: https://audeering.github.io/audiofile/benchmark.html
+.. _sox: http://sox.sourceforge.net/
+.. _virtualenv: https://virtualenv.pypa.io/
 
 .. |tests| image:: https://github.com/audeering/audiofile/workflows/Test/badge.svg
     :target: https://github.com/audeering/audiofile/actions?query=workflow%3ATest
