@@ -48,6 +48,8 @@ intersphinx_mapping = {
 # Ignore package dependencies during building the docs
 autodoc_mock_imports = ['soundfile']
 
+copybutton_prompt_text = r'>>> |\.\.\. |$ '
+copybutton_prompt_is_regexp = True
 
 # HTML --------------------------------------------------------------------
 
