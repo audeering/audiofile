@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set the number of files to generate
-NBFILES=10
+NBFILES=100
 DIR=AUDIO
 
 for k in $(seq -f "%02g" 1 10 151); do
