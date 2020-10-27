@@ -1,11 +1,8 @@
 from __future__ import division
 import os
 import sys
+import tempfile
 import typing
-try:
-    from tempfile import TemporaryDirectory
-except ImportError:  # Python 2.7
-    from backports.tempfile import TemporaryDirectory
 
 import numpy as np
 import soundfile
@@ -63,7 +60,7 @@ def read(
         # It might be the case that MP3 files will be supported by soundfile in
         # the future as well. For a discussion on MP3 support in the underlying
         # libsndfile see https://github.com/erikd/libsndfile/issues/258.
-        with TemporaryDirectory(prefix='audiofile') as tmpdir:
+        with tempfile.TemporaryDirectory(prefix='audiofile') as tmpdir:
             tmpfile = os.path.join(tmpdir, 'tmp.wav')
             convert_to_wav(file, tmpfile, offset, duration)
             signal, sample_rate = soundfile.read(
