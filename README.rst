@@ -35,9 +35,9 @@ Code example for reading a file:
 .. |coverage| image:: https://codecov.io/gh/audeering/audiofile/branch/master/graph/badge.svg?token=LVF0621BKR
     :target: https://codecov.io/gh/audeering/audiofile/
     :alt: code coverage
-.. |docs| image:: https://readthedocs.org/projects/audiofile/badge/
-    :target: https://audiofile.readthedocs.io/
-    :alt: audiofile's documentation on Read the Docs
+.. |docs| image:: https://img.shields.io/pypi/v/audiofile?label=docs
+    :target: https://audeering.github.io/audiofile/
+    :alt: audiofile's documentation
 .. |python-versions| image:: https://img.shields.io/pypi/pyversions/audiofile.svg
     :target: https://pypi.org/project/audiofile/
     :alt: audiofile's supported Python versions
