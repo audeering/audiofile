@@ -22,13 +22,6 @@ To install :mod:`audiofile` run:
     $ # source ${HOME}/.envs/audiofile/bin/activate
     $ pip install audiofile
 
-If you want to use Python 2.7
-make sure you install the tempfile backports package as well:
-
-.. code-block:: bash
-
-    pip install backports.tempfile
-
 
 .. _virtualenv: https://virtualenv.pypa.io/
 .. _ffmpeg: https://www.ffmpeg.org/

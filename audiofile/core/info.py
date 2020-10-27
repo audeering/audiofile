@@ -2,10 +2,7 @@
 from __future__ import division
 import logging
 import os
-try:
-    from tempfile import TemporaryDirectory
-except ImportError:  # Python 2.7
-    from backports.tempfile import TemporaryDirectory
+import tempfile
 
 import soundfile
 import sox
@@ -88,7 +85,7 @@ def samples(file: str) -> int:
         return samples_as_int(file)
     else:
         # Always convert to WAV for non SNDFORMATS
-        with TemporaryDirectory(prefix='audiofile') as tmpdir:
+        with tempfile.TemporaryDirectory(prefix='audiofile') as tmpdir:
             tmpfile = os.path.join(tmpdir, 'tmp.wav')
             convert_to_wav(file, tmpfile)
             return samples_as_int(tmpfile)
