@@ -75,9 +75,9 @@ if __name__ == "__main__":
                     continue
                 duration = int(audio_dir)
                 dataset = AudioFolder(
-                        os.path.join(root, audio_dir),
-                        lib='info_' + lib,
-                        extension=args.ext
+                    os.path.join(root, audio_dir),
+                    lib='info_' + lib,
+                    extension=args.ext,
                 )
 
                 start = time.time()
@@ -91,7 +91,7 @@ if __name__ == "__main__":
                     ext=args.ext,
                     lib=lib,
                     duration=duration,
-                    time=float(end-start) / len(dataset),
+                    time=float(end - start) / len(dataset),
                 )
 
     store.df.to_pickle(f'results/benchmark_info_{args.ext}.pickle')

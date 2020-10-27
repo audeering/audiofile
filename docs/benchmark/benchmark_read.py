@@ -13,7 +13,6 @@ import loaders
 matplotlib.use('Agg')
 
 
-
 def get_files(dir, extension):
     audio_files = []
     dir = os.path.expanduser(dir)
@@ -47,7 +46,7 @@ class AudioFolder(object):
 
 
 if __name__ == "__main__":
-    
+
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--ext', type=str, default="wav")
     args = parser.parse_args()
@@ -68,8 +67,8 @@ if __name__ == "__main__":
         'ar_ffmpeg',
         'ar_mad',
         'aubio',
-        'soundfile', 
-        'librosa', 
+        'soundfile',
+        'librosa',
         'scipy',
         'audiofile',
     ]
@@ -81,12 +80,11 @@ if __name__ == "__main__":
                 try:
                     duration = int(audio_dir)
                     dataset = AudioFolder(
-                            os.path.join(root, audio_dir), 
-                            lib='load_' + lib,
-                            extension=args.ext
+                        os.path.join(root, audio_dir),
+                        lib='load_' + lib,
+                        extension=args.ext,
                     )
-                    
-                    
+
                     start = time.time()
 
                     for fp in dataset.audio_files:
@@ -98,9 +96,9 @@ if __name__ == "__main__":
                         ext=args.ext,
                         lib=lib,
                         duration=duration,
-                        time=float(end-start) / len(dataset),
+                        time=float(end - start) / len(dataset),
                     )
-                except:
+                except:  # noqa: E722
                     continue
 
     store.df.to_pickle(f'results/benchmark_read_{args.ext}.pickle')
