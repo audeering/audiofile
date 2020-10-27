@@ -7,6 +7,16 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 0.3.0 (2020-10-27)
+--------------------------
+
+* Changed: use ``audiofile.core`` structure under the hood
+* Changed: use Github Actions for tests
+* Changed: use Github Actions for automatic publishing
+* Changed: host documentation as Github pages
+* Removed: support for Python 2.7
+
+
 Version 0.2.4 (2020-08-31)
 --------------------------
 
