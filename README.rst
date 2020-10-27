@@ -15,6 +15,8 @@ and mediainfo_,
 if those are available on your system.
 In addition, it can create WAV files.
 
+Have a look at the installation_ and usage_ instructions as a starting point.
+
 Code example for reading a file:
 
 .. code-block:: python
@@ -28,6 +30,8 @@ Code example for reading a file:
 .. _ffmpeg: https://www.ffmpeg.org/
 .. _sox: http://sox.sourceforge.net/
 .. _mediainfo: https://mediaarea.net/en/MediaInfo/
+.. _installation: https://audeering.github.io/audiofile/installation.html
+.. _usage: https://audeering.github.io/audiofile/usage.html
 
 .. |tests| image:: https://github.com/audeering/audiofile/workflows/Test/badge.svg
     :target: https://github.com/audeering/audiofile/actions?query=workflow%3ATest
