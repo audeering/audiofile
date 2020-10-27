@@ -75,7 +75,7 @@ Running the benchmark
     $ # Create and activate Python virtual environment, e.g.
     $ # virtualenv --no-download --python=python3 ${HOME}/.envs/audiofile-benchmark
     $ # source ${HOME}/.envs/audiofile-benchmark/bin/activate
-    $ pip install -r requirements.txt
+    $ pip install -r requirements.txt.lock
     $ bash run.sh
 
 
