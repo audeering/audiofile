@@ -40,13 +40,36 @@ for package in ['read', 'info']:
             y = pd.concat([y, best_lib])
 
         common_libs = ['audiofile', 'soundfile', 'aubio', 'librosa']
-        if 'wav' in exts:
-            # Don't show audioread and sox as they are too slow
-            lib_order = common_libs + ['scipy']
-        else:
-            lib_order = common_libs + ['audioread']
+        # Define what to show in each figure
+        if 'wav' in exts and package == 'read':
+            lib_order = ['audiofile', 'soundfile', 'aubio', 'librosa', 'scipy']
+            height = 5.6
+            aspect = 1.2
+        elif 'wav' in exts and package == 'info':
+            lib_order = ['audiofile', 'soundfile', 'aubio']
+            height = 3.36
+            aspect = 2.0
+        elif 'mp3' in exts and package == 'read':
+            lib_order = ['audiofile', 'librosa', 'audioread']
+            height = 3.36
+            aspect = 2.0
+        elif 'mp3' in exts and package == 'info':
+            lib_order = ['audiofile', 'audioread']
+            height = 2.24
+            aspect = 3.0
 
         fig = plt.figure()
+
+        # Define colors for the libraries
+        #
+        palette = {
+            'audiofile': '#4a74b5',
+            'soundfile': '#db8548',
+            'aubio': '#5dab64',
+            'librosa': '#c34c4d',
+            'scipy': '#8174b8',
+            'audioread': '#94785e',
+        }
 
         g = sns.catplot(
             x="time",
@@ -55,11 +78,14 @@ for package in ['read', 'info']:
             hue='lib',
             hue_order=lib_order,
             order=exts,
+            palette=palette,
             data=y,
-            height=5.6,
-            aspect=1.2,
+            height=height,
+            aspect=aspect,
             legend=False
         )
+        if 'mp3' in exts:
+            plt.ylim(2, -1)
         g.despine(left=True)
         plt.legend(loc='upper right')
         plt.xlabel('time / s per file')
