@@ -30,13 +30,13 @@ Python packages
 
 The following Python packages are benchmarked against each other:
 
-* aubio_
-* audioread_
-* :mod:`audiofile`
-* librosa_
-* scipy_
-* soundfile_
-* sox_
+* aubio_ 0.4.9
+* audioread_ 2.1.9
+* :mod:`audiofile` 0.3.1
+* librosa_ 0.8.0
+* scipy_ 1.5.3
+* soundfile_ 0.10.3.post1
+* sox_ 1.4.1
 
 scipy_ and librosa_ are only tested for reading files,
 whereas sox_ is only tested for accessing metadata information.
