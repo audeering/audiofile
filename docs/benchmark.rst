@@ -102,7 +102,7 @@ as it was the slowest library.
 
 .. image:: ./benchmark/results/benchmark_wav-flac-ogg_read.png
 
-Results for :mod:`audioread`, soundfile_ and librosa_ are identical here
+Results for :mod:`audiofile`, soundfile_ and librosa_ are identical here
 as all of them use soundfile_ under the hood to read the data.
 
 Accessing metadata
