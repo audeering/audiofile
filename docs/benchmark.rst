@@ -66,6 +66,18 @@ the following was requested for every file:
 Running the benchmark
 ^^^^^^^^^^^^^^^^^^^^^
 
+The benchmark was executed on the following machine:
+
+* CPU: Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz x 12
+* RAM: '15.37 GiB'
+* Hard drive: Samsung SSD 860
+* Linux: Ubuntu 18.04.5
+* Python: 3.6.9
+
+To rerun the benchmark yourself,
+clone the repository
+and execute:
+
 .. code-block:: bash
 
     $ cd docs/benchmark/
