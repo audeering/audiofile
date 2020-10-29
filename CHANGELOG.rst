@@ -7,6 +7,14 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 0.3.3 (2020-10-29)
+--------------------------
+
+* Added: more tests to increase code coverage to 100%
+* Added: link to benchmark page in README
+* Changed: tests now require 100% code coverage
+
+
 Version 0.3.2 (2020-10-29)
 --------------------------
 
