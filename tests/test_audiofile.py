@@ -124,6 +124,24 @@ def test_wav(tmpdir, duration, sampling_rate, channels, always_2d):
     else:
         assert sig.ndim == 2
 
+    # Test additional arguments to read
+    if sampling_rate > 100:
+        offset = 0.001
+        duration = duration - 2 * offset
+        sig, fs = af.read(
+            file,
+            offset=offset,
+            duration=duration,
+            always_2d=always_2d,
+        )
+        assert _samples(sig) == int(np.ceil(duration * sampling_rate))
+
+    # Call with unallowed precision
+    if sampling_rate == 100 and duration == 2 and channels == 1:
+        expected_error = '"precision" has to be one of 16bit, 24bit, 32bit.'
+        with pytest.raises(SystemExit, match=expected_error):
+            af.write(file, signal, sampling_rate, precision='1bit')
+
 
 @pytest.mark.parametrize('magnitude', [0.01, 0.1, 1])
 @pytest.mark.parametrize('normalize', [False, True])
@@ -202,6 +220,19 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     assert af.samples(mp3_file) == _samples(sig)
     assert af.duration(mp3_file) == _duration(sig, sampling_rate)
 
+    # Test additional arguments to read with sox
+    offset = 0.1
+    duration = 0.5
+    sig, fs = af.read(mp3_file, offset=offset, duration=duration)
+    assert _duration(sig, sampling_rate) == duration
+    sig, fs = af.read(mp3_file, offset=offset)
+    assert_allclose(
+        _duration(sig, sampling_rate),
+        af.duration(mp3_file) - offset,
+        rtol=0,
+        atol=tolerance('duration', sampling_rate),
+    )
+
 
 def test_formats(tmpdir):
     base_url = 'https://dl.espressif.com/dl/audio/'
@@ -225,3 +256,12 @@ def test_formats(tmpdir):
         assert af.sampling_rate(file) == sampling_rate
         assert af.samples(file) == _samples(signal)
         assert af.duration(file) == _duration(signal, sampling_rate)
+
+        if url.endswith('m4a'):
+            # Test additional arguments to read with ffmpeg
+            offset = 0.1
+            duration = 0.5
+            sig, fs = af.read(file, offset=offset, duration=duration)
+            assert _duration(sig, sampling_rate) == duration
+            sig, fs = af.read(file, offset=offset)
+            assert _duration(sig, sampling_rate) == af.duration(file) - offset
