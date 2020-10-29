@@ -7,13 +7,14 @@ audiofile
 The Python package **audiofile** handles all kind of audio files
 with a focus on `reading speed`_.
 
-It can read and get metadata information
+It can read and request information
+on channels, duration, number of samples and sampling rate
 for all files that are supported by
 ffmpeg_,
 sox_,
-and mediainfo_,
-if those are available on your system.
-In addition, it can create WAV files.
+and mediainfo_.
+In addition,
+it can write WAV, FLAC, and OGG files.
 
 Have a look at the installation_ and usage_ instructions as a starting point.
 
