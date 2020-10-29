@@ -6,6 +6,7 @@
     
     installation
     usage
+    benchmark
     contributing
     changelog
 
