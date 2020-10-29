@@ -7,6 +7,14 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 0.3.2 (2020-10-29)
+--------------------------
+
+* Added: benchmark results page in docs
+* Fixed: multi-line release changelogs on Github
+* Fixed: copy-button for bash examples
+
+
 Version 0.3.1 (2020-10-27)
 --------------------------
 
