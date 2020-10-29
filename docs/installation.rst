@@ -1,7 +1,7 @@
 Installation
 ============
 
-:mod:`audiofile` should handle WAV, FLAC, OGG out of the box.
+:mod:`audiofile` supports WAV, FLAC, OGG out of the box.
 In order to handle all possible audio files,
 please make sure ffmpeg_,
 sox_,
