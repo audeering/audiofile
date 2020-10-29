@@ -139,7 +139,7 @@ For MP3 and MP4 files,
 The main focus was not speed,
 but consistent results for number of samples and duration.
 This can only be achieved by first converting the file to WAV
-as the duration will depend in the used decoder.
+as the duration will depend on the used decoder.
 
 
 .. _aubio: https://github.com/aubio/aubio/

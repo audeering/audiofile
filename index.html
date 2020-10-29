@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                v0.3.3
+                v0.3.4
               </div>
             
           
@@ -155,7 +155,7 @@
         
             
             
-              <a href="https://github.com/audeering/audiofile/blob/v0.3.3/docs/index.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/audeering/audiofile/blob/v0.3.4/docs/index.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -174,13 +174,14 @@
 <p><a class="reference external" href="https://github.com/audeering/audiofile/actions?query=workflow%3ATest"><img alt="Test status" src="https://github.com/audeering/audiofile/workflows/Test/badge.svg" /></a> <a class="reference external" href="https://codecov.io/gh/audeering/audiofile/"><img alt="code coverage" src="https://codecov.io/gh/audeering/audiofile/branch/master/graph/badge.svg?token=LVF0621BKR" /></a> <a class="reference external" href="https://audeering.github.io/audiofile/"><img alt="audiofile's documentation" src="https://img.shields.io/pypi/v/audiofile?label=docs" /></a> <a class="reference external" href="https://pypi.org/project/audiofile/"><img alt="audiofile's supported Python versions" src="https://img.shields.io/pypi/pyversions/audiofile.svg" /></a> <a class="reference external" href="https://github.com/audeering/audiofile/blob/master/LICENSE"><img alt="audiofile's MIT license" src="https://img.shields.io/badge/license-MIT-green.svg" /></a></p>
 <p>The Python package <strong>audiofile</strong> handles all kind of audio files
 with a focus on <a class="reference external" href="https://audeering.github.io/audiofile/benchmark.html">reading speed</a>.</p>
-<p>It can read and get metadata information
+<p>It can read and request information
+on channels, duration, number of samples and sampling rate
 for all files that are supported by
 <a class="reference external" href="https://www.ffmpeg.org/">ffmpeg</a>,
 <a class="reference external" href="http://sox.sourceforge.net/">sox</a>,
-and <a class="reference external" href="https://mediaarea.net/en/MediaInfo/">mediainfo</a>,
-if those are available on your system.
-In addition, it can create WAV files.</p>
+and <a class="reference external" href="https://mediaarea.net/en/MediaInfo/">mediainfo</a>.
+In addition,
+it can write WAV, FLAC, and OGG files.</p>
 <p>Have a look at the <a class="reference external" href="https://audeering.github.io/audiofile/installation.html">installation</a> and <a class="reference external" href="https://audeering.github.io/audiofile/usage.html">usage</a> instructions as a starting point.</p>
 <p>Code example for reading a file:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">audiofile</span> <span class="k">as</span> <span class="nn">af</span>
