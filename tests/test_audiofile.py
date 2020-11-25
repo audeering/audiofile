@@ -54,12 +54,14 @@ def download_url(url, root):
     return fpath
 
 
-def write_and_read(file,
-                   signal,
-                   sampling_rate,
-                   precision='16bit',
-                   always_2d=False,
-                   normalize=False):
+def write_and_read(
+        file,
+        signal,
+        sampling_rate,
+        precision='16bit',
+        always_2d=False,
+        normalize=False,
+):
     """Write and read audio files."""
     af.write(file, signal, sampling_rate, precision, normalize)
     return af.read(file, always_2d=always_2d)
@@ -83,16 +85,24 @@ def _magnitude(signal):
     return np.max(np.abs(signal))
 
 
+@pytest.mark.parametrize("precision", ['8bit', '16bit', '24bit', '32bit'])
 @pytest.mark.parametrize("duration", [0.01, 0.9999, 2])
 @pytest.mark.parametrize("sampling_rate", [100, 8000, 44100])
 @pytest.mark.parametrize("channels", [1, 2, 3, 10])
 @pytest.mark.parametrize("always_2d", [False, True])
-def test_wav(tmpdir, duration, sampling_rate, channels, always_2d):
+def test_wav(tmpdir, precision, duration, sampling_rate, channels, always_2d):
+    bit_depth = int(precision[:-3])
     file = str(tmpdir.join('signal.wav'))
     signal = sine(duration=duration,
                   sampling_rate=sampling_rate,
                   channels=channels)
-    sig, fs = write_and_read(file, signal, sampling_rate, always_2d=always_2d)
+    sig, fs = write_and_read(
+        file,
+        signal,
+        sampling_rate,
+        precision=precision,
+        always_2d=always_2d,
+    )
     # Expected number of samples
     samples = int(np.ceil(duration * sampling_rate))
     # Compare with sox implementation to check write()
@@ -101,6 +111,7 @@ def test_wav(tmpdir, duration, sampling_rate, channels, always_2d):
     assert sox.file_info.sample_rate(file) == sampling_rate
     assert sox.file_info.channels(file) == channels
     assert sox.file_info.num_samples(file) == samples
+    assert sox.file_info.bitdepth(file) == bit_depth
     # Compare with signal values to check read()
     assert_allclose(_duration(sig, fs), duration,
                     rtol=0, atol=tolerance('duration', sampling_rate))
@@ -113,6 +124,7 @@ def test_wav(tmpdir, duration, sampling_rate, channels, always_2d):
     assert af.sampling_rate(file) == sampling_rate
     assert af.channels(file) == channels
     assert af.samples(file) == samples
+    assert af.bit_depth(file) == bit_depth
     # Test types of audiofile metadata methods
     assert type(af.duration(file)) is float
     assert type(af.sampling_rate(file)) is int
@@ -138,7 +150,7 @@ def test_wav(tmpdir, duration, sampling_rate, channels, always_2d):
 
     # Call with unallowed precision
     if sampling_rate == 100 and duration == 2 and channels == 1:
-        expected_error = '"precision" has to be one of 16bit, 24bit, 32bit.'
+        expected_error = '"precision" has to be one of'
         with pytest.raises(SystemExit, match=expected_error):
             af.write(file, signal, sampling_rate, precision='1bit')
 
@@ -159,7 +171,7 @@ def test_magnitude(tmpdir, magnitude, normalize, precision, sampling_rate):
     assert type(_magnitude(sig)) is np.float32
 
 
-@pytest.mark.parametrize('file_type', ['wav', 'flac'])
+@pytest.mark.parametrize('file_type', ['wav', 'flac', 'ogg'])
 @pytest.mark.parametrize('sampling_rate', [8000, 48000])
 @pytest.mark.parametrize("channels", [1, 2, 8, 255])
 @pytest.mark.parametrize('magnitude', [0.01])
@@ -191,6 +203,8 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     # Test samples
     assert _samples(sig) == _samples(signal)
     assert sox.file_info.num_samples(file) == _samples(signal)
+    # Test precision
+    assert sox.file_info.bitdepth(file) == af.bit_depth(file)
 
 
 @pytest.mark.parametrize('sampling_rate', [8000, 48000])
@@ -219,6 +233,7 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     assert af.sampling_rate(mp3_file) == sampling_rate
     assert af.samples(mp3_file) == _samples(sig)
     assert af.duration(mp3_file) == _duration(sig, sampling_rate)
+    assert af.bit_depth(mp3_file) is None
 
     # Test additional arguments to read with sox
     offset = 0.1
@@ -259,6 +274,7 @@ def test_formats(tmpdir):
         assert af.sampling_rate(file) == sampling_rate
         assert af.samples(file) == _samples(signal)
         assert af.duration(file) == _duration(signal, sampling_rate)
+        assert af.bit_depth(file) is None
 
         if url.endswith('m4a'):
             # Test additional arguments to read with ffmpeg

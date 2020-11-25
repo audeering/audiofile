@@ -41,5 +41,20 @@ def run_sox(infile, outfile, offset, duration):
     tfm.build(infile, outfile)
 
 
+MAX_CHANNELS = {
+    'wav': 65535,
+    'ogg': 255,
+    'flac': 8,
+}
+r"""Maximum number of channels per format."""
+
+PRECISIONG = {
+    '8bit': 'PCM_S8',
+    '16bit': 'PCM_16',
+    '24bit': 'PCM_24',
+    '32bit': 'PCM_32',
+}
+r"""Precision as returned by soundfile."""
+
 SNDFORMATS = ['wav', 'flac', 'ogg']
-"""File formats handled by soundfile"""
+r"""File formats handled by soundfile"""

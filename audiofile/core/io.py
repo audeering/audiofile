@@ -11,6 +11,7 @@ from audiofile.core.convert import convert_to_wav
 from audiofile.core.info import sampling_rate
 from audiofile.core.utils import (
     file_extension,
+    MAX_CHANNELS,
     SNDFORMATS,
 )
 
@@ -113,11 +114,10 @@ def write(
             The format (WAV, FLAC, OGG) will be inferred from the file name
         signal: audio data to write
         sampling_rate: sample rate of the audio data
-        precision: precision of writen file,
-            can be `'16bit'`,
-            `'24bit'`,
-            `'32bit'`.
-            Only available for WAV files
+        precision: precision of written file,
+            can be `'8bit'`, `'16bit'`, `'24bit'`
+            for WAV anf FLAC files,
+            and in addition `'32bit'` for WAV files
         normalize: normalize audio data before writing
         kwargs: pass on further arguments to :func:`soundfile.write`
 
@@ -126,40 +126,43 @@ def write(
         due to a bug in its libsndfile version.
 
     """
-    precision_mapping = {
-        '16bit': 'PCM_16',
-        '24bit': 'PCM_24',
-        '32bit': 'PCM_32',
-    }
-    max_channels = {
-        'wav': 65535,
-        'ogg': 255,
-        'flac': 8,
-    }
-    # Check for allowed precisions
-    allowed_precissions = sorted(list(precision_mapping.keys()))
-    if precision not in allowed_precissions:
-        sys.exit(
-            f'"precision" has to be one of {", ".join(allowed_precissions)}.'
-        )
-    # Check if number of channels is allowed for chosen file type
     file_type = file_extension(file)
+    # Check for allowed precisions
+    if file_type == 'wav':
+        precision_mapping = {
+            '8bit': 'PCM_U8',
+            '16bit': 'PCM_16',
+            '24bit': 'PCM_24',
+            '32bit': 'PCM_32',
+        }
+    elif file_type == 'flac':
+        precision_mapping = {
+            '8bit': 'PCM_S8',
+            '16bit': 'PCM_16',
+            '24bit': 'PCM_24',
+        }
+    if file_type in ['wav', 'flac']:
+        allowed_precissions = sorted(list(precision_mapping.keys()))
+        if precision not in allowed_precissions:
+            sys.exit(
+                f'"precision" has to be one of '
+                f'{", ".join(allowed_precissions)}.'
+            )
+        subtype = precision_mapping[precision]
+    else:
+        subtype = None
+    # Check if number of channels is allowed for chosen file type
     if signal.ndim > 1:
         channels = np.shape(signal)[0]
     else:
         channels = 1
-    if channels > max_channels[file_type]:
+    if channels > MAX_CHANNELS[file_type]:
         if file_type != 'wav':
             hint = 'Consider using "wav" instead.'
         sys.exit(
             'The maximum number of allowed channels '
-            f'for {file_type} is {max_channels[file_type]}. {hint}'
+            f'for {file_type} is {MAX_CHANNELS[file_type]}. {hint}'
         )
-    # Precision setting is only available for WAV files
-    if file_type == 'wav':
-        subtype = precision_mapping[precision]
-    else:
-        subtype = None
     if normalize:
         signal = signal / np.max(np.abs(signal))
     soundfile.write(file, signal.T, sampling_rate, subtype=subtype, **kwargs)
