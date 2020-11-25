@@ -94,7 +94,7 @@ def write(
         file: str,
         signal: np.array,
         sampling_rate: int,
-        precision: str = '16bit',
+        bit_depth: str = 16,
         normalize: bool = False,
         **kwargs,
 ):
@@ -114,10 +114,9 @@ def write(
             The format (WAV, FLAC, OGG) will be inferred from the file name
         signal: audio data to write
         sampling_rate: sample rate of the audio data
-        precision: precision of written file,
-            can be `'8bit'`, `'16bit'`, `'24bit'`
-            for WAV anf FLAC files,
-            and in addition `'32bit'` for WAV files
+        bit_depth: bit depth of written file in bit,
+            can be 8, 16, 24 for WAV and FLAC files,
+            and in addition 32 for WAV files
         normalize: normalize audio data before writing
         kwargs: pass on further arguments to :func:`soundfile.write`
 
@@ -129,26 +128,26 @@ def write(
     file_type = file_extension(file)
     # Check for allowed precisions
     if file_type == 'wav':
-        precision_mapping = {
-            '8bit': 'PCM_U8',
-            '16bit': 'PCM_16',
-            '24bit': 'PCM_24',
-            '32bit': 'PCM_32',
+        depth_mapping = {
+            8: 'PCM_U8',
+            16: 'PCM_16',
+            24: 'PCM_24',
+            32: 'PCM_32',
         }
     elif file_type == 'flac':
-        precision_mapping = {
-            '8bit': 'PCM_S8',
-            '16bit': 'PCM_16',
-            '24bit': 'PCM_24',
+        depth_mapping = {
+            8: 'PCM_S8',
+            16: 'PCM_16',
+            24: 'PCM_24',
         }
     if file_type in ['wav', 'flac']:
-        allowed_precissions = sorted(list(precision_mapping.keys()))
-        if precision not in allowed_precissions:
+        bit_depths = sorted(list(depth_mapping.keys()))
+        if bit_depth not in bit_depths:
             sys.exit(
-                f'"precision" has to be one of '
-                f'{", ".join(allowed_precissions)}.'
+                f'"bit_depth" has to be one of '
+                f'{", ".join([str(b) for b in bit_depths])}.'
             )
-        subtype = precision_mapping[precision]
+        subtype = depth_mapping[bit_depth]
     else:
         subtype = None
     # Check if number of channels is allowed for chosen file type

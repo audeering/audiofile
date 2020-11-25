@@ -15,11 +15,11 @@ import audiofile as af
 def tolerance(condition, sampling_rate=0):
     """Absolute tolerance for different condition."""
     tol = 0
-    if condition == '16bit':
+    if condition == 16:
         tol = 2 ** -11  # half precision
-    elif condition == '24bit':
+    elif condition == 24:
         tol = 2 ** -17  # to be checked
-    elif condition == '32bit':
+    elif condition == 32:
         tol = 2 ** -24  # single precision
     elif condition == 'duration':
         tol = 1 / sampling_rate
@@ -58,12 +58,12 @@ def write_and_read(
         file,
         signal,
         sampling_rate,
-        precision='16bit',
+        bit_depth=16,
         always_2d=False,
         normalize=False,
 ):
     """Write and read audio files."""
-    af.write(file, signal, sampling_rate, precision, normalize)
+    af.write(file, signal, sampling_rate, bit_depth, normalize)
     return af.read(file, always_2d=always_2d)
 
 
@@ -85,13 +85,12 @@ def _magnitude(signal):
     return np.max(np.abs(signal))
 
 
-@pytest.mark.parametrize("precision", ['8bit', '16bit', '24bit', '32bit'])
+@pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])
 @pytest.mark.parametrize("duration", [0.01, 0.9999, 2])
 @pytest.mark.parametrize("sampling_rate", [100, 8000, 44100])
 @pytest.mark.parametrize("channels", [1, 2, 3, 10])
 @pytest.mark.parametrize("always_2d", [False, True])
-def test_wav(tmpdir, precision, duration, sampling_rate, channels, always_2d):
-    bit_depth = int(precision[:-3])
+def test_wav(tmpdir, bit_depth, duration, sampling_rate, channels, always_2d):
     file = str(tmpdir.join('signal.wav'))
     signal = sine(duration=duration,
                   sampling_rate=sampling_rate,
@@ -100,7 +99,7 @@ def test_wav(tmpdir, precision, duration, sampling_rate, channels, always_2d):
         file,
         signal,
         sampling_rate,
-        precision=precision,
+        bit_depth=bit_depth,
         always_2d=always_2d,
     )
     # Expected number of samples
@@ -148,26 +147,26 @@ def test_wav(tmpdir, precision, duration, sampling_rate, channels, always_2d):
         )
         assert _samples(sig) == int(np.ceil(duration * sampling_rate))
 
-    # Call with unallowed precision
+    # Call with unallowed bit depths
     if sampling_rate == 100 and duration == 2 and channels == 1:
-        expected_error = '"precision" has to be one of'
+        expected_error = '"bit_depth" has to be one of'
         with pytest.raises(SystemExit, match=expected_error):
-            af.write(file, signal, sampling_rate, precision='1bit')
+            af.write(file, signal, sampling_rate, bit_depth=1)
 
 
 @pytest.mark.parametrize('magnitude', [0.01, 0.1, 1])
 @pytest.mark.parametrize('normalize', [False, True])
-@pytest.mark.parametrize('precision', ['16bit', '24bit', '32bit'])
+@pytest.mark.parametrize('bit_depth', [16, 24, 32])
 @pytest.mark.parametrize('sampling_rate', [44100])
-def test_magnitude(tmpdir, magnitude, normalize, precision, sampling_rate):
+def test_magnitude(tmpdir, magnitude, normalize, bit_depth, sampling_rate):
     file = str(tmpdir.join('signal.wav'))
     signal = sine(magnitude=magnitude, sampling_rate=sampling_rate)
     if normalize:
         magnitude = 1.0
-    sig, _ = write_and_read(file, signal, sampling_rate, precision=precision,
+    sig, _ = write_and_read(file, signal, sampling_rate, bit_depth=bit_depth,
                             normalize=normalize)
     assert_allclose(_magnitude(sig), magnitude,
-                    rtol=0, atol=tolerance(precision))
+                    rtol=0, atol=tolerance(bit_depth))
     assert type(_magnitude(sig)) is np.float32
 
 
@@ -193,7 +192,7 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     assert sox.file_info.file_type(file) == file_type
     # Test magnitude
     assert_allclose(_magnitude(sig), magnitude,
-                    rtol=0, atol=tolerance('16bit'))
+                    rtol=0, atol=tolerance(16))
     # Test sampling rate
     assert fs == sampling_rate
     assert sox.file_info.sample_rate(file) == sampling_rate
@@ -203,7 +202,7 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     # Test samples
     assert _samples(sig) == _samples(signal)
     assert sox.file_info.num_samples(file) == _samples(signal)
-    # Test precision
+    # Test bit depth
     assert sox.file_info.bitdepth(file) == af.bit_depth(file)
 
 
@@ -222,7 +221,7 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     assert sox.file_info.file_type(mp3_file) == 'mp3'
     sig, fs = af.read(mp3_file)
     assert_allclose(_magnitude(sig), magnitude,
-                    rtol=0, atol=tolerance('16bit'))
+                    rtol=0, atol=tolerance(16))
     assert fs == sampling_rate
     assert _channels(sig) == channels
     if channels == 1:
