@@ -48,13 +48,5 @@ MAX_CHANNELS = {
 }
 r"""Maximum number of channels per format."""
 
-PRECISIONG = {
-    '8bit': 'PCM_S8',
-    '16bit': 'PCM_16',
-    '24bit': 'PCM_24',
-    '32bit': 'PCM_32',
-}
-r"""Precision as returned by soundfile."""
-
 SNDFORMATS = ['wav', 'flac', 'ogg']
 r"""File formats handled by soundfile"""
