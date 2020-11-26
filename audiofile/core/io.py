@@ -142,7 +142,6 @@ def write(
                 f'This will raise an error in version >=0.5.0'
             ),
             category=DeprecationWarning,
-            stacklevel=2,
         )
         bit_depth = backward_mapping[bit_depth]
     if 'precision' in kwargs.keys():
@@ -155,7 +154,6 @@ def write(
                 f'This will raise an error in version >=0.5.0'
             ),
             category=DeprecationWarning,
-            stacklevel=2,
         )
         bit_depth = backward_mapping[_precision]
 
