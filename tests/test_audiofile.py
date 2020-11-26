@@ -2,6 +2,7 @@ from __future__ import division
 import os
 import subprocess
 import socket
+import warnings
 
 import pytest
 import numpy as np
@@ -83,6 +84,29 @@ def _duration(signal, sampling_rate):
 
 def _magnitude(signal):
     return np.max(np.abs(signal))
+
+
+def test_deprecated_precision(tmpdir):
+    sampling_rate = 8000
+    precision = '16bit'
+    bit_depth = 16
+    signal = sine(sampling_rate=sampling_rate)
+    file = str(tmpdir.join('signal-precision.wav'))
+    with warnings.catch_warnings(record=True) as w:
+        af.write(file, signal, sampling_rate, precision)
+        assert issubclass(w[-1].category, DeprecationWarning)
+        assert str(w[-1].message) == (
+            f'Use "{bit_depth}" instead of '
+            f'"{precision}" for specifying bit depth'
+        )
+    with warnings.catch_warnings(record=True) as w:
+        af.write(file, signal, sampling_rate, precision=precision)
+        assert issubclass(w[-1].category, DeprecationWarning)
+        assert str(w[-1].message) == (
+            f'Use "bit_depth={bit_depth}" '
+            f'instead of "precision={precision}" '
+            f'for specifying bit depth'
+        )
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])

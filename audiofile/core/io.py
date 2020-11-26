@@ -3,6 +3,7 @@ import os
 import sys
 import tempfile
 import typing
+import warnings
 
 import numpy as np
 import soundfile
@@ -126,6 +127,36 @@ def write(
 
     """
     file_type = file_extension(file)
+
+    # Backward compatibility between bit_depth and precision
+    backward_mapping = {
+        '16bit': 16,
+        '24bit': 24,
+        '32bit': 32,
+    }
+    if bit_depth in backward_mapping.keys():
+        warnings.warn(
+            (
+                f'Use "{backward_mapping[bit_depth]}" instead of '
+                f'"{bit_depth}" for specifying bit depth'
+            ),
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        bit_depth = backward_mapping[bit_depth]
+    if 'precision' in kwargs.keys():
+        _precision = kwargs.pop('precision')
+        warnings.warn(
+            (
+                f'Use "bit_depth={backward_mapping[_precision]}" '
+                f'instead of "precision={_precision}" '
+                f'for specifying bit depth'
+            ),
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        bit_depth = backward_mapping[_precision]
+
     # Check for allowed precisions
     if file_type == 'wav':
         depth_mapping = {
