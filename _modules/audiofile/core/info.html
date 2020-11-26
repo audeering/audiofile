@@ -56,7 +56,7 @@
 
           <a href="../../../index.html">
           
-            <img src="../../../_static/images/audeering.png" class="logo" alt="audEERING"/>
+            <img src="../../../_static/images/audeering.svg" class="logo" alt="audEERING"/>
           
           
             <span> audiofile</span>
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                v0.3.4
+                v0.4.0
               </div>
             
           
@@ -166,10 +166,10 @@
             
   <h1>Source code for audiofile.core.info</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Read, write, and get information about audio files.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">typing</span>
 
 <span class="kn">import</span> <span class="nn">soundfile</span>
 <span class="kn">import</span> <span class="nn">sox</span>
@@ -184,6 +184,50 @@
 
 <span class="c1"># Disable warning outputs of sox as we use it with try</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;sox&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="bit_depth"><a class="viewcode-back" href="../../../api.html#audiofile.bit_depth">[docs]</a><span class="k">def</span> <span class="nf">bit_depth</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bit depth of audio file.</span>
+
+<span class="sd">    For lossy audio files,</span>
+<span class="sd">    ``None`` is returned as they have a varying bit depth.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file: file name of input audio file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bit depth of audio file</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_type</span> <span class="o">=</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;wav&#39;</span><span class="p">:</span>
+        <span class="n">precision_mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;PCM_16&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+            <span class="s1">&#39;PCM_24&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+            <span class="s1">&#39;PCM_32&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+            <span class="s1">&#39;PCM_U8&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="s1">&#39;FLOAT&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+            <span class="s1">&#39;DOUBLE&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+            <span class="s1">&#39;ULAW&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="s1">&#39;ALAW&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="s1">&#39;IMA_ADPCM&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s1">&#39;MS_ADPCM&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s1">&#39;GSM610&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>  <span class="c1"># not sure if this could be variable?</span>
+            <span class="s1">&#39;G721_32&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># not sure if correct</span>
+        <span class="p">}</span>
+    <span class="k">elif</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;flac&#39;</span><span class="p">:</span>
+        <span class="n">precision_mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;PCM_16&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+            <span class="s1">&#39;PCM_24&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+            <span class="s1">&#39;PCM_32&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+            <span class="s1">&#39;PCM_S8&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;wav&#39;</span><span class="p">,</span> <span class="s1">&#39;flac&#39;</span><span class="p">]:</span>
+        <span class="n">depth</span> <span class="o">=</span> <span class="n">precision_mapping</span><span class="p">[</span><span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">subtype</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">depth</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">depth</span></div>
 
 
 <div class="viewcode-block" id="channels"><a class="viewcode-back" href="../../../api.html#audiofile.channels">[docs]</a><span class="k">def</span> <span class="nf">channels</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -285,7 +329,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2020/10/29 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2020/11/26 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -306,6 +350,11 @@
   </div>
   
 
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
 
     

@@ -56,7 +56,7 @@
 
           <a href="../../../index.html">
           
-            <img src="../../../_static/images/audeering.png" class="logo" alt="audEERING"/>
+            <img src="../../../_static/images/audeering.svg" class="logo" alt="audEERING"/>
           
           
             <span> audiofile</span>
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                v0.3.4
+                v0.4.0
               </div>
             
           
@@ -170,6 +170,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">soundfile</span>
@@ -178,6 +179,7 @@
 <span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">sampling_rate</span>
 <span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">file_extension</span><span class="p">,</span>
+    <span class="n">MAX_CHANNELS</span><span class="p">,</span>
     <span class="n">SNDFORMATS</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -260,7 +262,7 @@
         <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">signal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
         <span class="n">sampling_rate</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">precision</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;16bit&#39;</span><span class="p">,</span>
+        <span class="n">bit_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
         <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
@@ -280,11 +282,9 @@
 <span class="sd">            The format (WAV, FLAC, OGG) will be inferred from the file name</span>
 <span class="sd">        signal: audio data to write</span>
 <span class="sd">        sampling_rate: sample rate of the audio data</span>
-<span class="sd">        precision: precision of writen file,</span>
-<span class="sd">            can be `&#39;16bit&#39;`,</span>
-<span class="sd">            `&#39;24bit&#39;`,</span>
-<span class="sd">            `&#39;32bit&#39;`.</span>
-<span class="sd">            Only available for WAV files</span>
+<span class="sd">        bit_depth: bit depth of written file in bit,</span>
+<span class="sd">            can be 8, 16, 24 for WAV and FLAC files,</span>
+<span class="sd">            and in addition 32 for WAV files</span>
 <span class="sd">        normalize: normalize audio data before writing</span>
 <span class="sd">        kwargs: pass on further arguments to :func:`soundfile.write`</span>
 
@@ -293,40 +293,67 @@
 <span class="sd">        due to a bug in its libsndfile version.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">precision_mapping</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;16bit&#39;</span><span class="p">:</span> <span class="s1">&#39;PCM_16&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;24bit&#39;</span><span class="p">:</span> <span class="s1">&#39;PCM_24&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;32bit&#39;</span><span class="p">:</span> <span class="s1">&#39;PCM_32&#39;</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="n">max_channels</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;wav&#39;</span><span class="p">:</span> <span class="mi">65535</span><span class="p">,</span>
-        <span class="s1">&#39;ogg&#39;</span><span class="p">:</span> <span class="mi">255</span><span class="p">,</span>
-        <span class="s1">&#39;flac&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-    <span class="p">}</span>
-    <span class="c1"># Check for allowed precisions</span>
-    <span class="n">allowed_precissions</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">precision_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-    <span class="k">if</span> <span class="n">precision</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_precissions</span><span class="p">:</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;&quot;precision&quot; has to be one of </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_precissions</span><span class="p">)</span><span class="si">}</span><span class="s1">.&#39;</span>
-        <span class="p">)</span>
-    <span class="c1"># Check if number of channels is allowed for chosen file type</span>
     <span class="n">file_type</span> <span class="o">=</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="c1"># Backward compatibility between bit_depth and precision</span>
+    <span class="n">backward_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;16bit&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+        <span class="s1">&#39;24bit&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+        <span class="s1">&#39;32bit&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">bit_depth</span> <span class="ow">in</span> <span class="n">backward_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Use &quot;</span><span class="si">{</span><span class="n">backward_mapping</span><span class="p">[</span><span class="n">bit_depth</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot; instead of &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">bit_depth</span><span class="si">}</span><span class="s1">&quot; for specifying bit depth. &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;This will raise an error in version &gt;=0.5.0&#39;</span>
+        <span class="p">)</span>
+        <span class="n">bit_depth</span> <span class="o">=</span> <span class="n">backward_mapping</span><span class="p">[</span><span class="n">bit_depth</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;precision&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">_precision</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;precision&#39;</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Use &quot;bit_depth=</span><span class="si">{</span><span class="n">backward_mapping</span><span class="p">[</span><span class="n">_precision</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot; &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;instead of &quot;precision=</span><span class="si">{</span><span class="n">_precision</span><span class="si">}</span><span class="s1">&quot; &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;for specifying bit depth. &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;This will raise an error in version &gt;=0.5.0&#39;</span>
+        <span class="p">)</span>
+        <span class="n">bit_depth</span> <span class="o">=</span> <span class="n">backward_mapping</span><span class="p">[</span><span class="n">_precision</span><span class="p">]</span>
+
+    <span class="c1"># Check for allowed precisions</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;wav&#39;</span><span class="p">:</span>
+        <span class="n">depth_mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">8</span><span class="p">:</span> <span class="s1">&#39;PCM_U8&#39;</span><span class="p">,</span>
+            <span class="mi">16</span><span class="p">:</span> <span class="s1">&#39;PCM_16&#39;</span><span class="p">,</span>
+            <span class="mi">24</span><span class="p">:</span> <span class="s1">&#39;PCM_24&#39;</span><span class="p">,</span>
+            <span class="mi">32</span><span class="p">:</span> <span class="s1">&#39;PCM_32&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="k">elif</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;flac&#39;</span><span class="p">:</span>
+        <span class="n">depth_mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">8</span><span class="p">:</span> <span class="s1">&#39;PCM_S8&#39;</span><span class="p">,</span>
+            <span class="mi">16</span><span class="p">:</span> <span class="s1">&#39;PCM_16&#39;</span><span class="p">,</span>
+            <span class="mi">24</span><span class="p">:</span> <span class="s1">&#39;PCM_24&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="k">if</span> <span class="n">file_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;wav&#39;</span><span class="p">,</span> <span class="s1">&#39;flac&#39;</span><span class="p">]:</span>
+        <span class="n">bit_depths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">depth_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="n">bit_depth</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bit_depths</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;&quot;bit_depth&quot; has to be one of &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bit_depths</span><span class="p">])</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="p">)</span>
+        <span class="n">subtype</span> <span class="o">=</span> <span class="n">depth_mapping</span><span class="p">[</span><span class="n">bit_depth</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">subtype</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># Check if number of channels is allowed for chosen file type</span>
     <span class="k">if</span> <span class="n">signal</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">channels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">signal</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">channels</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="n">channels</span> <span class="o">&gt;</span> <span class="n">max_channels</span><span class="p">[</span><span class="n">file_type</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">channels</span> <span class="o">&gt;</span> <span class="n">MAX_CHANNELS</span><span class="p">[</span><span class="n">file_type</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">file_type</span> <span class="o">!=</span> <span class="s1">&#39;wav&#39;</span><span class="p">:</span>
             <span class="n">hint</span> <span class="o">=</span> <span class="s1">&#39;Consider using &quot;wav&quot; instead.&#39;</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span>
             <span class="s1">&#39;The maximum number of allowed channels &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;for </span><span class="si">{</span><span class="n">file_type</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">max_channels</span><span class="p">[</span><span class="n">file_type</span><span class="p">]</span><span class="si">}</span><span class="s1">. </span><span class="si">{</span><span class="n">hint</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;for </span><span class="si">{</span><span class="n">file_type</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">MAX_CHANNELS</span><span class="p">[</span><span class="n">file_type</span><span class="p">]</span><span class="si">}</span><span class="s1">. </span><span class="si">{</span><span class="n">hint</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="p">)</span>
-    <span class="c1"># Precision setting is only available for WAV files</span>
-    <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s1">&#39;wav&#39;</span><span class="p">:</span>
-        <span class="n">subtype</span> <span class="o">=</span> <span class="n">precision_mapping</span><span class="p">[</span><span class="n">precision</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">subtype</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
         <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span>
     <span class="n">soundfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="n">subtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -345,7 +372,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2020/10/29 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2020/11/26 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -366,6 +393,11 @@
   </div>
   
 
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
 
     

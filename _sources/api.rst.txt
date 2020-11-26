@@ -13,6 +13,11 @@ write
 
 .. autofunction:: write
 
+bit_depth
+---------
+
+.. autofunction:: bit_depth
+
 channels
 --------
 

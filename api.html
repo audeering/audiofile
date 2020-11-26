@@ -57,7 +57,7 @@
 
           <a href="index.html">
           
-            <img src="_static/images/audeering.png" class="logo" alt="audEERING"/>
+            <img src="_static/images/audeering.svg" class="logo" alt="audEERING"/>
           
           
             <span> audiofile</span>
@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                v0.3.4
+                v0.4.0
               </div>
             
           
@@ -105,6 +105,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">audiofile</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#read">read</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#write">write</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bit-depth">bit_depth</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#channels">channels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#duration">duration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#samples">samples</a></li>
@@ -164,7 +165,7 @@
         
             
             
-              <a href="https://github.com/audeering/audiofile/blob/v0.3.4/docs/api.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/audeering/audiofile/blob/v0.4.0/docs/api.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -227,7 +228,7 @@ due to a bug in its libsndfile version.</p>
 <h2>write<a class="headerlink" href="#write" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="audiofile.write">
-<code class="sig-prename descclassname">audiofile.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">signal</span></em>, <em class="sig-param"><span class="n">sampling_rate</span></em>, <em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">'16bit'</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/io.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#audiofile.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">audiofile.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em>, <em class="sig-param"><span class="n">signal</span></em>, <em class="sig-param"><span class="n">sampling_rate</span></em>, <em class="sig-param"><span class="n">bit_depth</span><span class="o">=</span><span class="default_value">16</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/io.html#write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#audiofile.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write (normalized) audio files.</p>
 <p>Save audio data provided as an array of shape <code class="docutils literal notranslate"><span class="pre">[channels,</span> <span class="pre">samples]</span></code>
 to a WAV, FLAC, or OGG file.
@@ -243,11 +244,9 @@ For monaural audio the array can be one-dimensional.</p>
 The format (WAV, FLAC, OGG) will be inferred from the file name</p></li>
 <li><p><strong>signal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – audio data to write</p></li>
 <li><p><strong>sampling_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – sample rate of the audio data</p></li>
-<li><p><strong>precision</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – precision of writen file,
-can be <cite>‘16bit’</cite>,
-<cite>‘24bit’</cite>,
-<cite>‘32bit’</cite>.
-Only available for WAV files</p></li>
+<li><p><strong>bit_depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – bit depth of written file in bit,
+can be 8, 16, 24 for WAV and FLAC files,
+and in addition 32 for WAV files</p></li>
 <li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – normalize audio data before writing</p></li>
 <li><p><strong>kwargs</strong> – pass on further arguments to <a class="reference external" href="https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write" title="(in PySoundFile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.write()</span></code></a></p></li>
 </ul>
@@ -258,6 +257,28 @@ Only available for WAV files</p></li>
 <p>OGG file handling does not work properly under Ubuntu 16.04
 due to a bug in its libsndfile version.</p>
 </div>
+</dd></dl>
+
+</div>
+<div class="section" id="bit-depth">
+<h2>bit_depth<a class="headerlink" href="#bit-depth" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="audiofile.bit_depth">
+<code class="sig-prename descclassname">audiofile.</code><code class="sig-name descname">bit_depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#bit_depth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#audiofile.bit_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bit depth of audio file.</p>
+<p>For lossy audio files,
+<code class="docutils literal notranslate"><span class="pre">None</span></code> is returned as they have a varying bit depth.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – file name of input audio file</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>bit depth of audio file</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -387,7 +408,7 @@ will be shorter accordingly to those values.</p>
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2020/10/29 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2020/11/26 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -408,6 +429,11 @@ will be shorter accordingly to those values.</p>
   </div>
   
 
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
 
     
