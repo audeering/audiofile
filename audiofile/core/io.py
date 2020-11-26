@@ -138,7 +138,8 @@ def write(
         warnings.warn(
             (
                 f'Use "{backward_mapping[bit_depth]}" instead of '
-                f'"{bit_depth}" for specifying bit depth'
+                f'"{bit_depth}" for specifying bit depth. '
+                f'This will raise an error in version >=0.5.0'
             ),
             category=DeprecationWarning,
             stacklevel=2,
@@ -150,7 +151,8 @@ def write(
             (
                 f'Use "bit_depth={backward_mapping[_precision]}" '
                 f'instead of "precision={_precision}" '
-                f'for specifying bit depth'
+                f'for specifying bit depth. '
+                f'This will raise an error in version >=0.5.0'
             ),
             category=DeprecationWarning,
             stacklevel=2,

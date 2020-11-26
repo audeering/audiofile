@@ -97,7 +97,8 @@ def test_deprecated_precision(tmpdir):
         assert issubclass(w[-1].category, DeprecationWarning)
         assert str(w[-1].message) == (
             f'Use "{bit_depth}" instead of '
-            f'"{precision}" for specifying bit depth'
+            f'"{precision}" for specifying bit depth. '
+            f'This will raise an error in version >=0.5.0'
         )
     with warnings.catch_warnings(record=True) as w:
         af.write(file, signal, sampling_rate, precision=precision)
@@ -105,7 +106,8 @@ def test_deprecated_precision(tmpdir):
         assert str(w[-1].message) == (
             f'Use "bit_depth={bit_depth}" '
             f'instead of "precision={precision}" '
-            f'for specifying bit depth'
+            f'for specifying bit depth. '
+            f'This will raise an error in version >=0.5.0'
         )
 
 
