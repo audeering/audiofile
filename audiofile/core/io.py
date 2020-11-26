@@ -95,7 +95,7 @@ def write(
         file: str,
         signal: np.array,
         sampling_rate: int,
-        bit_depth: str = 16,
+        bit_depth: int = 16,
         normalize: bool = False,
         **kwargs,
 ):
