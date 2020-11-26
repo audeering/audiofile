@@ -7,6 +7,16 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 0.4.0 (2020-11-26)
+--------------------------
+
+* Added ``audiofile.bit_depth()``
+  which returns bit depth of WAV and FLAC files
+* Added: ``bit_depth`` argument to ``audiofile.write()``
+* Deprecated: ``precision`` argument of ``audiofile.write()``,
+  use ``bit_depth`` instead
+
+
 Version 0.3.4 (2020-10-29)
 --------------------------
 
