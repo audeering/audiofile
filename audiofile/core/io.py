@@ -136,24 +136,18 @@ def write(
     }
     if bit_depth in backward_mapping.keys():
         warnings.warn(
-            (
-                f'Use "{backward_mapping[bit_depth]}" instead of '
-                f'"{bit_depth}" for specifying bit depth. '
-                f'This will raise an error in version >=0.5.0'
-            ),
-            category=DeprecationWarning,
+            f'Use "{backward_mapping[bit_depth]}" instead of '
+            f'"{bit_depth}" for specifying bit depth. '
+            f'This will raise an error in version >=0.5.0'
         )
         bit_depth = backward_mapping[bit_depth]
     if 'precision' in kwargs.keys():
         _precision = kwargs.pop('precision')
         warnings.warn(
-            (
-                f'Use "bit_depth={backward_mapping[_precision]}" '
-                f'instead of "precision={_precision}" '
-                f'for specifying bit depth. '
-                f'This will raise an error in version >=0.5.0'
-            ),
-            category=DeprecationWarning,
+            f'Use "bit_depth={backward_mapping[_precision]}" '
+            f'instead of "precision={_precision}" '
+            f'for specifying bit depth. '
+            f'This will raise an error in version >=0.5.0'
         )
         bit_depth = backward_mapping[_precision]
 
