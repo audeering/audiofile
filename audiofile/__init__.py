@@ -1,6 +1,7 @@
 """Read, write, and get information about audio files."""
 from audiofile.core.convert import convert_to_wav
 from audiofile.core.info import (
+    bit_depth,
     channels,
     duration,
     samples,

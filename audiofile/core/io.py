@@ -3,6 +3,7 @@ import os
 import sys
 import tempfile
 import typing
+import warnings
 
 import numpy as np
 import soundfile
@@ -11,6 +12,7 @@ from audiofile.core.convert import convert_to_wav
 from audiofile.core.info import sampling_rate
 from audiofile.core.utils import (
     file_extension,
+    MAX_CHANNELS,
     SNDFORMATS,
 )
 
@@ -93,7 +95,7 @@ def write(
         file: str,
         signal: np.array,
         sampling_rate: int,
-        precision: str = '16bit',
+        bit_depth: int = 16,
         normalize: bool = False,
         **kwargs,
 ):
@@ -113,11 +115,9 @@ def write(
             The format (WAV, FLAC, OGG) will be inferred from the file name
         signal: audio data to write
         sampling_rate: sample rate of the audio data
-        precision: precision of writen file,
-            can be `'16bit'`,
-            `'24bit'`,
-            `'32bit'`.
-            Only available for WAV files
+        bit_depth: bit depth of written file in bit,
+            can be 8, 16, 24 for WAV and FLAC files,
+            and in addition 32 for WAV files
         normalize: normalize audio data before writing
         kwargs: pass on further arguments to :func:`soundfile.write`
 
@@ -126,40 +126,67 @@ def write(
         due to a bug in its libsndfile version.
 
     """
-    precision_mapping = {
-        '16bit': 'PCM_16',
-        '24bit': 'PCM_24',
-        '32bit': 'PCM_32',
-    }
-    max_channels = {
-        'wav': 65535,
-        'ogg': 255,
-        'flac': 8,
-    }
-    # Check for allowed precisions
-    allowed_precissions = sorted(list(precision_mapping.keys()))
-    if precision not in allowed_precissions:
-        sys.exit(
-            f'"precision" has to be one of {", ".join(allowed_precissions)}.'
-        )
-    # Check if number of channels is allowed for chosen file type
     file_type = file_extension(file)
+
+    # Backward compatibility between bit_depth and precision
+    backward_mapping = {
+        '16bit': 16,
+        '24bit': 24,
+        '32bit': 32,
+    }
+    if bit_depth in backward_mapping.keys():
+        warnings.warn(
+            f'Use "{backward_mapping[bit_depth]}" instead of '
+            f'"{bit_depth}" for specifying bit depth. '
+            f'This will raise an error in version >=0.5.0'
+        )
+        bit_depth = backward_mapping[bit_depth]
+    if 'precision' in kwargs.keys():
+        _precision = kwargs.pop('precision')
+        warnings.warn(
+            f'Use "bit_depth={backward_mapping[_precision]}" '
+            f'instead of "precision={_precision}" '
+            f'for specifying bit depth. '
+            f'This will raise an error in version >=0.5.0'
+        )
+        bit_depth = backward_mapping[_precision]
+
+    # Check for allowed precisions
+    if file_type == 'wav':
+        depth_mapping = {
+            8: 'PCM_U8',
+            16: 'PCM_16',
+            24: 'PCM_24',
+            32: 'PCM_32',
+        }
+    elif file_type == 'flac':
+        depth_mapping = {
+            8: 'PCM_S8',
+            16: 'PCM_16',
+            24: 'PCM_24',
+        }
+    if file_type in ['wav', 'flac']:
+        bit_depths = sorted(list(depth_mapping.keys()))
+        if bit_depth not in bit_depths:
+            sys.exit(
+                f'"bit_depth" has to be one of '
+                f'{", ".join([str(b) for b in bit_depths])}.'
+            )
+        subtype = depth_mapping[bit_depth]
+    else:
+        subtype = None
+    # Check if number of channels is allowed for chosen file type
     if signal.ndim > 1:
         channels = np.shape(signal)[0]
     else:
         channels = 1
-    if channels > max_channels[file_type]:
+    if channels > MAX_CHANNELS[file_type]:
         if file_type != 'wav':
             hint = 'Consider using "wav" instead.'
         sys.exit(
             'The maximum number of allowed channels '
-            f'for {file_type} is {max_channels[file_type]}. {hint}'
+            f'for {file_type} is {MAX_CHANNELS[file_type]}. {hint}'
         )
-    # Precision setting is only available for WAV files
-    if file_type == 'wav':
-        subtype = precision_mapping[precision]
-    else:
-        subtype = None
     if normalize:
         signal = signal / np.max(np.abs(signal))
     soundfile.write(file, signal.T, sampling_rate, subtype=subtype, **kwargs)

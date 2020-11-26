@@ -41,5 +41,12 @@ def run_sox(infile, outfile, offset, duration):
     tfm.build(infile, outfile)
 
 
+MAX_CHANNELS = {
+    'wav': 65535,
+    'ogg': 255,
+    'flac': 8,
+}
+r"""Maximum number of channels per format."""
+
 SNDFORMATS = ['wav', 'flac', 'ogg']
-"""File formats handled by soundfile"""
+r"""File formats handled by soundfile"""

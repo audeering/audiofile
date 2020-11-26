@@ -1,8 +1,8 @@
 """Read, write, and get information about audio files."""
-from __future__ import division
 import logging
 import os
 import tempfile
+import typing
 
 import soundfile
 import sox
@@ -17,6 +17,50 @@ from audiofile.core.utils import (
 
 # Disable warning outputs of sox as we use it with try
 logging.getLogger('sox').setLevel(logging.CRITICAL)
+
+
+def bit_depth(file: str) -> typing.Optional[int]:
+    r"""Bit depth of audio file.
+
+    For lossy audio files,
+    ``None`` is returned as they have a varying bit depth.
+
+    Args:
+        file: file name of input audio file
+
+    Returns:
+        bit depth of audio file
+
+    """
+    file_type = file_extension(file)
+    if file_type == 'wav':
+        precision_mapping = {
+            'PCM_16': 16,
+            'PCM_24': 24,
+            'PCM_32': 32,
+            'PCM_U8': 8,
+            'FLOAT': 32,
+            'DOUBLE': 64,
+            'ULAW': 8,
+            'ALAW': 8,
+            'IMA_ADPCM': 4,
+            'MS_ADPCM': 4,
+            'GSM610': 16,  # not sure if this could be variable?
+            'G721_32': 4,  # not sure if correct
+        }
+    elif file_type == 'flac':
+        precision_mapping = {
+            'PCM_16': 16,
+            'PCM_24': 24,
+            'PCM_32': 32,
+            'PCM_S8': 8,
+        }
+    if file_extension(file) in ['wav', 'flac']:
+        depth = precision_mapping[soundfile.info(file).subtype]
+    else:
+        depth = None
+
+    return depth
 
 
 def channels(file: str) -> int:
