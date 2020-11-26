@@ -48,6 +48,10 @@ Now you can get metadata information on that signal:
 
     af.sampling_rate('noise.flac')
 
+.. jupyter-execute::
+
+    af.bit_depth('noise.flac')
+
 
 Read a file
 -----------
