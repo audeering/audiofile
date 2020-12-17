@@ -7,6 +7,8 @@ import typing
 import soundfile
 import sox
 
+import audeer
+
 from audiofile.core.convert import convert_to_wav
 from audiofile.core.utils import (
     file_extension,
@@ -32,6 +34,7 @@ def bit_depth(file: str) -> typing.Optional[int]:
         bit depth of audio file
 
     """
+    file = audeer.safe_path(file)
     file_type = file_extension(file)
     if file_type == 'wav':
         precision_mapping = {
@@ -73,6 +76,7 @@ def channels(file: str) -> int:
         number of channels in audio file
 
     """
+    file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
         return soundfile.info(file).channels
     else:
@@ -98,6 +102,7 @@ def duration(file: str) -> float:
         duration in seconds of audio file
 
     """
+    file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
         return soundfile.info(file).duration
     else:
@@ -119,6 +124,7 @@ def samples(file: str) -> int:
             soundfile.info(file).duration * soundfile.info(file).samplerate
         )
 
+    file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
         return samples_as_int(file)
     else:
@@ -139,6 +145,7 @@ def sampling_rate(file: str) -> int:
         sampling rate of audio file
 
     """
+    file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
         return soundfile.info(file).samplerate
     else:

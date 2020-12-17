@@ -2,6 +2,8 @@ import logging
 
 import sox
 
+import audeer
+
 from audiofile.core.utils import (
     run_ffmpeg,
     run_sox,
@@ -32,6 +34,8 @@ def convert_to_wav(
         offset: start reading at offset in seconds
 
     """
+    infile = audeer.safe_path(infile)
+    outfile = audeer.safe_path(outfile)
     try:
         # Convert to WAV file with sox
         run_sox(infile, outfile, offset, duration)
