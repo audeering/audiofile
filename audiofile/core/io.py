@@ -8,6 +8,8 @@ import warnings
 import numpy as np
 import soundfile
 
+import audeer
+
 from audiofile.core.convert import convert_to_wav
 from audiofile.core.info import sampling_rate
 from audiofile.core.utils import (
@@ -50,6 +52,7 @@ def read(
         due to a bug in its libsndfile version.
 
     """
+    file = audeer.safe_path(file)
     tmpdir = None
     if file_extension(file) not in SNDFORMATS:
         # Convert file formats not recognized by soundfile to WAV first.
@@ -126,6 +129,7 @@ def write(
         due to a bug in its libsndfile version.
 
     """
+    file = audeer.safe_path(file)
     file_type = file_extension(file)
 
     # Backward compatibility between bit_depth and precision
