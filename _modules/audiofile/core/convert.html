@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                v0.4.0
+                v0.4.1
               </div>
             
           
@@ -169,6 +169,8 @@
 
 <span class="kn">import</span> <span class="nn">sox</span>
 
+<span class="kn">import</span> <span class="nn">audeer</span>
+
 <span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">run_ffmpeg</span><span class="p">,</span>
     <span class="n">run_sox</span><span class="p">,</span>
@@ -199,6 +201,8 @@
 <span class="sd">        offset: start reading at offset in seconds</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">infile</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
+    <span class="n">outfile</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># Convert to WAV file with sox</span>
         <span class="n">run_sox</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
@@ -220,7 +224,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2020/11/26 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2020/12/17 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
