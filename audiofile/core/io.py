@@ -75,11 +75,11 @@ def read(
                 **kwargs,
             )
     else:
-        if duration or offset > 0:
+        if duration is not None or offset > 0:
             sample_rate = sampling_rate(file)
         if offset > 0:
             offset = np.ceil(offset * sample_rate)  # samples
-        if duration:
+        if duration is not None:
             duration = int(np.ceil(duration * sample_rate) + offset)  # samples
         signal, sample_rate = soundfile.read(
             file,

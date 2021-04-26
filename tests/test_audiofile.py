@@ -111,6 +111,25 @@ def test_deprecated_precision(tmpdir):
         )
 
 
+@pytest.mark.parametrize('duration', [-1.0, -1, 0, 0.0])
+@pytest.mark.parametrize('offset', [0, 1])
+def test_read(tmpdir, duration, offset):
+    file = str(tmpdir.join('signal.wav'))
+    sampling_rate = 8000
+    signal = sine(
+        duration=0.1,
+        sampling_rate=sampling_rate,
+        channels=1,
+    )
+    af.write(file, signal, sampling_rate)
+    sig, fs = af.read(file, duration=duration, offset=offset)
+    assert sig.shape == (0,)
+    assert fs == sampling_rate
+    sig, fs = af.read(file, always_2d=True, duration=duration, offset=offset)
+    assert sig.shape == (1, 0)
+    assert fs == sampling_rate
+
+
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])
 @pytest.mark.parametrize("duration", [0.01, 0.9999, 2])
 @pytest.mark.parametrize("sampling_rate", [100, 8000, 44100])
