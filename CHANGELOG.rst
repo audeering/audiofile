@@ -7,6 +7,12 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 0.4.2 (2021-04-26)
+--------------------------
+
+* Fixed: allow for ``duration=0.0`` in ``audiofile.read()``
+
+
 Version 0.4.1 (2020-12-17)
 --------------------------
 
