@@ -4,8 +4,7 @@
 #
 #    pip-compile --output-file=requirements.txt.lock requirements.txt
 #
---index-url https://artifactory.audeering.com/artifactory/api/pypi/pypi/simple
---trusted-host artifactory.audeering.com
+--index-url https://pypi.org/simple/
 
 appdirs==1.4.4            # via pooch
 aubio==0.4.9              # via -r requirements.txt
@@ -45,7 +44,3 @@ soundfile==0.10.3.post1   # via -r requirements.txt, audiofile, librosa
 sox==1.4.1                # via -r requirements.txt, audiofile
 threadpoolctl==2.1.0      # via scikit-learn
 urllib3==1.25.11          # via requests
-
-# The following packages are considered to be unsafe in a requirements file:
-# pip
-# setuptools

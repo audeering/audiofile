@@ -3,7 +3,6 @@ audiofile
 audioread
 librosa
 pandas
-pip==18.1
 pygobject
 pymad
 scipy
