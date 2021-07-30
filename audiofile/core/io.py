@@ -39,7 +39,12 @@ def read(
         offset: start reading at offset in seconds
         always_2d: if `True` it always returns a two-dimensional signal
             even for mono sound files
-        dtype: data type of returned signal
+        dtype: data type of returned signal,
+            select from
+            ``'float64'``,
+            ``'float32'``,
+            ``'int32'``,
+            ``'int16'``
         kwargs: pass on further arguments to :func:`soundfile.read`
 
     Returns:
