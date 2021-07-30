@@ -98,6 +98,10 @@ body {
     margin-bottom: 12px;
     margin-top: 12px;
 }
+/* Fix row margins for tables in docstrings */
+.rst-content dl table td p {
+    margin-bottom: 0px !important;
+}
 /* Fix border lines in table headers */
 .wy-table-responsive thead th {
     border: solid 1px #e1e4e5;

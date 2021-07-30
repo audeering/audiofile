@@ -30,6 +30,8 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/css/audeering.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/audeering.css" type="text/css" />
   <link rel="stylesheet" href="_static/jupyter-sphinx.css" type="text/css" />
   <link rel="stylesheet" href="_static/thebelab.css" type="text/css" />
   <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
@@ -68,7 +70,7 @@
             
             
               <div class="version">
-                v0.4.2
+                v0.4.3
               </div>
             
           
@@ -92,7 +94,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
@@ -100,7 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API Documentation</span></p>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">audiofile</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#read">read</a></li>
@@ -165,7 +167,7 @@
         
             
             
-              <a href="https://github.com/audeering/audiofile/blob/v0.4.2/docs/api.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/audeering/audiofile/blob/v0.4.3/docs/api.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -185,8 +187,8 @@
 <div class="section" id="read">
 <h2>read<a class="headerlink" href="#read" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="audiofile.read">
-<code class="sig-prename descclassname"><span class="pre">audiofile.</span></code><code class="sig-name descname"><span class="pre">read</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always_2d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/io.html#read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.read" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="audiofile.read">
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always_2d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/io.html#read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read audio file.</p>
 <p>It uses <a class="reference external" href="https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.read" title="(in PySoundFile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.read()</span></code></a> for WAV, FLAC, and OGG files.
 All other audio files are
@@ -199,6 +201,12 @@ first converted to WAV by sox or ffmpeg.</p>
 <li><p><strong>offset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – start reading at offset in seconds</p></li>
 <li><p><strong>always_2d</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – if <cite>True</cite> it always returns a two-dimensional signal
 even for mono sound files</p></li>
+<li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – data type of returned signal,
+select from
+<code class="docutils literal notranslate"><span class="pre">'float64'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'float32'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'int32'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'int16'</span></code></p></li>
 <li><p><strong>kwargs</strong> – pass on further arguments to <a class="reference external" href="https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.read" title="(in PySoundFile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.read()</span></code></a></p></li>
 </ul>
 </dd>
@@ -227,8 +235,8 @@ due to a bug in its libsndfile version.</p>
 <div class="section" id="write">
 <h2>write<a class="headerlink" href="#write" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="audiofile.write">
-<code class="sig-prename descclassname"><span class="pre">audiofile.</span></code><code class="sig-name descname"><span class="pre">write</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bit_depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/io.html#write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.write" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="audiofile.write">
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bit_depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/io.html#write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write (normalized) audio files.</p>
 <p>Save audio data provided as an array of shape <code class="docutils literal notranslate"><span class="pre">[channels,</span> <span class="pre">samples]</span></code>
 to a WAV, FLAC, or OGG file.
@@ -263,8 +271,8 @@ due to a bug in its libsndfile version.</p>
 <div class="section" id="bit-depth">
 <h2>bit_depth<a class="headerlink" href="#bit-depth" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="audiofile.bit_depth">
-<code class="sig-prename descclassname"><span class="pre">audiofile.</span></code><code class="sig-name descname"><span class="pre">bit_depth</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#bit_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.bit_depth" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="audiofile.bit_depth">
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">bit_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#bit_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.bit_depth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bit depth of audio file.</p>
 <p>For lossy audio files,
 <code class="docutils literal notranslate"><span class="pre">None</span></code> is returned as they have a varying bit depth.</p>
@@ -285,8 +293,8 @@ due to a bug in its libsndfile version.</p>
 <div class="section" id="channels">
 <h2>channels<a class="headerlink" href="#channels" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="audiofile.channels">
-<code class="sig-prename descclassname"><span class="pre">audiofile.</span></code><code class="sig-name descname"><span class="pre">channels</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#channels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.channels" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="audiofile.channels">
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">channels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#channels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.channels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of channels in audio file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -305,8 +313,8 @@ due to a bug in its libsndfile version.</p>
 <div class="section" id="duration">
 <h2>duration<a class="headerlink" href="#duration" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="audiofile.duration">
-<code class="sig-prename descclassname"><span class="pre">audiofile.</span></code><code class="sig-name descname"><span class="pre">duration</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.duration" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="audiofile.duration">
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.duration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Duration in seconds of audio file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -325,8 +333,8 @@ due to a bug in its libsndfile version.</p>
 <div class="section" id="samples">
 <h2>samples<a class="headerlink" href="#samples" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="audiofile.samples">
-<code class="sig-prename descclassname"><span class="pre">audiofile.</span></code><code class="sig-name descname"><span class="pre">samples</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.samples" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="audiofile.samples">
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of samples in audio file (0 if unavailable).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -345,8 +353,8 @@ due to a bug in its libsndfile version.</p>
 <div class="section" id="sampling-rate">
 <h2>sampling_rate<a class="headerlink" href="#sampling-rate" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="audiofile.sampling_rate">
-<code class="sig-prename descclassname"><span class="pre">audiofile.</span></code><code class="sig-name descname"><span class="pre">sampling_rate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#sampling_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.sampling_rate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="audiofile.sampling_rate">
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">sampling_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#sampling_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.sampling_rate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sampling rate of audio file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -365,8 +373,8 @@ due to a bug in its libsndfile version.</p>
 <div class="section" id="convert-to-wav">
 <h2>convert_to_wav<a class="headerlink" href="#convert-to-wav" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="audiofile.convert_to_wav">
-<code class="sig-prename descclassname"><span class="pre">audiofile.</span></code><code class="sig-name descname"><span class="pre">convert_to_wav</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/convert.html#convert_to_wav"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.convert_to_wav" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="audiofile.convert_to_wav">
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">convert_to_wav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/convert.html#convert_to_wav"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.convert_to_wav" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert any audio/video file to WAV.</p>
 <p>It uses sox or ffmpeg for the conversion.
 If <code class="docutils literal notranslate"><span class="pre">duration</span></code> and/or <code class="docutils literal notranslate"><span class="pre">offset</span></code> are specified
@@ -408,7 +416,7 @@ will be shorter accordingly to those values.</p>
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/04/26 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/07/30 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -440,6 +448,7 @@ will be shorter accordingly to those values.</p>
     
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
