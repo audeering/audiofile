@@ -24,6 +24,7 @@ def read(
         duration: float = None,
         offset: float = 0,
         always_2d: bool = False,
+        dtype: str = 'float32',
         **kwargs,
 ) -> typing.Tuple[np.array, int]:
     """Read audio file.
@@ -38,6 +39,7 @@ def read(
         offset: start reading at offset in seconds
         always_2d: if `True` it always returns a two-dimensional signal
             even for mono sound files
+        dtype: data type of returned signal
         kwargs: pass on further arguments to :func:`soundfile.read`
 
     Returns:
@@ -70,7 +72,7 @@ def read(
             convert_to_wav(file, tmpfile, offset, duration)
             signal, sample_rate = soundfile.read(
                 tmpfile,
-                dtype='float32',
+                dtype=dtype,
                 always_2d=always_2d,
                 **kwargs,
             )
@@ -85,7 +87,7 @@ def read(
             file,
             start=int(offset),
             stop=duration,
-            dtype='float32',
+            dtype=dtype,
             always_2d=always_2d,
             **kwargs,
         )
