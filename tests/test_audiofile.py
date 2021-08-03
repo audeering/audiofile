@@ -75,31 +75,6 @@ def _magnitude(signal):
     return np.max(np.abs(signal))
 
 
-def test_deprecated_precision(tmpdir):
-    sampling_rate = 8000
-    precision = '16bit'
-    bit_depth = 16
-    signal = sine(sampling_rate=sampling_rate)
-    file = str(tmpdir.join('signal-precision.wav'))
-    with warnings.catch_warnings(record=True) as w:
-        af.write(file, signal, sampling_rate, precision)
-        assert issubclass(w[-1].category, UserWarning)
-        assert str(w[-1].message) == (
-            f'Use "{bit_depth}" instead of '
-            f'"{precision}" for specifying bit depth. '
-            f'This will raise an error in version >=0.5.0'
-        )
-    with warnings.catch_warnings(record=True) as w:
-        af.write(file, signal, sampling_rate, precision=precision)
-        assert issubclass(w[-1].category, UserWarning)
-        assert str(w[-1].message) == (
-            f'Use "bit_depth={bit_depth}" '
-            f'instead of "precision={precision}" '
-            f'for specifying bit depth. '
-            f'This will raise an error in version >=0.5.0'
-        )
-
-
 @pytest.mark.parametrize('duration', [-1.0, -1, 0, 0.0])
 @pytest.mark.parametrize('offset', [0, 1])
 def test_read(tmpdir, duration, offset):
