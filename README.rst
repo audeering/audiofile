@@ -22,9 +22,15 @@ Code example for reading a file:
 
 .. code-block:: python
 
-    import audiofile as af
+    import audiofile
 
-    signal, sampling_rate = af.read('signal.wav')
+    signal, sampling_rate = audiofile.read('signal.wav')
+
+Under the hood it uses soundfile_ to read the audio files,
+converting non-supported formats first to WAV files.
+The same approach is applied
+when requesting duration for formats that need to be decoded
+to ensure that duration and number of samples match.
 
 
 .. _ffmpeg: https://www.ffmpeg.org/
@@ -34,6 +40,7 @@ Code example for reading a file:
 .. _reading speed: https://audeering.github.io/audiofile/benchmark.html
 .. _sox: http://sox.sourceforge.net/
 .. _virtualenv: https://virtualenv.pypa.io/
+.. _soundfile: https://pysoundfile.readthedocs.io/
 
 .. |tests| image:: https://github.com/audeering/audiofile/workflows/Test/badge.svg
     :target: https://github.com/audeering/audiofile/actions?query=workflow%3ATest

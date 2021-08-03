@@ -7,11 +7,16 @@
     installation
     usage
     benchmark
-    contributing
-    changelog
 
 .. toctree::
     :caption: API Documentation
     :hidden:
 
     api
+
+.. toctree::
+    :caption: Development
+    :hidden:
+
+    contributing
+    changelog
