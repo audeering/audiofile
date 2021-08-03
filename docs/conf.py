@@ -32,6 +32,7 @@ pygments_style = None
 extensions = [
     'jupyter_sphinx',
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',  # support for Google-style docstrings
     'sphinx_autodoc_typehints',
     'sphinx_copybutton',

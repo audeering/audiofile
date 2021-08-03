@@ -110,7 +110,7 @@ def duration(file: str) -> float:
 
 
 def samples(file: str) -> int:
-    """Number of samples in audio file (0 if unavailable).
+    """Number of samples in audio file.
 
     Args:
         file: file name of input audio file
