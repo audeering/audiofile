@@ -54,10 +54,6 @@ def read(
           a one-dimensional array is returned
         * sample rate of the audio file
 
-    Note:
-        OGG file handling will not work properly under Ubuntu 16.04
-        due to a bug in its libsndfile version.
-
     """
     file = audeer.safe_path(file)
     tmpdir = None
@@ -130,10 +126,6 @@ def write(
             and in addition 32 for WAV files
         normalize: normalize audio data before writing
         kwargs: pass on further arguments to :func:`soundfile.write`
-
-    Note:
-        OGG file handling does not work properly under Ubuntu 16.04
-        due to a bug in its libsndfile version.
 
     """
     file = audeer.safe_path(file)
