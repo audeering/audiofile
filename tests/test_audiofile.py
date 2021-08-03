@@ -1,14 +1,12 @@
 from __future__ import division
 import os
 import subprocess
-import socket
 import warnings
 
 import pytest
 import numpy as np
 from numpy.testing import assert_allclose
 import sox
-from six.moves import urllib
 
 import audiofile as af
 
@@ -44,15 +42,6 @@ def sine(duration=1,
         signal = ensure_two_dimensions(signal)
         signal = np.repeat(signal, channels, axis=0)
     return signal
-
-
-def download_url(url, root):
-    """Download a file from an url to a specified directory."""
-    filename = os.path.basename(url)
-    fpath = os.path.join(root, filename)
-    if not os.path.isfile(fpath):
-        urllib.request.urlretrieve(url, fpath)
-    return fpath
 
 
 def write_and_read(
@@ -296,23 +285,17 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
         )
 
 
-def test_formats(tmpdir):
-    base_url = 'https://dl.espressif.com/dl/audio/'
+def test_formats():
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    assests_dir = os.path.join(script_dir, 'assets')
     files = [
         'gs-16b-1c-44100hz.opus',
         'gs-16b-1c-8000hz.amr',
         'gs-16b-1c-44100hz.m4a',
         'gs-16b-1c-44100hz.aac',
     ]
-    urls = [base_url + f for f in files]
-    for url in urls:
-        print(url)
-        try:
-            file = download_url(url, str(tmpdir))
-        except (urllib.error.ContentTooShortError,
-                urllib.error.HTTPError,
-                socket.gaierror):
-            pytest.skip("Skip unavailable file")
+    files = [os.path.join(assests_dir, f) for f in files]
+    for file in files:
         signal, sampling_rate = af.read(file)
         assert af.channels(file) == _channels(signal)
         assert af.sampling_rate(file) == sampling_rate
@@ -320,7 +303,7 @@ def test_formats(tmpdir):
         assert af.duration(file) == _duration(signal, sampling_rate)
         assert af.bit_depth(file) is None
 
-        if url.endswith('m4a'):
+        if file.endswith('m4a'):
             # Test additional arguments to read with ffmpeg
             offset = 0.1
             duration = 0.5
