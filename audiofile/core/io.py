@@ -128,6 +128,9 @@ def write(
         normalize: normalize audio data before writing
         kwargs: pass on further arguments to :func:`soundfile.write`
 
+    Raises:
+        RuntimeError: for non-supported bit depth or number of channels
+
     """
     file = audeer.safe_path(file)
     file_type = file_extension(file)
@@ -172,7 +175,7 @@ def write(
     if file_type in ['wav', 'flac']:
         bit_depths = sorted(list(depth_mapping.keys()))
         if bit_depth not in bit_depths:
-            sys.exit(
+            raise RuntimeError(
                 f'"bit_depth" has to be one of '
                 f'{", ".join([str(b) for b in bit_depths])}.'
             )
@@ -186,10 +189,12 @@ def write(
         channels = 1
     if channels > MAX_CHANNELS[file_type]:
         if file_type != 'wav':
-            hint = 'Consider using "wav" instead.'
-        sys.exit(
-            'The maximum number of allowed channels '
-            f'for {file_type} is {MAX_CHANNELS[file_type]}. {hint}'
+            hint = " Consider using 'wav' instead."
+        else:
+            hint = ''
+        raise RuntimeError(
+            "The maximum number of allowed channels "
+            f"for '{file_type}' is {MAX_CHANNELS[file_type]}.{hint}"
         )
     if normalize:
         signal = signal / np.max(np.abs(signal))
