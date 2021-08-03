@@ -37,7 +37,7 @@ def read(
         file: file name of input audio file
         duration: return only a specified duration in seconds
         offset: start reading at offset in seconds
-        always_2d: if `True` it always returns a two-dimensional signal
+        always_2d: if ``True`` it always returns a two-dimensional signal
             even for mono sound files
         dtype: data type of returned signal,
             select from
@@ -50,7 +50,8 @@ def read(
     Returns:
         * a two-dimensional array in the form
           ``[channels, samples]``.
-          If the sound file has only one channel,
+          If the sound file has only one channel
+          and ``always_2d=False``,
           a one-dimensional array is returned
         * sample rate of the audio file
 
