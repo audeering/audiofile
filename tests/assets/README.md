@@ -1,7 +1,7 @@
 # Non SND format audio test files
 
 This folder contains files to test file formats
-that can not be stored with `audiofile.write()`
+that cannot be stored with `audiofile.write()`
 and can hence not been created on the fly.
 
 The files stored here are downloaded from
