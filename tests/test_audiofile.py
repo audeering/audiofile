@@ -181,12 +181,6 @@ def test_wav(tmpdir, bit_depth, duration, sampling_rate, channels, always_2d):
         )
         assert _samples(sig) == int(np.ceil(duration * sampling_rate))
 
-    # Call with unallowed bit depths
-    if sampling_rate == 100 and duration == 2 and channels == 1:
-        expected_error = '"bit_depth" has to be one of'
-        with pytest.raises(SystemExit, match=expected_error):
-            af.write(file, signal, sampling_rate, bit_depth=1)
-
 
 @pytest.mark.parametrize('magnitude', [0.01, 0.1, 1])
 @pytest.mark.parametrize('normalize', [False, True])
@@ -213,10 +207,8 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     signal = sine(magnitude=magnitude,
                   sampling_rate=sampling_rate,
                   channels=channels)
-    # Checking for not allowed combinations of channel and file type
+    # Skip unallowed combination
     if file_type == 'flac' and channels > 8:
-        with pytest.raises(SystemExit):
-            write_and_read(file, signal, sampling_rate)
         return 0
     # Allowed combinations
     sig, fs = write_and_read(file, signal, sampling_rate)
@@ -311,3 +303,33 @@ def test_formats():
             assert _duration(sig, sampling_rate) == duration
             sig, fs = af.read(file, offset=offset)
             assert _duration(sig, sampling_rate) == af.duration(file) - offset
+
+
+def test_write_errors():
+
+    sampling_rate = 44100
+
+    # Call with unallowed bit depths
+    expected_error = '"bit_depth" has to be one of'
+    with pytest.raises(RuntimeError, match=expected_error):
+        af.write('test.wav', np.zeros((1, 100)), sampling_rate, bit_depth=1)
+
+    # Checking for not allowed combinations of channel and file type
+    expected_error = (
+        "The maximum number of allowed channels "
+        "for 'flac' is 8. Consider using 'wav' instead."
+    )
+    with pytest.raises(RuntimeError, match=expected_error):
+        write_and_read('test.flac', np.zeros((9, 100)), sampling_rate)
+    expected_error = (
+        "The maximum number of allowed channels "
+        "for 'ogg' is 255. Consider using 'wav' instead."
+    )
+    with pytest.raises(RuntimeError, match=expected_error):
+        write_and_read('test.ogg', np.zeros((256, 100)), sampling_rate)
+    expected_error = (
+        "The maximum number of allowed channels "
+        "for 'wav' is 65535."
+    )
+    with pytest.raises(RuntimeError, match=expected_error):
+        write_and_read('test.wav', np.zeros((65536, 100)), sampling_rate)
