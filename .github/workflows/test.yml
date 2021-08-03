@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-20.04, macOS-latest ]
+        os: [ ubuntu-20.04, macOS-latest, windows-latest ]
         python-version: [3.6]
         include:
           - os: ubuntu-latest
@@ -37,6 +37,10 @@ jobs:
     - name: Prepare OSX
       run: brew install sox ffmpeg mediainfo
       if: matrix.os == 'macOS-latest'
+
+    - name: Windows
+      run: choco install sox.portable ffmpeg mediainfo
+      if: matrix.os == 'windows-latest'
 
     - name: Install dependencies
       run: |
