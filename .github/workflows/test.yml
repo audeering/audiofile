@@ -35,7 +35,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest' || matrix.os == 'ubuntu-20.04'
 
     - name: Prepare OSX
-      run: brew install sox
+      run: brew install sox ffmpeg mediainfo
       if: matrix.os == 'macOS-latest'
 
     - name: Install dependencies
