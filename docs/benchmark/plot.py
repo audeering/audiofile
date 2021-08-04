@@ -54,9 +54,9 @@ for package in ['read', 'info']:
             height = 3.36
             aspect = 2.0
         elif 'mp3' in exts and package == 'info':
-            lib_order = ['audiofile', 'audioread']
-            height = 2.24
-            aspect = 3.0
+            lib_order = ['audiofile', 'audiofile_sloppy', 'audioread']
+            height = 3.36
+            aspect = 2.0
 
         fig = plt.figure()
 
@@ -64,6 +64,7 @@ for package in ['read', 'info']:
         #
         palette = {
             'audiofile': '#4a74b5',
+            'audiofile_sloppy': '#6b93d7',
             'soundfile': '#db8548',
             'aubio': '#5dab64',
             'librosa': '#c34c4d',
