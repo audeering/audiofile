@@ -92,11 +92,32 @@ def channels(file: str) -> int:
                 return int(run(cmd2))
 
 
-def duration(file: str) -> float:
+def duration(file: str, sloppy=False) -> float:
     """Duration in seconds of audio file.
+
+    The default behavior (``sloppy=False``)
+    ensures
+    the duration in seconds
+    matches the one in samples.
+    To achieve this it first decodes files to WAV
+    if needed, e.g. MP3 files.
+    If you have different decoders
+    on different machines,
+    results might differ.
+
+    The case ``sloppy=True`` returns the duration
+    as reported in the header of the audio file.
+    This is faster,
+    but might still return different results
+    on different machines
+    as it depends on the installed software.
+    If no duration information is provided in the header
+    it will fall back to ``sloppy=False``.
 
     Args:
         file: file name of input audio file
+        sloppy: if ``True`` report duration
+            as stored in the header
 
     Returns:
         duration in seconds of audio file
@@ -105,8 +126,18 @@ def duration(file: str) -> float:
     file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
         return soundfile.info(file).duration
-    else:
-        return samples(file) / sampling_rate(file)
+
+    if sloppy:
+        try:
+            return float(sox.file_info.duration(file))
+        except sox.core.SoxiError:
+            cmd = f'mediainfo --Inform="Audio;%Duration%" {file}'
+            duration = run(cmd)
+            if duration:
+                # Convert to seconds, as mediainfo returns milliseconds
+                return float(duration) / 1000
+
+    return samples(file) / sampling_rate(file)
 
 
 def samples(file: str) -> int:

@@ -152,3 +152,12 @@ def info_audiofile(fp):
     info['channels'] = af.channels
     info['sampling_rate'] = af.sampling_rate
     return info
+
+
+def info_audiofile_sloppy(fp):
+    info = {}
+    info['duration'] = af.duration(fp, sloppy=True)
+    info['samples'] = af.samples(fp)
+    info['channels'] = af.channels
+    info['sampling_rate'] = af.sampling_rate
+    return info

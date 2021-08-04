@@ -53,7 +53,6 @@ if __name__ == "__main__":
 
     store = utils.DF_writer(columns)
 
-    # audio formats to be bench
     # libraries to be benchmarked
     libs = [
         'aubio',
@@ -62,6 +61,7 @@ if __name__ == "__main__":
         'audioread',
         # 'librosa',  # no direct support
         'audiofile',
+        'audiofile_sloppy',
     ]
 
     for lib in libs:
