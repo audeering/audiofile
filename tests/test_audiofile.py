@@ -265,9 +265,9 @@ def test_formats():
         'gs-16b-1c-44100hz.aac',
     ]
     header_durations = [
-        15.839,
-        15.840000,
-        15.833,
+        15.84,
+        15.84,
+        15.83,
         None,
     ]
     files = [os.path.join(assests_dir, f) for f in files]

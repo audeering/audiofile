@@ -133,7 +133,11 @@ def duration(file: str, sloppy=False) -> float:
             cmd = f'mediainfo --Inform="Audio;%Duration%" {file}'
             duration = run(cmd)
             if duration:
-                return float(duration) / 1000  # mediainfo returns milliseconds
+                # Convert to seconds, as mediainfo returns milliseconds
+                duration = float(duration) / 1000
+                # Limit precision for better cross-platform comparability
+                duration = round(duration, 2)
+                return duration
 
     return samples(file) / sampling_rate(file)
 
