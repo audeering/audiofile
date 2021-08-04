@@ -264,10 +264,10 @@ def test_formats():
         'gs-16b-1c-44100hz.m4a',
         'gs-16b-1c-44100hz.aac',
     ]
-    header_durations = [
-        15.84,
-        15.84,
-        15.83,
+    header_durations = [  # as given by mediainfo
+        15.839,
+        15.840000,
+        15.833,
         None,
     ]
     files = [os.path.join(assests_dir, f) for f in files]
@@ -279,9 +279,15 @@ def test_formats():
         duration = _duration(signal, sampling_rate)
         assert af.duration(file) == duration
         if header_duration is None:
+            # Here we expect samplewise precision
             assert af.duration(file, sloppy=True) == duration
         else:
-            assert af.duration(file, sloppy=True) == header_duration
+            # Here we expect limited precision
+            # as the results differ between soxi and mediainfo
+            precision = 1
+            sloppy_duration = round(af.duration(file, sloppy=True), precision)
+            header_duration = round(header_duration, precision)
+            assert sloppy_duration == header_duration
         assert af.bit_depth(file) is None
 
         if file.endswith('m4a'):

@@ -107,9 +107,10 @@ def duration(file: str, sloppy=False) -> float:
 
     The case ``sloppy=True`` returns the duration
     as reported in the header of the audio file.
-    This is faster
-    and returns the same result
-    independently of the decoder.
+    This is faster,
+    but might still return different results
+    on different machines
+    as it depends on the installed software.
     If no duration information is provided in the header
     it will fall back to ``sloppy=False``.
 
@@ -134,10 +135,7 @@ def duration(file: str, sloppy=False) -> float:
             duration = run(cmd)
             if duration:
                 # Convert to seconds, as mediainfo returns milliseconds
-                duration = float(duration) / 1000
-                # Limit precision for better cross-platform comparability
-                duration = round(duration, 2)
-                return duration
+                return float(duration) / 1000
 
     return samples(file) / sampling_rate(file)
 
