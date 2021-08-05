@@ -192,7 +192,8 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     if sys.platform == 'win32' and file_type in ['flac', 'ogg']:
         use_sox = False
     # Allowed combinations
-    sig, fs = write_and_read(file, signal, sampling_rate)
+    bit_depth = 16
+    sig, fs = write_and_read(file, signal, sampling_rate, bit_depth=bit_depth)
     # Test file type
     assert audeer.file_extension(file) == file_type
     # Test magnitude
@@ -212,7 +213,8 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
         assert sox.file_info.num_samples(file) == _samples(signal)
     # Test bit depth
     if use_sox:
-        assert sox.file_info.bitdepth(file) == af.bit_depth(file)
+        bit_depth = sox.file_info.bitdepth(file)
+    assert af.bit_depth(file)  == bit_depth
 
 
 @pytest.mark.parametrize('sampling_rate', [8000, 48000])
@@ -220,9 +222,10 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
 @pytest.mark.parametrize('magnitude', [0.01])
 def test_mp3(tmpdir, magnitude, sampling_rate, channels):
 
-    # # Currently we are not able to setup the Windows runner with MP3 support
-    # if sys.platform == 'win32':
-    #     return
+    # Currently we are not able to setup the Windows runner with MP3 support
+    # https://github.com/audeering/audiofile/issues/51
+    if sys.platform == 'win32':
+        return
 
     signal = sine(magnitude=magnitude,
                   sampling_rate=sampling_rate,
