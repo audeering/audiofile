@@ -1,6 +1,7 @@
 import os
 import subprocess
 import shlex
+import sys
 
 import sox
 
@@ -16,12 +17,8 @@ def run(shell_command):
     """Return the output of a shell command provided as string."""
     # posix=False ensure paths with \\ are preserved under Winodws
     # see https://stackoverflow.com/a/63534016
-    if sys.platform == 'win32':
-        posix = False
-    else:
-        posix = True
     out = subprocess.check_output(
-        shlex.split(shell_command, posix=posix),
+        shlex.split(shell_command, posix=(sys.platform != 'win32')),
         stderr=subprocess.STDOUT
     )
     try:
