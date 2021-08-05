@@ -35,11 +35,11 @@ jobs:
       if: matrix.os == 'ubuntu-latest' || matrix.os == 'ubuntu-20.04'
 
     - name: Prepare OSX
-      run: brew install libmad sox ffmpeg mediainfo
+      run: brew install sox ffmpeg mediainfo
       if: matrix.os == 'macOS-latest'
 
     - name: Windows
-      run: choco install sox.portable ffmpeg mediainfo
+      run: choco install libmad sox.portable ffmpeg mediainfo
       if: matrix.os == 'windows-latest'
 
     - name: Install dependencies
