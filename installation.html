@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                v0.4.3
+                v1.0.0
               </div>
             
           
@@ -100,12 +100,15 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmark.html">Benchmark</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">audiofile</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
 
             
@@ -158,7 +161,7 @@
         
             
             
-              <a href="https://github.com/audeering/audiofile/blob/v0.4.3/docs/installation.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/audeering/audiofile/blob/v1.0.0/docs/installation.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -177,11 +180,12 @@
 <p><a class="reference internal" href="api.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a> supports WAV, FLAC, OGG out of the box.
 In order to handle all possible audio files,
 please make sure <a class="reference external" href="https://www.ffmpeg.org/">ffmpeg</a>,
-<a class="reference external" href="http://sox.sourceforge.net/">sox</a>,
+<a class="reference external" href="http://sox.sourceforge.net/">sox</a>
+(with MP3 support for best performance),
 and <a class="reference external" href="https://mediaarea.net/en/MediaInfo/">mediainfo</a>
 are installed on your system,
 e.g.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo apt-get install ffmpeg mediainfo sox
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ sudo apt-get install ffmpeg mediainfo sox libsox-fmt-mp3
 </pre></div>
 </div>
 <p>To install <a class="reference internal" href="api.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a> run:</p>
@@ -216,7 +220,7 @@ $ pip install audiofile
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/07/30 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/08/05 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>

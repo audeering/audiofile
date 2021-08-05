@@ -3,6 +3,17 @@ audiofile
 
 .. automodule:: audiofile
 
+.. autosummary::
+
+    read
+    write
+    bit_depth
+    channels
+    duration
+    samples
+    sampling_rate
+    convert_to_wav
+
 read
 ----
 

@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                v0.4.3
+                v1.0.0
               </div>
             
           
@@ -98,12 +98,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../benchmark.html">Benchmark</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api.html">audiofile</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
 </ul>
 
             
@@ -253,19 +256,40 @@
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sox</span><span class="o">.</span><span class="n">file_info</span><span class="o">.</span><span class="n">channels</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
         <span class="k">except</span> <span class="n">sox</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SoxiError</span><span class="p">:</span>
             <span class="c1"># For MP4 stored and returned number of channels can be different</span>
-            <span class="n">cmd1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Channel(s)_Original%&quot; </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&#39;</span>
-            <span class="n">cmd2</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Channel(s)%&quot; </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">cmd1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Channel(s)_Original%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="n">cmd2</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Channel(s)%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd1</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                 <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd2</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="duration"><a class="viewcode-back" href="../../../api.html#audiofile.duration">[docs]</a><span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="duration"><a class="viewcode-back" href="../../../api.html#audiofile.duration">[docs]</a><span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sloppy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Duration in seconds of audio file.</span>
+
+<span class="sd">    The default behavior (``sloppy=False``)</span>
+<span class="sd">    ensures</span>
+<span class="sd">    the duration in seconds</span>
+<span class="sd">    matches the one in samples.</span>
+<span class="sd">    To achieve this it first decodes files to WAV</span>
+<span class="sd">    if needed, e.g. MP3 files.</span>
+<span class="sd">    If you have different decoders</span>
+<span class="sd">    on different machines,</span>
+<span class="sd">    results might differ.</span>
+
+<span class="sd">    The case ``sloppy=True`` returns the duration</span>
+<span class="sd">    as reported in the header of the audio file.</span>
+<span class="sd">    This is faster,</span>
+<span class="sd">    but might still return different results</span>
+<span class="sd">    on different machines</span>
+<span class="sd">    as it depends on the installed software.</span>
+<span class="sd">    If no duration information is provided in the header</span>
+<span class="sd">    it will fall back to ``sloppy=False``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
+<span class="sd">        sloppy: if ``True`` report duration</span>
+<span class="sd">            as stored in the header</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        duration in seconds of audio file</span>
@@ -274,12 +298,22 @@
     <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">duration</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">samples</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">/</span> <span class="n">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
+
+    <span class="k">if</span> <span class="n">sloppy</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">sox</span><span class="o">.</span><span class="n">file_info</span><span class="o">.</span><span class="n">duration</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">sox</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SoxiError</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Duration%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">duration</span><span class="p">:</span>
+                <span class="c1"># Convert to seconds, as mediainfo returns milliseconds</span>
+                <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>
+
+    <span class="k">return</span> <span class="n">samples</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">/</span> <span class="n">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="samples"><a class="viewcode-back" href="../../../api.html#audiofile.samples">[docs]</a><span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Number of samples in audio file (0 if unavailable).</span>
+    <span class="sd">&quot;&quot;&quot;Number of samples in audio file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
@@ -321,7 +355,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sox</span><span class="o">.</span><span class="n">file_info</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
         <span class="k">except</span> <span class="n">sox</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SoxiError</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%SamplingRate%&quot; </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%SamplingRate%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span></div>
 </pre></div>
 
@@ -338,7 +372,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/07/30 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/08/05 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>

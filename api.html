@@ -37,7 +37,8 @@
   <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Changelog" href="changelog.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="prev" title="Benchmark" href="benchmark.html" />
     
   
 
@@ -70,7 +71,7 @@
             
             
               <div class="version">
-                v0.4.3
+                v1.0.0
               </div>
             
           
@@ -99,8 +100,6 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmark.html">Benchmark</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul class="current">
@@ -115,6 +114,11 @@
 <li class="toctree-l2"><a class="reference internal" href="#convert-to-wav">convert_to_wav</a></li>
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
 </ul>
 
             
@@ -167,7 +171,7 @@
         
             
             
-              <a href="https://github.com/audeering/audiofile/blob/v0.4.3/docs/api.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/audeering/audiofile/blob/v1.0.0/docs/api.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -184,6 +188,38 @@
   <div class="section" id="module-audiofile">
 <span id="audiofile"></span><h1>audiofile<a class="headerlink" href="#module-audiofile" title="Permalink to this headline">¶</a></h1>
 <p>Read, write, and get information about audio files.</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#audiofile.read" title="audiofile.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>(file[, duration, offset, always_2d, dtype])</p></td>
+<td><p>Read audio file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#audiofile.write" title="audiofile.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(file, signal, sampling_rate[, …])</p></td>
+<td><p>Write (normalized) audio files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#audiofile.bit_depth" title="audiofile.bit_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bit_depth</span></code></a>(file)</p></td>
+<td><p>Bit depth of audio file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#audiofile.channels" title="audiofile.channels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">channels</span></code></a>(file)</p></td>
+<td><p>Number of channels in audio file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#audiofile.duration" title="audiofile.duration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">duration</span></code></a>(file[, sloppy])</p></td>
+<td><p>Duration in seconds of audio file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#audiofile.samples" title="audiofile.samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">samples</span></code></a>(file)</p></td>
+<td><p>Number of samples in audio file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#audiofile.sampling_rate" title="audiofile.sampling_rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampling_rate</span></code></a>(file)</p></td>
+<td><p>Sampling rate of audio file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#audiofile.convert_to_wav" title="audiofile.convert_to_wav"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_to_wav</span></code></a>(infile, outfile[, offset, …])</p></td>
+<td><p>Convert any audio/video file to WAV.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="section" id="read">
 <h2>read<a class="headerlink" href="#read" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
@@ -199,7 +235,7 @@ first converted to WAV by sox or ffmpeg.</p>
 <li><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – file name of input audio file</p></li>
 <li><p><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – return only a specified duration in seconds</p></li>
 <li><p><strong>offset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – start reading at offset in seconds</p></li>
-<li><p><strong>always_2d</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – if <cite>True</cite> it always returns a two-dimensional signal
+<li><p><strong>always_2d</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> it always returns a two-dimensional signal
 even for mono sound files</p></li>
 <li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – data type of returned signal,
 select from
@@ -217,18 +253,14 @@ select from
 <dd class="field-odd"><p><ul class="simple">
 <li><p>a two-dimensional array in the form
 <code class="docutils literal notranslate"><span class="pre">[channels,</span> <span class="pre">samples]</span></code>.
-If the sound file has only one channel,
+If the sound file has only one channel
+and <code class="docutils literal notranslate"><span class="pre">always_2d=False</span></code>,
 a one-dimensional array is returned</p></li>
 <li><p>sample rate of the audio file</p></li>
 </ul>
 </p>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>OGG file handling will not work properly under Ubuntu 16.04
-due to a bug in its libsndfile version.</p>
-</div>
 </dd></dl>
 
 </div>
@@ -259,12 +291,10 @@ and in addition 32 for WAV files</p></li>
 <li><p><strong>kwargs</strong> – pass on further arguments to <a class="reference external" href="https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write" title="(in PySoundFile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.write()</span></code></a></p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.9)"><strong>RuntimeError</strong></a> – for non-supported bit depth or number of channels</p>
+</dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>OGG file handling does not work properly under Ubuntu 16.04
-due to a bug in its libsndfile version.</p>
-</div>
 </dd></dl>
 
 </div>
@@ -314,11 +344,32 @@ due to a bug in its libsndfile version.</p>
 <h2>duration<a class="headerlink" href="#duration" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="audiofile.duration">
-<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.duration" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sloppy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.duration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Duration in seconds of audio file.</p>
+<p>The default behavior (<code class="docutils literal notranslate"><span class="pre">sloppy=False</span></code>)
+ensures
+the duration in seconds
+matches the one in samples.
+To achieve this it first decodes files to WAV
+if needed, e.g. MP3 files.
+If you have different decoders
+on different machines,
+results might differ.</p>
+<p>The case <code class="docutils literal notranslate"><span class="pre">sloppy=True</span></code> returns the duration
+as reported in the header of the audio file.
+This is faster,
+but might still return different results
+on different machines
+as it depends on the installed software.
+If no duration information is provided in the header
+it will fall back to <code class="docutils literal notranslate"><span class="pre">sloppy=False</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – file name of input audio file</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – file name of input audio file</p></li>
+<li><p><strong>sloppy</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code> report duration
+as stored in the header</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
@@ -335,7 +386,7 @@ due to a bug in its libsndfile version.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="audiofile.samples">
 <span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/audiofile/core/info.html#samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.samples" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of samples in audio file (0 if unavailable).</p>
+<dd><p>Number of samples in audio file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – file name of input audio file</p>
@@ -403,8 +454,10 @@ will be shorter accordingly to those values.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="changelog.html" class="btn btn-neutral float-left" title="Changelog" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="benchmark.html" class="btn btn-neutral float-left" title="Benchmark" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -416,7 +469,7 @@ will be shorter accordingly to those values.</p>
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/07/30 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/08/05 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>

@@ -37,7 +37,6 @@
   <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="audiofile" href="api.html" />
     <link rel="prev" title="Contributing" href="contributing.html" />
     
   
@@ -71,7 +70,7 @@
             
             
               <div class="version">
-                v0.4.3
+                v1.0.0
               </div>
             
           
@@ -96,12 +95,20 @@
             
             
               <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="benchmark.html">Benchmark</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">audiofile</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0-2021-08-05">Version 1.0.0 (2021-08-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-4-3-2021-07-30">Version 0.4.3 (2021-07-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-4-2-2021-04-26">Version 0.4.2 (2021-04-26)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-4-1-2020-12-17">Version 0.4.1 (2020-12-17)</a></li>
@@ -122,10 +129,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-0-1-0-2019-03-25">Version 0.1.0 (2019-03-25)</a></li>
 </ul>
 </li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html">audiofile</a></li>
 </ul>
 
             
@@ -178,7 +181,7 @@
         
             
             
-              <a href="https://github.com/audeering/audiofile/blob/v0.4.3/docs/changelog.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/audeering/audiofile/blob/v1.0.0/docs/changelog.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -197,6 +200,21 @@
 <p>All notable changes to this project will be documented in this file.</p>
 <p>The format is based on <a class="reference external" href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
 and this project adheres to <a class="reference external" href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<div class="section" id="version-1-0-0-2021-08-05">
+<h2>Version 1.0.0 (2021-08-05)<a class="headerlink" href="#version-1-0-0-2021-08-05" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Added: support for Python 3.9</p></li>
+<li><p>Added: tests for Windows</p></li>
+<li><p>Added: tests for macOS</p></li>
+<li><p>Added: <code class="docutils literal notranslate"><span class="pre">sloppy</span></code> argument to <code class="docutils literal notranslate"><span class="pre">audiofile.duration()</span></code>
+for faster processing of non SND formats</p></li>
+<li><p>Changed: <code class="docutils literal notranslate"><span class="pre">audiofile.write()</span></code> raises <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>
+instead of <code class="docutils literal notranslate"><span class="pre">SystemExit</span></code></p></li>
+<li><p>Changed: added <code class="docutils literal notranslate"><span class="pre">sloppy=True</span></code> results
+when accessing metadata of MP3 and MP4 files in the benchmarks</p></li>
+<li><p>Removed: deprecated precision argument from <code class="docutils literal notranslate"><span class="pre">audiofile.write()</span></code></p></li>
+</ul>
+</div>
 <div class="section" id="version-0-4-3-2021-07-30">
 <h2>Version 0.4.3 (2021-07-30)<a class="headerlink" href="#version-0-4-3-2021-07-30" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -336,8 +354,6 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="api.html" class="btn btn-neutral float-right" title="audiofile" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
       
         <a href="contributing.html" class="btn btn-neutral float-left" title="Contributing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
@@ -351,7 +367,7 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/07/30 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/08/05 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>

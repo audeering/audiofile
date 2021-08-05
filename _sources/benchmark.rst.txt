@@ -32,7 +32,7 @@ The following Python packages are benchmarked against each other:
 
 * aubio_ 0.4.9
 * audioread_ 2.1.9
-* :mod:`audiofile` 0.3.1
+* :mod:`audiofile` 1.0.0
 * librosa_ 0.8.0
 * scipy_ 1.5.3
 * soundfile_ 0.10.3.post1
@@ -140,6 +140,11 @@ The main focus was not speed,
 but consistent results for number of samples and duration.
 This can only be achieved by first converting the file to WAV
 as the duration will depend on the used decoder.
+You can speed up the processing by setting ``sloppy=True``
+as argument to :func:`audiofile.duration`.
+This tries to read the duration from the header of the file
+and is shown as audiofile_sloppy
+in the figure.
 
 
 .. _aubio: https://github.com/aubio/aubio/

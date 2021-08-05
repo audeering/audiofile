@@ -18,13 +18,13 @@ let's create a dummy signal containing noise:
 
 .. jupyter-execute::
 
+    import audiofile
     import numpy as np
-    import audiofile as af
 
     sampling_rate = 8000  # in Hz
     noise = np.random.normal(0, 1, sampling_rate)
     noise /= np.amax(np.abs(noise))
-    af.write('noise.flac', noise, sampling_rate)
+    audiofile.write('noise.flac', noise, sampling_rate)
 
 
 File information
@@ -34,23 +34,23 @@ Now you can get metadata information on that signal:
 
 .. jupyter-execute::
 
-    af.channels('noise.flac')
+    audiofile.channels('noise.flac')
 
 .. jupyter-execute::
 
-    af.duration('noise.flac')
+    audiofile.duration('noise.flac')
 
 .. jupyter-execute::
 
-    af.samples('noise.flac')
+    audiofile.samples('noise.flac')
 
 .. jupyter-execute::
 
-    af.sampling_rate('noise.flac')
+    audiofile.sampling_rate('noise.flac')
 
 .. jupyter-execute::
 
-    af.bit_depth('noise.flac')
+    audiofile.bit_depth('noise.flac')
 
 
 Read a file
@@ -60,7 +60,7 @@ You can read the signal:
 
 .. jupyter-execute::
 
-    sig, fs = af.read('noise.flac')
+    sig, fs = audiofile.read('noise.flac')
     print(f'sampling rate: {fs}, signal shape: {sig.shape}')
 
 If you prefer a workflow
@@ -69,14 +69,14 @@ enforce it with:
 
 .. jupyter-execute::
 
-    sig, fs = af.read('noise.flac', always_2d=True)
+    sig, fs = audiofile.read('noise.flac', always_2d=True)
     print(f'sampling rate: {fs}, signal shape: {sig.shape}')
 
 If you just want to read from 500 ms to 900 ms of the signal:
 
 .. jupyter-execute::
 
-    sig, fs = af.read('noise.flac', offset=0.5, duration=0.4)
+    sig, fs = audiofile.read('noise.flac', offset=0.5, duration=0.4)
     print(f'sampling rate: {fs}, signal shape: {sig.shape}')
 
 
@@ -87,8 +87,8 @@ You can convert any file to WAV using:
 
 .. jupyter-execute::
 
-    af.convert_to_wav('noise.flac', 'noise.wav')
-    af.samples('noise.wav')
+    audiofile.convert_to_wav('noise.flac', 'noise.wav')
+    audiofile.samples('noise.wav')
 
 
 .. jupyter-execute::
