@@ -7,6 +7,21 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.0.0 (2021-08-05)
+--------------------------
+
+* Added: support for Python 3.9
+* Added: tests for Windows
+* Added: tests for macOS
+* Added: ``sloppy`` argument to ``audiofile.duration()``
+  for faster processing of non SND formats
+* Changed: ``audiofile.write()`` raises ``RuntimeError``
+  instead of ``SystemExit``
+* Changed: added ``sloppy=True`` results
+  when accessing metadata of MP3 and MP4 files in the benchmarks
+* Removed: deprecated precision argument from ``audiofile.write()``
+
+
 Version 0.4.3 (2021-07-30)
 --------------------------
 
