@@ -196,7 +196,7 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     # Test file type
     if file_type == 'ogg':
         file_type = 'vorbis'
-    assert audeer.file_type(file) == file_type
+    assert audeer.file_extension(file) == file_type
     # Test magnitude
     assert_allclose(_magnitude(sig), magnitude,
                     rtol=0, atol=tolerance(16))
