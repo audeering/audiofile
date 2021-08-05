@@ -22,7 +22,7 @@ def run(shell_command):
     print('DEBUG: ', shell_command)
     print('DEBUG: ', command + args)
     out = subprocess.check_output(
-        command + args,
+        shlex.split(shell_command),
         stderr=subprocess.STDOUT
     )
     try:
