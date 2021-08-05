@@ -189,7 +189,7 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     if file_type == 'flac' and channels > 8:
         return 0
     # Windows runners sox does not support flac
-    if file_type == 'flac' and sys.platform == 'win32':
+    if sys.platform == 'win32' and file_type in ['flac', 'ogg']:
         use_sox = False
     # Allowed combinations
     sig, fs = write_and_read(file, signal, sampling_rate)
