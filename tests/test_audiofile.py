@@ -291,7 +291,6 @@ def test_formats():
     files = [os.path.join(assests_dir, f) for f in files]
     for file, header_duration in zip(files, header_durations):
         signal, sampling_rate = af.read(file)
-        assert os.path.exists(file)
         assert af.channels(file) == _channels(signal)
         assert af.sampling_rate(file) == sampling_rate
         assert af.samples(file) == _samples(signal)
