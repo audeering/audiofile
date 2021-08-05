@@ -270,7 +270,7 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
 
 def test_formats():
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    #script_dir = 'tests'
+    # script_dir = 'tests'
     print('DEBUG: ', audeer.list_dir_names(script_dir))
     print('DEBUG: ', audeer.list_file_names(script_dir))
     assests_dir = os.path.join(script_dir, 'assets')
