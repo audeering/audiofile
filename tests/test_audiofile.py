@@ -219,6 +219,11 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
 @pytest.mark.parametrize("channels", [1, 2])
 @pytest.mark.parametrize('magnitude', [0.01])
 def test_mp3(tmpdir, magnitude, sampling_rate, channels):
+
+    # Currently we are not able to setup the Windows runner with MP3 support
+    if sys.platform == 'win32':
+        return
+
     signal = sine(magnitude=magnitude,
                   sampling_rate=sampling_rate,
                   channels=channels)
@@ -241,14 +246,9 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     assert af.sampling_rate(mp3_file) == sampling_rate
     assert af.samples(mp3_file) == _samples(sig)
     assert af.duration(mp3_file) == _duration(sig, sampling_rate)
-    if sys.platform != 'win32':
-        # sox on Windows doesn't support MP3 files
-        sloppy_duration = round(af.duration(mp3_file, sloppy=True), 1)
-        assert sloppy_duration == round(_duration(sig, sampling_rate), 1)
-    else:
-        assert af.duration(mp3_file, sloppy=True) == sox.file_info.duration(
-            mp3_file
-        )
+    assert af.duration(mp3_file, sloppy=True) == sox.file_info.duration(
+        mp3_file
+    )
     assert af.bit_depth(mp3_file) is None
 
     # Test additional arguments to read with sox
