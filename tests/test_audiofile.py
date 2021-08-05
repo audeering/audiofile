@@ -214,7 +214,7 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     # Test bit depth
     if use_sox:
         bit_depth = sox.file_info.bitdepth(file)
-    assert af.bit_depth(file)  == bit_depth
+    assert af.bit_depth(file) == bit_depth
 
 
 @pytest.mark.parametrize('sampling_rate', [8000, 48000])
