@@ -19,6 +19,8 @@ def run(shell_command):
     # see https://stackoverflow.com/a/63534016
     command = shlex.split(shell_command, posix=(sys.platform != 'win32'))[:1]
     args = shlex.split(shell_command)[1:]
+    print('DEBUG: ', shell_command)
+    print('DEBUG: ', command + args)
     out = subprocess.check_output(
         command + args,
         stderr=subprocess.STDOUT
