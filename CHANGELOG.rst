@@ -39,7 +39,7 @@ Version 0.4.1 (2020-12-17)
 
 * Added: ``bit_depth`` to usage section of documentation
 * Fixed: handling of file names that include ``~`` or ``..``
-    by using ``audeer.safe_path``
+  by using ``audeer.safe_path``
 
 
 Version 0.4.0 (2020-11-26)
