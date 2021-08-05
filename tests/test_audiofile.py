@@ -269,7 +269,8 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
 
 
 def test_formats():
-    script_dir = os.path.dirname(os.path.realpath(__file__))
+    # script_dir = os.path.dirname(os.path.realpath(__file__))
+    script_dir = 'tests'
     assests_dir = os.path.join(script_dir, 'assets')
     files = [
         'gs-16b-1c-44100hz.opus',
