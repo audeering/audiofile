@@ -15,12 +15,6 @@ def file_extension(path):
 
 def run(shell_command):
     """Return the output of a shell command provided as string."""
-    # posix=False ensure paths with \\ are preserved under Winodws
-    # see https://stackoverflow.com/a/63534016
-    command = shlex.split(shell_command, posix=(sys.platform != 'win32'))[:1]
-    args = shlex.split(shell_command)[1:]
-    print('DEBUG: ', shell_command)
-    print('DEBUG: ', command + args)
     out = subprocess.check_output(
         shlex.split(shell_command),
         stderr=subprocess.STDOUT
