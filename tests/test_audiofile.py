@@ -1,6 +1,7 @@
 from __future__ import division
 import os
 import subprocess
+import sys
 import warnings
 
 import pytest
@@ -8,6 +9,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 import sox
 
+import audeer
 import audiofile as af
 
 
@@ -178,6 +180,7 @@ def test_magnitude(tmpdir, magnitude, normalize, bit_depth, sampling_rate):
 @pytest.mark.parametrize("channels", [1, 2, 8, 255])
 @pytest.mark.parametrize('magnitude', [0.01])
 def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
+    use_sox = True
     file = str(tmpdir.join('signal.' + file_type))
     signal = sine(magnitude=magnitude,
                   sampling_rate=sampling_rate,
@@ -185,26 +188,33 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     # Skip unallowed combination
     if file_type == 'flac' and channels > 8:
         return 0
+    # Windows runners sox does not support flac
+    if file_type == 'flac' and sys.platform == 'win32':
+        use_sox = False
     # Allowed combinations
     sig, fs = write_and_read(file, signal, sampling_rate)
     # Test file type
     if file_type == 'ogg':
         file_type = 'vorbis'
-    assert sox.file_info.file_type(file).rstrip() == file_type
+    assert audeer.file_type(file) == file_type
     # Test magnitude
     assert_allclose(_magnitude(sig), magnitude,
                     rtol=0, atol=tolerance(16))
     # Test sampling rate
     assert fs == sampling_rate
-    assert sox.file_info.sample_rate(file) == sampling_rate
+    if use_sox:
+        assert sox.file_info.sample_rate(file) == sampling_rate
     # Test channels
     assert _channels(sig) == channels
-    assert sox.file_info.channels(file) == channels
+    if use_sox:
+        assert sox.file_info.channels(file) == channels
     # Test samples
     assert _samples(sig) == _samples(signal)
-    assert sox.file_info.num_samples(file) == _samples(signal)
+    if use_sox:
+        assert sox.file_info.num_samples(file) == _samples(signal)
     # Test bit depth
-    assert sox.file_info.bitdepth(file) == af.bit_depth(file)
+    if use_sox:
+        assert sox.file_info.bitdepth(file) == af.bit_depth(file)
 
 
 @pytest.mark.parametrize('sampling_rate', [8000, 48000])
