@@ -227,7 +227,7 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     mp3_file = str(tmpdir.join('signal.mp3'))
     af.write(wav_file, signal, sampling_rate)
     subprocess.call(['sox', wav_file, mp3_file])
-    assert sox.file_info.file_type(mp3_file) == 'mp3'
+    assert audeer.file_extension(mp3_file) == 'mp3'
     sig, fs = af.read(mp3_file)
     assert_allclose(_magnitude(sig), magnitude,
                     rtol=0, atol=tolerance(16))
@@ -241,9 +241,14 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     assert af.sampling_rate(mp3_file) == sampling_rate
     assert af.samples(mp3_file) == _samples(sig)
     assert af.duration(mp3_file) == _duration(sig, sampling_rate)
-    assert af.duration(mp3_file, sloppy=True) == sox.file_info.duration(
-        mp3_file
-    )
+    if sys.platform != 'win32':
+        # sox on Windows doesn't support MP3 files
+        sloppy_duration = round(af.duration(mp3_file, sloppy=True), 1)
+        assert sloppy_duration == round(_duration(sig, sampling_rate), 1)
+    else:
+        assert af.duration(mp3_file, sloppy=True) == sox.file_info.duration(
+            mp3_file
+        )
     assert af.bit_depth(mp3_file) is None
 
     # Test additional arguments to read with sox

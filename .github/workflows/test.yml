@@ -39,7 +39,7 @@ jobs:
       if: matrix.os == 'macOS-latest'
 
     - name: Windows
-      run: choco install libmad sox.portable ffmpeg mediainfo
+      run: choco install sox.portable ffmpeg mediainfo
       if: matrix.os == 'windows-latest'
 
     - name: Install dependencies
