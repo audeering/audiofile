@@ -273,7 +273,7 @@ def test_formats():
     # script_dir = 'tests'
     print('DEBUG: ', audeer.list_dir_names(script_dir))
     print('DEBUG: ', audeer.list_file_names(script_dir))
-    print('DEBUG: ', audiofile.core.utils.run('mediainfo --Version'))
+    print('DEBUG: ', af.core.utils.run('mediainfo --Version'))
     assests_dir = os.path.join(script_dir, 'assets')
     files = [
         'gs-16b-1c-44100hz.opus',
