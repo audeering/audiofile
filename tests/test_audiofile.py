@@ -214,6 +214,8 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     # Test bit depth
     if use_sox:
         bit_depth = sox.file_info.bitdepth(file)
+    elif file_type == 'ogg':
+        bit_depth = None
     assert af.bit_depth(file) == bit_depth
 
 
