@@ -273,6 +273,7 @@ def test_formats():
     # script_dir = 'tests'
     print('DEBUG: ', audeer.list_dir_names(script_dir))
     print('DEBUG: ', audeer.list_file_names(script_dir))
+    print('DEBUG: ', audiofile.core.utils.run('mediainfo --Version'))
     assests_dir = os.path.join(script_dir, 'assets')
     files = [
         'gs-16b-1c-44100hz.opus',
@@ -289,6 +290,7 @@ def test_formats():
     files = [os.path.join(assests_dir, f) for f in files]
     for file, header_duration in zip(files, header_durations):
         signal, sampling_rate = af.read(file)
+        assert os.path.exists(file)
         assert af.channels(file) == _channels(signal)
         assert af.sampling_rate(file) == sampling_rate
         assert af.samples(file) == _samples(signal)
