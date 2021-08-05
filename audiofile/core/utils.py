@@ -4,10 +4,12 @@ import shlex
 
 import sox
 
+import audeer
+
 
 def file_extension(path):
     """Lower case file extension."""
-    return os.path.splitext(path)[-1][1:].lower()
+    return audeer.file_extension(path).lower()
 
 
 def run(shell_command):
