@@ -22,7 +22,8 @@ def empty_wav_file(request):
     tmp_path = tempfile.mktemp('.wav', prefix="empty-audio-")
     af.write(tmp_path, np.array([[]]), 16000)
 
-    ofpath = os.path.join(os.path.splitext(tmp_path)[0] + request.param)
+    file_ext = request.param
+    ofpath = audeer.replace_file_extension(tmp_path, file_ext)
     if os.path.exists(tmp_path):
         os.rename(tmp_path, ofpath)
 
