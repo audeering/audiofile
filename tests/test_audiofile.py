@@ -1,6 +1,6 @@
 from __future__ import division
 import os
-import pydub
+from posixpath import splitext
 import subprocess
 import sys
 import warnings
@@ -15,12 +15,21 @@ import audeer
 import audiofile as af
 
 
-@pytest.fixture(scope='session')
-def empty_wav_file():
-    outfile = tempfile.mktemp(suffix=".bin", prefix="empty-audio-")
-    data = pydub.AudioSegment.empty()
-    data.export(out_f=outfile, format='wav',)
-    return outfile
+@pytest.fixture(scope='function')
+def empty_wav_file(request):
+    """fixture to generate to """
+
+    tmp_path = tempfile.mktemp('.wav', prefix="empty-audio-")
+    af.write(tmp_path, np.array([[]]), 16000)
+
+    ofpath = os.path.join(os.path.splitext(tmp_path)[0] + request.param)
+    if os.path.exists(tmp_path):
+        os.rename(tmp_path, ofpath)
+
+    yield ofpath
+
+    if os.path.exists(ofpath):
+        os.remove(ofpath)
 
 
 def tolerance(condition, sampling_rate=0):
@@ -106,8 +115,11 @@ def test_read(tmpdir, duration, offset):
     assert fs == sampling_rate
 
 
+@pytest.mark.parametrize(
+    'empty_wav_file', ('.bin', '.wav'), indirect=True)
 def test_read_empty_wav(empty_wav_file):
     """test that sloppy and nonsloppy have the same return type and value"""
+
     duration_diligent = af.duration(empty_wav_file, sloppy=False)
     assert af.duration(empty_wav_file, sloppy=True) == duration_diligent
 
