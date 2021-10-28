@@ -1,9 +1,7 @@
 from __future__ import division
 import os
-from posixpath import splitext
 import subprocess
 import sys
-import warnings
 import tempfile
 
 import pytest
