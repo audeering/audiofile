@@ -59,7 +59,7 @@
 
           <a href="index.html">
           
-            <img src="_static/images/audeering.svg" class="logo" alt="audEERING"/>
+            <img src="_static/images/audeering.png" class="logo" alt="audEERING"/>
           
           
             <span> audiofile</span>
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                v1.0.0
+                v1.0.1
               </div>
             
           
@@ -108,6 +108,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-0-1-2021-10-28">Version 1.0.1 (2021-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-0-2021-08-05">Version 1.0.0 (2021-08-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-4-3-2021-07-30">Version 0.4.3 (2021-07-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-0-4-2-2021-04-26">Version 0.4.2 (2021-04-26)</a></li>
@@ -152,44 +153,14 @@
         
         <div class="rst-content">
         
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
       <li>Changelog</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-            
-            
-              <a href="https://github.com/audeering/audiofile/blob/v1.0.0/docs/changelog.rst" class="fa fa-github"> Edit on GitHub</a>
-            
-          
-        
+              <a href="https://github.com/audeering/audiofile/" class="fa fa-github"> GitHub</a>
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -200,6 +171,14 @@
 <p>All notable changes to this project will be documented in this file.</p>
 <p>The format is based on <a class="reference external" href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
 and this project adheres to <a class="reference external" href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<div class="section" id="version-1-0-1-2021-10-28">
+<h2>Version 1.0.1 (2021-10-28)<a class="headerlink" href="#version-1-0-1-2021-10-28" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Fixed: <code class="docutils literal notranslate"><span class="pre">audiofile.duration()</span></code> returns now <code class="docutils literal notranslate"><span class="pre">0.0</span></code>
+for an empty WAV file with wrong file extension
+instead of <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+</ul>
+</div>
 <div class="section" id="version-1-0-0-2021-08-05">
 <h2>Version 1.0.0 (2021-08-05)<a class="headerlink" href="#version-1-0-0-2021-08-05" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -231,11 +210,8 @@ when accessing metadata of MP3 and MP4 files in the benchmarks</p></li>
 <h2>Version 0.4.1 (2020-12-17)<a class="headerlink" href="#version-0-4-1-2020-12-17" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>Added: <code class="docutils literal notranslate"><span class="pre">bit_depth</span></code> to usage section of documentation</p></li>
-<li><dl class="simple">
-<dt>Fixed: handling of file names that include <code class="docutils literal notranslate"><span class="pre">~</span></code> or <code class="docutils literal notranslate"><span class="pre">..</span></code></dt><dd><p>by using <code class="docutils literal notranslate"><span class="pre">audeer.safe_path</span></code></p>
-</dd>
-</dl>
-</li>
+<li><p>Fixed: handling of file names that include <code class="docutils literal notranslate"><span class="pre">~</span></code> or <code class="docutils literal notranslate"><span class="pre">..</span></code>
+by using <code class="docutils literal notranslate"><span class="pre">audeer.safe_path</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="version-0-4-0-2020-11-26">
@@ -367,7 +343,7 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/08/05 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/10/28 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
