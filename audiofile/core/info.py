@@ -129,7 +129,11 @@ def duration(file: str, sloppy=False) -> float:
 
     if sloppy:
         try:
-            return float(sox.file_info.duration(file))
+            duration = sox.file_info.duration(file)
+            if duration is None:
+                duration = 0.0
+
+            return duration
         except sox.core.SoxiError:
             cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
             duration = run(cmd)

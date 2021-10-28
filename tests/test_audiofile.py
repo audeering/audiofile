@@ -2,7 +2,7 @@ from __future__ import division
 import os
 import subprocess
 import sys
-import warnings
+import tempfile
 
 import pytest
 import numpy as np
@@ -11,6 +11,24 @@ import sox
 
 import audeer
 import audiofile as af
+
+
+@pytest.fixture(scope='function')
+def empty_wav_file(request):
+    """fixture to generate to """
+
+    tmp_path = tempfile.mktemp('.wav', prefix="empty-audio-")
+    af.write(tmp_path, np.array([[]]), 16000)
+
+    file_ext = request.param
+    ofpath = audeer.replace_file_extension(tmp_path, file_ext)
+    if os.path.exists(tmp_path):
+        os.rename(tmp_path, ofpath)
+
+    yield ofpath
+
+    if os.path.exists(ofpath):
+        os.remove(ofpath)
 
 
 def tolerance(condition, sampling_rate=0):
@@ -94,6 +112,15 @@ def test_read(tmpdir, duration, offset):
     sig, fs = af.read(file, always_2d=True, duration=duration, offset=offset)
     assert sig.shape == (1, 0)
     assert fs == sampling_rate
+
+
+@pytest.mark.parametrize(
+    'empty_wav_file', ('.bin', '.wav'), indirect=True)
+def test_read_empty_wav(empty_wav_file):
+    """test that sloppy and nonsloppy have the same return type and value"""
+
+    duration_diligent = af.duration(empty_wav_file, sloppy=False)
+    assert af.duration(empty_wav_file, sloppy=True) == duration_diligent
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])
