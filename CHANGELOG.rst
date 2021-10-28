@@ -7,6 +7,14 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.0.1 (2021-10-28)
+--------------------------
+
+* Fixed: ``audiofile.duration()`` returns now ``0.0``
+  for an empty WAV file with wrong file extension
+  instead of ``None``
+
+
 Version 1.0.0 (2021-08-05)
 --------------------------
 
