@@ -150,7 +150,10 @@ def test_empty_file(empty_file):
 )
 def test_broken_file(extension):
     broken_file = os.path.join(ASSETS_DIR, f'broken.{extension}')
-
+    # Reading file
+    with pytest.raises(RuntimeError, match='data in an unknown format'):
+        af.read(broken_file)
+    # Metadata
     if extension == 'wav':
         with pytest.raises(RuntimeError, match='data in an unknown format'):
             af.bit_depth(broken_file)
