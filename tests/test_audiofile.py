@@ -15,7 +15,6 @@ import audiofile as af
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 ASSETS_DIR = os.path.join(SCRIPT_DIR, 'assets')
-SAMPLING_RATE = 16000
 
 
 @pytest.fixture(scope='function')
@@ -27,7 +26,7 @@ def empty_file(request):
     """
 
     tmp_path = tempfile.mktemp('.wav', prefix="empty-audio-")
-    af.write(tmp_path, np.array([[]]), SAMPLING_RATE)
+    af.write(tmp_path, np.array([[]]), 16000)
 
     file_ext = request.param
     ofpath = audeer.replace_file_extension(tmp_path, file_ext)
