@@ -14,8 +14,12 @@ import audiofile as af
 
 
 @pytest.fixture(scope='function')
-def empty_wav_file(request):
-    """fixture to generate to """
+def empty_file(request):
+    """Fixture to generate empty audio files.
+
+    The request parameter allows to change the file extension.
+
+    """
 
     tmp_path = tempfile.mktemp('.wav', prefix="empty-audio-")
     af.write(tmp_path, np.array([[]]), 16000)
@@ -115,12 +119,20 @@ def test_read(tmpdir, duration, offset):
 
 
 @pytest.mark.parametrize(
-    'empty_wav_file', ('.bin', '.wav'), indirect=True)
-def test_read_empty_wav(empty_wav_file):
+    'empty_file',
+    ('bin', 'mp3', 'wav'),
+    indirect=True,
+)
+def test_read_empty_file(empty_file):
     """test that sloppy and nonsloppy have the same return type and value"""
 
-    duration_diligent = af.duration(empty_wav_file, sloppy=False)
-    assert af.duration(empty_wav_file, sloppy=True) == duration_diligent
+    for sloppy in [True, False]:
+        assert af.duration(empty_file, sloppy=sloppy) == 0.0
+
+    assert af.channels(empty_file) == 0
+    assert af.sampling_rate(empty_file) == 0
+    assert af.bit_depth is None
+    assert af.samples == 0
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])

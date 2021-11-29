@@ -81,6 +81,7 @@ def channels(file: str) -> int:
         return soundfile.info(file).channels
     else:
         try:
+            print('Running sox')
             return int(sox.file_info.channels(file))
         except sox.core.SoxiError:
             # For MP4 stored and returned number of channels can be different
