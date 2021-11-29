@@ -11,6 +11,7 @@ import audeer
 
 from audiofile.core.convert import convert_to_wav
 from audiofile.core.utils import (
+    broken_file_error,
     file_extension,
     run,
     SNDFORMATS,
@@ -81,7 +82,6 @@ def channels(file: str) -> int:
         return soundfile.info(file).channels
     else:
         try:
-            print('Running sox')
             return int(sox.file_info.channels(file))
         except sox.core.SoxiError:
             # For MP4 stored and returned number of channels can be different
@@ -90,7 +90,10 @@ def channels(file: str) -> int:
             try:
                 return int(run(cmd1))
             except ValueError:
-                return int(run(cmd2))
+                try:
+                    return int(run(cmd2))
+                except ValueError:
+                    raise RuntimeError(broken_file_error(file))
 
 
 def duration(file: str, sloppy=False) -> float:
@@ -189,4 +192,8 @@ def sampling_rate(file: str) -> int:
             return int(sox.file_info.sample_rate(file))
         except sox.core.SoxiError:
             cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
-            return int(run(cmd))
+            sampling_rate = run(cmd)
+            if sampling_rate:
+                return int(sampling_rate)
+            else:
+                raise RuntimeError(broken_file_error(file))

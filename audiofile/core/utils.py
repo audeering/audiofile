@@ -7,6 +7,26 @@ import sox
 import audeer
 
 
+def broken_file_error(file: str) -> str:
+    r"""Broken file error message.
+
+    If we encounter a broken file,
+    we raise the same error for non SND files
+    as soundfile does for SND files
+
+    Args:
+        file: file name
+
+    Returns:
+        error message
+
+    """
+    return (
+        f'Error opening {file}: '
+        'File contains data in an unknown format.'
+    )
+
+
 def file_extension(path):
     """Lower case file extension."""
     return audeer.file_extension(path).lower()

@@ -13,6 +13,11 @@ import audeer
 import audiofile as af
 
 
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+ASSETS_DIR = os.path.join(SCRIPT_DIR, 'assets')
+SAMPLING_RATE = 16000
+
+
 @pytest.fixture(scope='function')
 def empty_file(request):
     """Fixture to generate empty audio files.
@@ -22,7 +27,7 @@ def empty_file(request):
     """
 
     tmp_path = tempfile.mktemp('.wav', prefix="empty-audio-")
-    af.write(tmp_path, np.array([[]]), 16000)
+    af.write(tmp_path, np.array([[]]), SAMPLING_RATE)
 
     file_ext = request.param
     ofpath = audeer.replace_file_extension(tmp_path, file_ext)
@@ -123,16 +128,42 @@ def test_read(tmpdir, duration, offset):
     ('bin', 'mp3', 'wav'),
     indirect=True,
 )
-def test_read_empty_file(empty_file):
-    """test that sloppy and nonsloppy have the same return type and value"""
-
+def test_empty_file(empty_file):
+    # Reading file
+    signal, sampling_rate = af.read(empty_file)
+    assert len(signal) == 0
+    # Metadata
     for sloppy in [True, False]:
         assert af.duration(empty_file, sloppy=sloppy) == 0.0
+    assert af.channels(empty_file) == 1
+    assert af.sampling_rate(empty_file) == sampling_rate
+    assert af.samples(empty_file) == 0
+    if audeer.file_extension(empty_file) == 'wav':
+        assert af.bit_depth(empty_file) == 16
+    else:
+        assert af.bit_depth(empty_file) is None
 
-    assert af.channels(empty_file) == 0
-    assert af.sampling_rate(empty_file) == 0
-    assert af.bit_depth is None
-    assert af.samples == 0
+
+@pytest.mark.parametrize(
+    'extension',
+    ('wav', 'mp3'),
+)
+def test_broken_file(extension):
+    broken_file = os.path.join(ASSETS_DIR, f'broken.{extension}')
+
+    if extension == 'wav':
+        with pytest.raises(RuntimeError, match='data in an unknown format'):
+            af.bit_depth(broken_file)
+    else:
+        assert af.bit_depth(broken_file) is None
+    with pytest.raises(RuntimeError, match='data in an unknown format'):
+        af.channels(broken_file)
+    with pytest.raises(RuntimeError, match='data in an unknown format'):
+        af.duration(broken_file)
+    with pytest.raises(RuntimeError, match='data in an unknown format'):
+        af.samples(broken_file)
+    with pytest.raises(RuntimeError, match='data in an unknown format'):
+        af.sampling_rate(broken_file)
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])
@@ -313,8 +344,6 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
 
 
 def test_formats():
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    assests_dir = os.path.join(script_dir, 'assets')
     files = [
         'gs-16b-1c-44100hz.opus',
         'gs-16b-1c-8000hz.amr',
@@ -327,7 +356,7 @@ def test_formats():
         15.833,
         None,
     ]
-    files = [os.path.join(assests_dir, f) for f in files]
+    files = [os.path.join(ASSETS_DIR, f) for f in files]
     for file, header_duration in zip(files, header_durations):
         signal, sampling_rate = af.read(file)
         assert af.channels(file) == _channels(signal)
