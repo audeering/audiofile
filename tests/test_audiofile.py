@@ -149,22 +149,25 @@ def test_empty_file(empty_file):
 )
 def test_broken_file(extension):
     broken_file = os.path.join(ASSETS_DIR, f'broken.{extension}')
+    # Only match the beginning of error message
+    # as the default soundfile message differs at the end on macOS
+    error_msg = 'Error opening'
     # Reading file
-    with pytest.raises(RuntimeError, match='data in an unknown format'):
+    with pytest.raises(RuntimeError, match=error_msg):
         af.read(broken_file)
     # Metadata
     if extension == 'wav':
-        with pytest.raises(RuntimeError, match='data in an unknown format'):
+        with pytest.raises(RuntimeError, match=error_msg):
             af.bit_depth(broken_file)
     else:
         assert af.bit_depth(broken_file) is None
-    with pytest.raises(RuntimeError, match='data in an unknown format'):
+    with pytest.raises(RuntimeError, match=error_msg):
         af.channels(broken_file)
-    with pytest.raises(RuntimeError, match='data in an unknown format'):
+    with pytest.raises(RuntimeError, match=error_msg):
         af.duration(broken_file)
-    with pytest.raises(RuntimeError, match='data in an unknown format'):
+    with pytest.raises(RuntimeError, match=error_msg):
         af.samples(broken_file)
-    with pytest.raises(RuntimeError, match='data in an unknown format'):
+    with pytest.raises(RuntimeError, match=error_msg):
         af.sampling_rate(broken_file)
 
 
