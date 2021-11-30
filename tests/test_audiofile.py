@@ -18,25 +18,44 @@ ASSETS_DIR = os.path.join(SCRIPT_DIR, 'assets')
 
 
 @pytest.fixture(scope='function')
-def empty_file(request):
+def empty_file(tmpdir, request):
     """Fixture to generate empty audio files.
 
-    The request parameter allows to change the file extension.
+    The request parameter allows to select the file extension.
 
     """
+    # Create empty audio file
+    empty_file = os.path.join(tmpdir, 'empty-file.wav')
+    af.write(empty_file, np.array([[]]), 16000)
 
-    tmp_path = tempfile.mktemp('.wav', prefix="empty-audio-")
-    af.write(tmp_path, np.array([[]]), 16000)
-
+    # Rename to match extension
     file_ext = request.param
-    ofpath = audeer.replace_file_extension(tmp_path, file_ext)
-    if os.path.exists(tmp_path):
-        os.rename(tmp_path, ofpath)
+    ofpath = audeer.replace_file_extension(empty_file, file_ext)
+    if os.path.exists(empty_file):
+        os.rename(empty_file, ofpath)
 
     yield ofpath
 
     if os.path.exists(ofpath):
         os.remove(ofpath)
+
+
+@pytest.fixture(scope='function')
+def broken_file(tmpdir, request):
+    """Fixture to generate broken audio files.
+
+    The request parameter allows to select the file extension.
+
+    """
+    # Create broken audio file
+    file_ext = request.param
+    broken_file = os.path.join(tmpdir, f'broken-file.{file_ext}')
+    open(broken_file, 'w').close()
+
+    yield broken_file
+
+    if os.path.exists(broken_file):
+        os.remove(broken_file)
 
 
 def tolerance(condition, sampling_rate=0):
@@ -144,11 +163,11 @@ def test_empty_file(empty_file):
 
 
 @pytest.mark.parametrize(
-    'extension',
-    ('wav', 'mp3'),
+    'broken_file',
+    ('bin', 'mp3', 'wav'),
+    indirect=True,
 )
-def test_broken_file(extension):
-    broken_file = os.path.join(ASSETS_DIR, f'broken.{extension}')
+def test_broken_file(broken_file):
     # Only match the beginning of error message
     # as the default soundfile message differs at the end on macOS
     error_msg = 'Error opening'
@@ -156,7 +175,7 @@ def test_broken_file(extension):
     with pytest.raises(RuntimeError, match=error_msg):
         af.read(broken_file)
     # Metadata
-    if extension == 'wav':
+    if audeer.file_extension(broken_file) == 'wav':
         with pytest.raises(RuntimeError, match=error_msg):
             af.bit_depth(broken_file)
     else:
