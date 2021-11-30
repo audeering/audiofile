@@ -1,6 +1,8 @@
 __pycache__/
+audiofile.egg-info/
 .eggs/
 build/
 dist/
 .coverage
 coverage.xml
+docs/benchmark/AUDIO/
