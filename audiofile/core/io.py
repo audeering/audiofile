@@ -56,7 +56,7 @@ def read(
         * sample rate of the audio file
 
     Raises:
-        RuntimeError: if ``file`` is broken or not a supproted format
+        RuntimeError: if ``file`` is broken or not a supported format
 
     """
     file = audeer.safe_path(file)
