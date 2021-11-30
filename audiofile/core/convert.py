@@ -35,6 +35,9 @@ def convert_to_wav(
         duration: return only a specified duration in seconds
         offset: start reading at offset in seconds
 
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supproted format
+
     """
     infile = audeer.safe_path(infile)
     outfile = audeer.safe_path(outfile)
