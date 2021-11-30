@@ -55,6 +55,9 @@ def read(
           a one-dimensional array is returned
         * sample rate of the audio file
 
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supproted format
+
     """
     file = audeer.safe_path(file)
     tmpdir = None

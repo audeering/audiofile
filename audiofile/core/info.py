@@ -34,6 +34,9 @@ def bit_depth(file: str) -> typing.Optional[int]:
     Returns:
         bit depth of audio file
 
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supproted format
+
     """
     file = audeer.safe_path(file)
     file_type = file_extension(file)
@@ -75,6 +78,9 @@ def channels(file: str) -> int:
 
     Returns:
         number of channels in audio file
+
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supproted format
 
     """
     file = audeer.safe_path(file)
@@ -126,6 +132,9 @@ def duration(file: str, sloppy=False) -> float:
     Returns:
         duration in seconds of audio file
 
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supproted format
+
     """
     file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
@@ -157,6 +166,9 @@ def samples(file: str) -> int:
     Returns:
         number of samples in audio file
 
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supproted format
+
     """
     def samples_as_int(file):
         return int(
@@ -182,6 +194,9 @@ def sampling_rate(file: str) -> int:
 
     Returns:
         sampling rate of audio file
+
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supproted format
 
     """
     file = audeer.safe_path(file)
