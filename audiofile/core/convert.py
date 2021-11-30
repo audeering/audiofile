@@ -36,7 +36,7 @@ def convert_to_wav(
         offset: start reading at offset in seconds
 
     Raises:
-        RuntimeError: if ``file`` is broken or not a supproted format
+        RuntimeError: if ``file`` is broken or not a supported format
 
     """
     infile = audeer.safe_path(infile)
