@@ -41,13 +41,13 @@ def empty_file(tmpdir, request):
 
 
 @pytest.fixture(scope='function')
-def broken_file(tmpdir, request):
+def non_audio_file(tmpdir, request):
     """Fixture to generate broken audio files.
 
     The request parameter allows to select the file extension.
 
     """
-    # Create broken audio file
+    # Create empty file to simulate broken/non-audio file
     file_ext = request.param
     broken_file = os.path.join(tmpdir, f'broken-file.{file_ext}')
     open(broken_file, 'w').close()
@@ -163,31 +163,31 @@ def test_empty_file(empty_file):
 
 
 @pytest.mark.parametrize(
-    'broken_file',
+    'non_audio_file',
     ('bin', 'mp3', 'wav'),
     indirect=True,
 )
-def test_broken_file(broken_file):
+def test_broken_file(non_audio_file):
     # Only match the beginning of error message
     # as the default soundfile message differs at the end on macOS
     error_msg = 'Error opening'
     # Reading file
     with pytest.raises(RuntimeError, match=error_msg):
-        af.read(broken_file)
+        af.read(non_audio_file)
     # Metadata
-    if audeer.file_extension(broken_file) == 'wav':
+    if audeer.file_extension(non_audio_file) == 'wav':
         with pytest.raises(RuntimeError, match=error_msg):
-            af.bit_depth(broken_file)
+            af.bit_depth(non_audio_file)
     else:
-        assert af.bit_depth(broken_file) is None
+        assert af.bit_depth(non_audio_file) is None
     with pytest.raises(RuntimeError, match=error_msg):
-        af.channels(broken_file)
+        af.channels(non_audio_file)
     with pytest.raises(RuntimeError, match=error_msg):
-        af.duration(broken_file)
+        af.duration(non_audio_file)
     with pytest.raises(RuntimeError, match=error_msg):
-        af.samples(broken_file)
+        af.samples(non_audio_file)
     with pytest.raises(RuntimeError, match=error_msg):
-        af.sampling_rate(broken_file)
+        af.sampling_rate(non_audio_file)
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])
