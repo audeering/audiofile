@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                v1.0.1
+                v1.0.2
               </div>
             
           
@@ -145,12 +145,14 @@
             
   <h1>Source code for audiofile.core.convert</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 
 <span class="kn">import</span> <span class="nn">sox</span>
 
 <span class="kn">import</span> <span class="nn">audeer</span>
 
 <span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">broken_file_error</span><span class="p">,</span>
     <span class="n">run_ffmpeg</span><span class="p">,</span>
     <span class="n">run_sox</span><span class="p">,</span>
 <span class="p">)</span>
@@ -179,6 +181,9 @@
 <span class="sd">        duration: return only a specified duration in seconds</span>
 <span class="sd">        offset: start reading at offset in seconds</span>
 
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if ``file`` is broken or not a supported format</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">infile</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
     <span class="n">outfile</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
@@ -186,8 +191,11 @@
         <span class="c1"># Convert to WAV file with sox</span>
         <span class="n">run_sox</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="n">sox</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SoxError</span><span class="p">,</span> <span class="n">sox</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">SoxiError</span><span class="p">):</span>
-        <span class="c1"># Convert to WAV file with ffmpeg</span>
-        <span class="n">run_ffmpeg</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span></div>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Convert to WAV file with ffmpeg</span>
+            <span class="n">run_ffmpeg</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">broken_file_error</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span></div>
 </pre></div>
 
            </div>
@@ -203,7 +211,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/10/28 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2021/12/06 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>

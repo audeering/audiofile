@@ -212,7 +212,10 @@ dl.property em {
 /* Remove bullet points from parameter lists */
 .rst-content .section dl.field-list.simple ul li {
     list-style: none;
-    margin-left: 0;
+    margin-left: 24px;
+    /* Don't indent first line of text, see */
+    /* https://gitlab.audeering.com/project/altavista-cc/tests/-/issues/19 */
+    text-indent: -24px;
 }
 /* Make heading of example section look like other sections */
 .rst-content dl.class p.rubric,
