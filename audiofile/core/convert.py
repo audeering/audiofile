@@ -1,10 +1,12 @@
 import logging
+import subprocess
 
 import sox
 
 import audeer
 
 from audiofile.core.utils import (
+    broken_file_error,
     run_ffmpeg,
     run_sox,
 )
@@ -33,6 +35,9 @@ def convert_to_wav(
         duration: return only a specified duration in seconds
         offset: start reading at offset in seconds
 
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supported format
+
     """
     infile = audeer.safe_path(infile)
     outfile = audeer.safe_path(outfile)
@@ -40,5 +45,8 @@ def convert_to_wav(
         # Convert to WAV file with sox
         run_sox(infile, outfile, offset, duration)
     except (sox.core.SoxError, sox.core.SoxiError):
-        # Convert to WAV file with ffmpeg
-        run_ffmpeg(infile, outfile, offset, duration)
+        try:
+            # Convert to WAV file with ffmpeg
+            run_ffmpeg(infile, outfile, offset, duration)
+        except subprocess.CalledProcessError:
+            raise RuntimeError(broken_file_error(infile))

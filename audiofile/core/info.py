@@ -11,6 +11,7 @@ import audeer
 
 from audiofile.core.convert import convert_to_wav
 from audiofile.core.utils import (
+    broken_file_error,
     file_extension,
     run,
     SNDFORMATS,
@@ -32,6 +33,9 @@ def bit_depth(file: str) -> typing.Optional[int]:
 
     Returns:
         bit depth of audio file
+
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supported format
 
     """
     file = audeer.safe_path(file)
@@ -75,6 +79,9 @@ def channels(file: str) -> int:
     Returns:
         number of channels in audio file
 
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supported format
+
     """
     file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
@@ -89,7 +96,10 @@ def channels(file: str) -> int:
             try:
                 return int(run(cmd1))
             except ValueError:
-                return int(run(cmd2))
+                try:
+                    return int(run(cmd2))
+                except ValueError:
+                    raise RuntimeError(broken_file_error(file))
 
 
 def duration(file: str, sloppy=False) -> float:
@@ -122,6 +132,9 @@ def duration(file: str, sloppy=False) -> float:
     Returns:
         duration in seconds of audio file
 
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supported format
+
     """
     file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
@@ -153,6 +166,9 @@ def samples(file: str) -> int:
     Returns:
         number of samples in audio file
 
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supported format
+
     """
     def samples_as_int(file):
         return int(
@@ -179,6 +195,9 @@ def sampling_rate(file: str) -> int:
     Returns:
         sampling rate of audio file
 
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supported format
+
     """
     file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
@@ -188,4 +207,8 @@ def sampling_rate(file: str) -> int:
             return int(sox.file_info.sample_rate(file))
         except sox.core.SoxiError:
             cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
-            return int(run(cmd))
+            sampling_rate = run(cmd)
+            if sampling_rate:
+                return int(sampling_rate)
+            else:
+                raise RuntimeError(broken_file_error(file))

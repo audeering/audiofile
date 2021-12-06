@@ -13,22 +13,49 @@ import audeer
 import audiofile as af
 
 
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+ASSETS_DIR = os.path.join(SCRIPT_DIR, 'assets')
+
+
 @pytest.fixture(scope='function')
-def empty_wav_file(request):
-    """fixture to generate to """
+def empty_file(tmpdir, request):
+    """Fixture to generate empty audio files.
 
-    tmp_path = tempfile.mktemp('.wav', prefix="empty-audio-")
-    af.write(tmp_path, np.array([[]]), 16000)
+    The request parameter allows to select the file extension.
 
+    """
+    # Create empty audio file
+    empty_file = os.path.join(tmpdir, 'empty-file.wav')
+    af.write(empty_file, np.array([[]]), 16000)
+
+    # Rename to match extension
     file_ext = request.param
-    ofpath = audeer.replace_file_extension(tmp_path, file_ext)
-    if os.path.exists(tmp_path):
-        os.rename(tmp_path, ofpath)
+    ofpath = audeer.replace_file_extension(empty_file, file_ext)
+    if os.path.exists(empty_file):
+        os.rename(empty_file, ofpath)
 
     yield ofpath
 
     if os.path.exists(ofpath):
         os.remove(ofpath)
+
+
+@pytest.fixture(scope='function')
+def non_audio_file(tmpdir, request):
+    """Fixture to generate broken audio files.
+
+    The request parameter allows to select the file extension.
+
+    """
+    # Create empty file to simulate broken/non-audio file
+    file_ext = request.param
+    broken_file = os.path.join(tmpdir, f'broken-file.{file_ext}')
+    open(broken_file, 'w').close()
+
+    yield broken_file
+
+    if os.path.exists(broken_file):
+        os.remove(broken_file)
 
 
 def tolerance(condition, sampling_rate=0):
@@ -115,12 +142,52 @@ def test_read(tmpdir, duration, offset):
 
 
 @pytest.mark.parametrize(
-    'empty_wav_file', ('.bin', '.wav'), indirect=True)
-def test_read_empty_wav(empty_wav_file):
-    """test that sloppy and nonsloppy have the same return type and value"""
+    'empty_file',
+    ('bin', 'mp3', 'wav'),
+    indirect=True,
+)
+def test_empty_file(empty_file):
+    # Reading file
+    signal, sampling_rate = af.read(empty_file)
+    assert len(signal) == 0
+    # Metadata
+    for sloppy in [True, False]:
+        assert af.duration(empty_file, sloppy=sloppy) == 0.0
+    assert af.channels(empty_file) == 1
+    assert af.sampling_rate(empty_file) == sampling_rate
+    assert af.samples(empty_file) == 0
+    if audeer.file_extension(empty_file) == 'wav':
+        assert af.bit_depth(empty_file) == 16
+    else:
+        assert af.bit_depth(empty_file) is None
 
-    duration_diligent = af.duration(empty_wav_file, sloppy=False)
-    assert af.duration(empty_wav_file, sloppy=True) == duration_diligent
+
+@pytest.mark.parametrize(
+    'non_audio_file',
+    ('bin', 'mp3', 'wav'),
+    indirect=True,
+)
+def test_broken_file(non_audio_file):
+    # Only match the beginning of error message
+    # as the default soundfile message differs at the end on macOS
+    error_msg = 'Error opening'
+    # Reading file
+    with pytest.raises(RuntimeError, match=error_msg):
+        af.read(non_audio_file)
+    # Metadata
+    if audeer.file_extension(non_audio_file) == 'wav':
+        with pytest.raises(RuntimeError, match=error_msg):
+            af.bit_depth(non_audio_file)
+    else:
+        assert af.bit_depth(non_audio_file) is None
+    with pytest.raises(RuntimeError, match=error_msg):
+        af.channels(non_audio_file)
+    with pytest.raises(RuntimeError, match=error_msg):
+        af.duration(non_audio_file)
+    with pytest.raises(RuntimeError, match=error_msg):
+        af.samples(non_audio_file)
+    with pytest.raises(RuntimeError, match=error_msg):
+        af.sampling_rate(non_audio_file)
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])
@@ -301,8 +368,6 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
 
 
 def test_formats():
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    assests_dir = os.path.join(script_dir, 'assets')
     files = [
         'gs-16b-1c-44100hz.opus',
         'gs-16b-1c-8000hz.amr',
@@ -315,7 +380,7 @@ def test_formats():
         15.833,
         None,
     ]
-    files = [os.path.join(assests_dir, f) for f in files]
+    files = [os.path.join(ASSETS_DIR, f) for f in files]
     for file, header_duration in zip(files, header_durations):
         signal, sampling_rate = af.read(file)
         assert af.channels(file) == _channels(signal)
