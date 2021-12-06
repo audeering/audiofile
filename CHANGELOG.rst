@@ -7,6 +7,13 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.0.2 (2021-12-06)
+--------------------------
+
+* Fixed: raise ``RuntimeError``
+  for broken or empty non SND files
+
+
 Version 1.0.1 (2021-10-28)
 --------------------------
 
