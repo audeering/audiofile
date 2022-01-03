@@ -8,12 +8,12 @@
     --light-grey: #F6F6F6;  /* UI CANVAS GREY */
     --grey: #DCDCDC;  /* LIGHT GREY */
     --dark-grey: #7D8181;  /* UI INACTIVE GREY */
-    --darker-grey: #555A5A;
-    /* Colors not used yet: */
+    /* Colors not used */
+    /* --darker-grey: #555A5A; 8?
     /* --grey3: #B9BEBE;  /* UI HIGH GREY */
     /* --grey5: #555A5A;  /* UI LOW GREY */
     /* --grey6: #363636; /* UI DARK GREY */
-    
+
 }
 
 /***** PAGE **************************************************************/
@@ -38,7 +38,7 @@ body {
     /* Decrease distance between paragraphs */
     margin-bottom: 10px !important;
 }
- 
+
 /***** LINKS *************************************************************/
 a {
     color: var(--red);
@@ -90,18 +90,6 @@ a:hover {
 .wy-menu-vertical p.caption {
     /* Color of TOC captions */
     color: var(--dark-grey);
-}
-.rst-content dl:not(.docutils) dt {
-    color: var(--red);
-    border-left: solid 3px var(--red);
-    border-top: none;
-    background: var(--light-grey);
-}
-.rst-content dl:not(.docutils) dl dt {
-    color: var(--black);
-    border-left: solid 3px var(--grey);
-    border-top: none;
-    background: var(--light-grey);
 }
 
 /***** ADMONITIONS (NOTES) ***********************************************/
@@ -187,28 +175,48 @@ content .viewcode-back {
 /* In line code */
 .rst-content code {
     font-size: 87%;
+    font-weight: bold;
     padding: 1px;
 }
 .rst-content tt.literal,
 .rst-content tt.literal,
 .rst-content code.literal {
-    color: var(--darker-grey);
+    color: var(--black);
     border: none;
     background-color: transparent;
+    font-weight: bold;
 }
 /* Typing */
 .rst-content code.xref {
-    color: var(--darker-grey);
+    color: var(--black);
     border: none;
     background-color: transparent;
 }
-/* Force arguments to be in normal font in header */
+/* Function/Class definition names */
+.rst-content dl:not(.docutils) .descname,
+.rst-content dl:not(.docutils) .descclassname {
+    color: var(--black);
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",Courier,monospace;
+}
 dl.class em,
 dl.function em,
 dl.method em,
 dl.property em {
     font-style: normal;
 }
+.rst-content dl:not(.docutils) dt {
+    color: var(--red);
+    border-left: solid 3px var(--red);
+    border-top: none;
+    background: var(--light-grey);
+}
+.rst-content dl:not(.docutils) dl dt {
+    color: var(--black);
+    border-left: solid 3px var(--grey);
+    border-top: none;
+    background: var(--light-grey);
+}
+
 /* Remove bullet points from parameter lists */
 .rst-content .section dl.field-list.simple ul li {
     list-style: none;
@@ -387,8 +395,8 @@ div.text_html thead {
   border-bottom: 1px solid black !important;
   vertical-align: bottom !important;
 }
-div.text_html tr, 
-div.text_html th, 
+div.text_html tr,
+div.text_html th,
 div.text_html td {
   text-align: right !important;
   vertical-align: middle !important;
