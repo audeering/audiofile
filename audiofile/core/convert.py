@@ -47,7 +47,7 @@ def convert_to_wav(
     except (
             sox.core.SoxError,
             sox.core.SoxiError,
-            FileNotFoundError,  # sox not installed
+            FileNotFoundError,  # sox binary missing
     ):
         try:
             # Convert to WAV file with ffmpeg
