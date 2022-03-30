@@ -73,7 +73,10 @@ def hide_sox(tmpdir, request):
         path = audeer.mkdir(os.path.join(tmpdir, 'bin'))
         for program in ['ffmpeg', 'mediainfo']:
             command = shutil.which(program)
-            os.symlink(command, os.path.join(path, program))
+            if sys.platform == 'win32':
+                shutil.copyfile(command, os.path.join(path, program))
+            else:
+                os.symlink(command, os.path.join(path, program))
         os.environ['PATH'] = path
 
     yield
