@@ -10,8 +10,8 @@ def test_symlinks(tmpdir):
     command = shutil.which(program)
     assert os.path.exists(command)
     local_command = os.path.join(path, program)
-    # os.symlink(command, local_command)
-    shutil.copyfile(command, local_command)
+    os.symlink(command, local_command)
+    # shutil.copyfile(command, local_command)
     assert os.path.exists(local_command)
     print(os.environ['PATH'])
     os.environ['PATH'] = path
