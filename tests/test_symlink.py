@@ -9,5 +9,8 @@ def test_symlinks(tmpdir):
     path = audeer.mkdir(os.path.join(tmpdir, 'bin'))
     command = shutil.which(program)
     assert os.path.exists(command)
-    os.symlink(command, os.path.join(path, program))
-    assert os.path.exists(os.path.join(path, program))
+    local_command = os.path.join(path, program)
+    os.symlink(command, local_command)
+    assert os.path.exists(local_command)
+    os.environ['PATH'] = path
+    assert shutil.which(program) == local_command
