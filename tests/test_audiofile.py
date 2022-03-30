@@ -163,6 +163,24 @@ def test_empty_file(empty_file):
 
 
 @pytest.mark.parametrize(
+    'ext, expected_error',
+    [
+        ('bin', OSError),
+        ('mp3', OSError),
+        ('wav', RuntimeError),
+    ],
+)
+def test_missing_file(ext, expected_error):
+    missing_file = f'missing_file.{ext}'
+    # Reading file
+    with pytest.raises(expected_error):
+        signal, sampling_rate = af.read(missing_file)
+    # Metadata
+    with pytest.raises(expected_error):
+        af.sampling_rate(missing_file)
+
+
+@pytest.mark.parametrize(
     'non_audio_file',
     ('bin', 'mp3', 'wav'),
     indirect=True,
