@@ -44,7 +44,11 @@ def convert_to_wav(
     try:
         # Convert to WAV file with sox
         run_sox(infile, outfile, offset, duration)
-    except (sox.core.SoxError, sox.core.SoxiError):
+    except (
+            sox.core.SoxError,
+            sox.core.SoxiError,
+            FileNotFoundError,  # sox not installed
+    ):
         try:
             # Convert to WAV file with ffmpeg
             run_ffmpeg(infile, outfile, offset, duration)

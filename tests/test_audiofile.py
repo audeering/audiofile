@@ -1,5 +1,6 @@
 from __future__ import division
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -56,6 +57,39 @@ def non_audio_file(tmpdir, request):
 
     if os.path.exists(broken_file):
         os.remove(broken_file)
+
+
+@pytest.fixture(scope='function')
+def hide_sox(tmpdir, request):
+    """Fixture to hide sox in test.
+
+    ffmpeg and mediainfo are still available.
+
+    """
+    hide = request.param
+    current_path = os.environ['PATH']
+
+    if hide:
+        path = audeer.mkdir(os.path.join(tmpdir, 'bin'))
+        for program in ['ffmpeg', 'mediainfo']:
+            command = shutil.which(program)
+            os.symlink(command, os.path.join(path, program))
+        os.environ['PATH'] = path
+
+    yield
+
+    os.environ['PATH'] = current_path
+
+
+@pytest.fixture(scope='function')
+def hide_system_path():
+    """Fixture to hide system path in test."""
+    current_path = os.environ['PATH']
+    os.environ['PATH'] = ''
+
+    yield
+
+    os.environ['PATH'] = current_path
 
 
 def tolerance(condition, sampling_rate=0):
@@ -142,11 +176,16 @@ def test_read(tmpdir, duration, offset):
 
 
 @pytest.mark.parametrize(
+    'hide_sox',
+    (True, False),
+    indirect=True,
+)
+@pytest.mark.parametrize(
     'empty_file',
     ('bin', 'mp3', 'wav'),
     indirect=True,
 )
-def test_empty_file(empty_file):
+def test_empty_file(hide_sox, empty_file):
     # Reading file
     signal, sampling_rate = af.read(empty_file)
     assert len(signal) == 0
@@ -163,6 +202,11 @@ def test_empty_file(empty_file):
 
 
 @pytest.mark.parametrize(
+    'hide_sox',
+    (True, False),
+    indirect=True,
+)
+@pytest.mark.parametrize(
     'ext, expected_error',
     [
         ('bin', OSError),
@@ -170,7 +214,7 @@ def test_empty_file(empty_file):
         ('wav', RuntimeError),
     ],
 )
-def test_missing_file(ext, expected_error):
+def test_missing_file(hide_sox, ext, expected_error):
     missing_file = f'missing_file.{ext}'
     # Reading file
     with pytest.raises(expected_error):
@@ -181,11 +225,16 @@ def test_missing_file(ext, expected_error):
 
 
 @pytest.mark.parametrize(
+    'hide_sox',
+    (True, False),
+    indirect=True,
+)
+@pytest.mark.parametrize(
     'non_audio_file',
     ('bin', 'mp3', 'wav'),
     indirect=True,
 )
-def test_broken_file(non_audio_file):
+def test_broken_file(hide_sox, non_audio_file):
     # Only match the beginning of error message
     # as the default soundfile message differs at the end on macOS
     error_msg = 'Error opening'
@@ -206,6 +255,20 @@ def test_broken_file(non_audio_file):
         af.samples(non_audio_file)
     with pytest.raises(RuntimeError, match=error_msg):
         af.sampling_rate(non_audio_file)
+
+
+@pytest.mark.parametrize(
+    'empty_file',
+    ('bin', 'mp3'),
+    indirect=True,
+)
+def test_missing_binaries(hide_system_path, empty_file):
+    # Reading file
+    with pytest.raises(FileNotFoundError, match='ffmpeg'):
+        signal, sampling_rate = af.read(empty_file)
+    # Metadata
+    with pytest.raises(FileNotFoundError, match='mediainfo'):
+        af.sampling_rate(empty_file)
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])

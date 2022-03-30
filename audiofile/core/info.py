@@ -22,6 +22,12 @@ from audiofile.core.utils import (
 logging.getLogger('sox').setLevel(logging.CRITICAL)
 
 
+SOX_ERRORS = (
+    sox.core.SoxiError,
+    FileNotFoundError,  # sox binary missing
+)
+
+
 def bit_depth(file: str) -> typing.Optional[int]:
     r"""Bit depth of audio file.
 
@@ -89,7 +95,7 @@ def channels(file: str) -> int:
     else:
         try:
             return int(sox.file_info.channels(file))
-        except sox.core.SoxiError:
+        except SOX_ERRORS:
             # For MP4 stored and returned number of channels can be different
             cmd1 = f'mediainfo --Inform="Audio;%Channel(s)_Original%" "{file}"'
             cmd2 = f'mediainfo --Inform="Audio;%Channel(s)%" "{file}"'
@@ -147,7 +153,7 @@ def duration(file: str, sloppy=False) -> float:
                 duration = 0.0
 
             return duration
-        except sox.core.SoxiError:
+        except SOX_ERRORS:
             cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
             duration = run(cmd)
             if duration:
@@ -205,7 +211,7 @@ def sampling_rate(file: str) -> int:
     else:
         try:
             return int(sox.file_info.sample_rate(file))
-        except sox.core.SoxiError:
+        except SOX_ERRORS:
             cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
             sampling_rate = run(cmd)
             if sampling_rate:
