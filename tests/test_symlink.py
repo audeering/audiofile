@@ -12,6 +12,8 @@ def test_symlinks(tmpdir):
     print(command)
     assert os.path.exists(command)
     local_command = os.path.join(path, program)
+    if platform.system() == 'Windows':
+        local_command += '.EXE'
     os.symlink(command, local_command)
     # shutil.copyfile(command, local_command)
     assert os.path.exists(local_command)
