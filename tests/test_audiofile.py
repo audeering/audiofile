@@ -268,10 +268,10 @@ def test_broken_file(hide_sox, non_audio_file):
 )
 def test_missing_binaries(hide_system_path, empty_file):
     # Reading file
-    with pytest.raises(FileNotFoundError, match='ffmpeg'):
+    with pytest.raises(FileNotFoundError):
         signal, sampling_rate = af.read(empty_file)
     # Metadata
-    with pytest.raises(FileNotFoundError, match='mediainfo'):
+    with pytest.raises(FileNotFoundError):
         af.sampling_rate(empty_file)
 
 
