@@ -1,5 +1,6 @@
 from __future__ import division
 import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -73,10 +74,10 @@ def hide_sox(tmpdir, request):
         path = audeer.mkdir(os.path.join(tmpdir, 'bin'))
         for program in ['ffmpeg', 'mediainfo']:
             command = shutil.which(program)
-            if sys.platform == 'win32':
-                shutil.copyfile(command, os.path.join(path, program))
-            else:
-                os.symlink(command, os.path.join(path, program))
+            local_command = os.path.join(path, program)
+            if platform.system() == 'Windows':
+                local_command += '.EXE'
+            os.symlink(command, local_command)
         os.environ['PATH'] = path
 
     yield
