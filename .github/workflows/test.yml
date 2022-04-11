@@ -39,8 +39,9 @@ jobs:
       if: matrix.os == 'macOS-latest'
 
     - name: Windows
-      # run: choco install sox.portable ffmpeg mediainfo-cli
     - uses: s-weigand/setup-conda@v1
+      with:
+        activate-conda: false  # don't switch Python version
       run: |
         conda config --add channels conda-forge
         conda config --set channel_priority strict
