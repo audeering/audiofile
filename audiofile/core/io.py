@@ -31,7 +31,7 @@ def read(
 
     It uses :func:`soundfile.read` for WAV, FLAC, and OGG files.
     All other audio files are
-    first converted to WAV by sox or ffmpeg.
+    first converted to WAV by ffmpeg.
 
     Args:
         file: file name of input audio file

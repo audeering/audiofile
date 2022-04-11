@@ -2,8 +2,6 @@ import os
 import subprocess
 import shlex
 
-import sox
-
 import audeer
 
 
@@ -51,16 +49,6 @@ def run_ffmpeg(infile, outfile, offset, duration):
     else:
         cmd = f'ffmpeg -ss {offset} -i "{infile}" "{outfile}"'
     run(cmd)
-
-
-def run_sox(infile, outfile, offset, duration):
-    """Convert audio file to WAV file."""
-    tfm = sox.Transformer()
-    if duration:
-        tfm.trim(offset, duration + offset)
-    elif offset > 0:
-        tfm.trim(offset)
-    tfm.build(infile, outfile)
 
 
 MAX_CHANNELS = {

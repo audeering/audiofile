@@ -5,7 +5,6 @@ import tempfile
 import typing
 
 import soundfile
-import sox
 
 import audeer
 
@@ -16,10 +15,6 @@ from audiofile.core.utils import (
     run,
     SNDFORMATS,
 )
-
-
-# Disable warning outputs of sox as we use it with try
-logging.getLogger('sox').setLevel(logging.CRITICAL)
 
 
 def bit_depth(file: str) -> typing.Optional[int]:
@@ -87,19 +82,16 @@ def channels(file: str) -> int:
     if file_extension(file) in SNDFORMATS:
         return soundfile.info(file).channels
     else:
+        # For MP4 stored and returned number of channels can be different
+        cmd1 = f'mediainfo --Inform="Audio;%Channel(s)_Original%" "{file}"'
+        cmd2 = f'mediainfo --Inform="Audio;%Channel(s)%" "{file}"'
         try:
-            return int(sox.file_info.channels(file))
-        except sox.core.SoxiError:
-            # For MP4 stored and returned number of channels can be different
-            cmd1 = f'mediainfo --Inform="Audio;%Channel(s)_Original%" "{file}"'
-            cmd2 = f'mediainfo --Inform="Audio;%Channel(s)%" "{file}"'
+            return int(run(cmd1))
+        except ValueError:
             try:
-                return int(run(cmd1))
+                return int(run(cmd2))
             except ValueError:
-                try:
-                    return int(run(cmd2))
-                except ValueError:
-                    raise RuntimeError(broken_file_error(file))
+                raise RuntimeError(broken_file_error(file))
 
 
 def duration(file: str, sloppy=False) -> float:
@@ -141,18 +133,11 @@ def duration(file: str, sloppy=False) -> float:
         return soundfile.info(file).duration
 
     if sloppy:
-        try:
-            duration = sox.file_info.duration(file)
-            if duration is None:
-                duration = 0.0
-
-            return duration
-        except sox.core.SoxiError:
-            cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
-            duration = run(cmd)
-            if duration:
-                # Convert to seconds, as mediainfo returns milliseconds
-                return float(duration) / 1000
+        cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
+        duration = run(cmd)
+        if duration:
+            # Convert to seconds, as mediainfo returns milliseconds
+            return float(duration) / 1000
 
     return samples(file) / sampling_rate(file)
 
@@ -203,12 +188,9 @@ def sampling_rate(file: str) -> int:
     if file_extension(file) in SNDFORMATS:
         return soundfile.info(file).samplerate
     else:
-        try:
-            return int(sox.file_info.sample_rate(file))
-        except sox.core.SoxiError:
-            cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
-            sampling_rate = run(cmd)
-            if sampling_rate:
-                return int(sampling_rate)
-            else:
-                raise RuntimeError(broken_file_error(file))
+        cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
+        sampling_rate = run(cmd)
+        if sampling_rate:
+            return int(sampling_rate)
+        else:
+            raise RuntimeError(broken_file_error(file))

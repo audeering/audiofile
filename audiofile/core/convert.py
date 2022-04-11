@@ -1,19 +1,12 @@
 import logging
 import subprocess
 
-import sox
-
 import audeer
 
 from audiofile.core.utils import (
     broken_file_error,
     run_ffmpeg,
-    run_sox,
 )
-
-
-# Disable warning outputs of sox as we use it with try
-logging.getLogger('sox').setLevel(logging.CRITICAL)
 
 
 def convert_to_wav(
@@ -24,7 +17,7 @@ def convert_to_wav(
 ):
     """Convert any audio/video file to WAV.
 
-    It uses sox or ffmpeg for the conversion.
+    It uses ffmpeg for the conversion.
     If ``duration`` and/or ``offset`` are specified
     the resulting WAV file
     will be shorter accordingly to those values.
@@ -42,11 +35,7 @@ def convert_to_wav(
     infile = audeer.safe_path(infile)
     outfile = audeer.safe_path(outfile)
     try:
-        # Convert to WAV file with sox
-        run_sox(infile, outfile, offset, duration)
-    except (sox.core.SoxError, sox.core.SoxiError):
-        try:
-            # Convert to WAV file with ffmpeg
-            run_ffmpeg(infile, outfile, offset, duration)
-        except subprocess.CalledProcessError:
-            raise RuntimeError(broken_file_error(infile))
+        # Convert to WAV file with ffmpeg
+        run_ffmpeg(infile, outfile, offset, duration)
+    except subprocess.CalledProcessError:
+        raise RuntimeError(broken_file_error(infile))
