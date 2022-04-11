@@ -29,6 +29,7 @@ for package in ['read', 'info']:
         for ext in exts:
             z = df[df['ext'] == ext]
             best_time = 1000000
+            best_lib = None
             for lib in ['ar_mad', 'ar_ffmpeg', 'ar_gstreamer']:
                 z_lib = z.loc[z['lib'] == lib, :]
                 z_lib['lib'] = 'audioread'
@@ -37,7 +38,8 @@ for package in ['read', 'info']:
                 if current_time < best_time:
                     best_lib = z_lib
                     best_time = current_time
-            y = pd.concat([y, best_lib])
+            if best_lib is not None:
+                y = pd.concat([y, best_lib])
 
         common_libs = ['audiofile', 'soundfile', 'aubio', 'librosa']
         # Define what to show in each figure
