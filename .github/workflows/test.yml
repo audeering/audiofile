@@ -38,14 +38,20 @@ jobs:
       run: brew install sox ffmpeg mediainfo
       if: matrix.os == 'macOS-latest'
 
-    - name: Prepare Windows
+    - name: Activate conda on Windows
       uses: s-weigand/setup-conda@v1
       with:
         activate-conda: false  # don't switch Python version
+      if: matrix.os == 'windows-latest'
+
+    - name: Prepare Windows
       run: |
         conda config --add channels conda-forge
         conda config --set channel_priority strict
         conda install sox
+        conda install ffmpeg
+        conda install pymediainfo
+        # choco install ffmpeg mediainfo-cli
       if: matrix.os == 'windows-latest'
 
     - name: Install dependencies
