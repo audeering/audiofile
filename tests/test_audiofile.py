@@ -391,12 +391,6 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     )
     assert audeer.file_extension(mp3_file) == 'mp3'
     sig, fs = af.read(mp3_file)
-    assert_allclose(
-        _magnitude(sig),
-        magnitude,
-        rtol=0,
-        atol=tolerance(16),
-    )
     assert fs == sampling_rate
     assert _channels(sig) == channels
     if channels == 1:
