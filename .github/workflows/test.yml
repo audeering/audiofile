@@ -34,6 +34,8 @@ jobs:
         activate-conda: false  # don't switch Python version
 
     - name: Install sox using conda
+      # MP3 support under Linux and macOS, see
+      # https://github.com/conda-forge/sox-feedstock/pull/18
       run: |
         conda config --add channels conda-forge
         conda config --set channel_priority strict
