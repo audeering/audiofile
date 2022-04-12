@@ -25,9 +25,10 @@ jobs:
             python-version: 3.9
             tasks: tests
             sox: sox
-          #- os: ubuntu-latest
-          #  python-version: 3.8
-          #  tasks: docs
+          - os: ubuntu-latest
+            python-version: 3.8
+            tasks: docs
+            sox: sox
 
     steps:
     - uses: actions/checkout@v2
