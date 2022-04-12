@@ -15,16 +15,20 @@ jobs:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
         python-version: [ 3.8 ]
         tasks: [ tests ]
+        sox: [ true, false ]
         include:
           - os: ubuntu-latest
             python-version: 3.7
             tasks: tests
+            sox: true
           - os: ubuntu-latest
             python-version: 3.9
             tasks: tests
+            sox: true
           - os: ubuntu-20.04
             python-version: 3.8
             tasks: docs
+            sox: false
 
     steps:
     - uses: actions/checkout@v2
@@ -38,7 +42,7 @@ jobs:
       uses: s-weigand/setup-conda@v1
       with:
         activate-conda: false  # don't switch Python version
-      if: matrix.tasks == 'tests'
+      if: matrix.sox == true
 
     - name: Install sox using conda
       # MP3 support under Linux and macOS, see
@@ -47,19 +51,25 @@ jobs:
         conda config --add channels conda-forge
         conda config --set channel_priority strict
         conda install sox
-      if: matrix.tasks == 'tests'
+      if: matrix.sox == true
 
-    - name: Prepare Ubuntu
+    - name: Ubuntu: install libsndfile
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsndfile1
+      if matrix.sox == false
+
+    - name: Ubuntu: install ffmpeg/mediainfo
       run: |
         sudo apt-get update
         sudo apt-get install -y ffmpeg mediainfo
       if: matrix.os == 'ubuntu-latest' && matrix.tasks == 'tests'
 
-    - name: Prepare OSX
+    - name: OSX: install ffmpeg/mediainfo
       run: brew install ffmpeg mediainfo
       if: matrix.os == 'macOS-latest'
 
-    - name: Prepare Windows
+    - name: Windows: install ffmpeg/mediainfo
       run: choco install ffmpeg mediainfo-cli
       if: matrix.os == 'windows-latest'
 
