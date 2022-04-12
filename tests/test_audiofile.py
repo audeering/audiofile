@@ -411,11 +411,6 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
 @pytest.mark.parametrize('magnitude', [0.01])
 def test_mp3(tmpdir, magnitude, sampling_rate, channels):
 
-    # Currently we are not able to setup the Windows runner with MP3 support
-    # https://github.com/audeering/audiofile/issues/51
-    if sys.platform == 'win32':
-        return
-
     signal = sine(magnitude=magnitude,
                   sampling_rate=sampling_rate,
                   channels=channels)
