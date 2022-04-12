@@ -19,7 +19,7 @@ logging.getLogger('sox').setLevel(logging.CRITICAL)
 import sox  # noqa: E402
 
 
-def convert_to_wav(
+def convert(
         infile: str,
         outfile: str,
         offset: float = 0,
@@ -42,8 +42,6 @@ def convert_to_wav(
         RuntimeError: if ``file`` is broken or not a supported format
 
     """
-    infile = audeer.safe_path(infile)
-    outfile = audeer.safe_path(outfile)
     try:
         # Convert to WAV file with sox
         run_sox(infile, outfile, offset, duration)

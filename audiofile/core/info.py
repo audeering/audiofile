@@ -8,7 +8,7 @@ import soundfile
 
 import audeer
 
-from audiofile.core.convert import convert_to_wav
+from audiofile.core.convert import convert
 from audiofile.core.utils import (
     broken_file_error,
     file_extension,
@@ -190,7 +190,7 @@ def samples(file: str) -> int:
         # Always convert to WAV for non SNDFORMATS
         with tempfile.TemporaryDirectory(prefix='audiofile') as tmpdir:
             tmpfile = os.path.join(tmpdir, 'tmp.wav')
-            convert_to_wav(file, tmpfile)
+            convert(file, tmpfile)
             return samples_as_int(tmpfile)
 
 

@@ -71,6 +71,21 @@ def hide_system_path():
     os.environ['PATH'] = current_path
 
 
+def convert_to_mp3(infile, outfile, sampling_rate, channels):
+    """Convert file to MP3 using ffmpeg."""
+    subprocess.call(
+        [
+            'ffmpeg',
+            '-i', infile,
+            '-vn',
+            '-ar', str(sampling_rate),
+            '-ac', str(channels),
+            '-b:a', '192k',
+            outfile,
+        ]
+    )
+
+
 def tolerance(condition, sampling_rate=0):
     """Absolute tolerance for different condition."""
     tol = 0
@@ -133,6 +148,36 @@ def _duration(signal, sampling_rate):
 
 def _magnitude(signal):
     return np.max(np.abs(signal))
+
+
+@pytest.mark.parametrize(
+    'file_extension',
+    ['wav', 'flac', 'ogg', 'mp3'],
+)
+def test_convert_to_wav(tmpdir, file_extension):
+    sampling_rate = 8000
+    channels = 1
+    signal = sine(
+        duration=0.1,
+        sampling_rate=sampling_rate,
+        channels=channels,
+    )
+    infile = str(tmpdir.join(f'signal.{file_extension}'))
+    if file_extension == 'mp3':
+        tmpfile = str(tmpdir.join('signal-tmp.wav'))
+        af.write(tmpfile, signal, sampling_rate)
+        convert_to_mp3(tmpfile, infile, sampling_rate, channels)
+    else:
+        af.write(infile, signal, sampling_rate)
+    outfile = str(tmpdir.join('signal_converted.wav'))
+    af.convert_to_wav(infile, outfile)
+    converted_signal, converted_sampling_rate = af.read(outfile)
+    assert converted_sampling_rate == sampling_rate
+    # Don't compare signals for MP3 as duration differs as well
+    if file_extension == 'ogg':
+        assert np.abs(converted_signal - signal).max() < 0.06
+    elif file_extension in ['wav', 'flac']:
+        assert np.abs(converted_signal - signal).max() < 0.0001
 
 
 @pytest.mark.parametrize('duration', [-1.0, -1, 0, 0.0])
@@ -378,17 +423,7 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     wav_file = str(tmpdir.join('signal.wav'))
     mp3_file = str(tmpdir.join('signal.mp3'))
     af.write(wav_file, signal, sampling_rate)
-    subprocess.call(
-        [
-            'ffmpeg',
-            '-i', wav_file,
-            '-vn',
-            '-ar', str(sampling_rate),
-            '-ac', str(channels),
-            '-b:a', '192k',
-            mp3_file,
-        ]
-    )
+    convert_to_mp3(wav_file, mp3_file, sampling_rate, channels)
     assert audeer.file_extension(mp3_file) == 'mp3'
     sig, fs = af.read(mp3_file)
     assert fs == sampling_rate
