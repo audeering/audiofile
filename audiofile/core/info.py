@@ -152,16 +152,15 @@ def duration(file: str, sloppy=False) -> float:
 
     if sloppy:
         try:
-            duration = sox.file_info.duration(file)
+            duration = sox.file_info.duration(file) or 0.0
         except SOX_ERRORS:
             cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
             duration = run(cmd)
             if duration:
                 # Convert to seconds, as mediainfo returns milliseconds
                 duration = float(duration) / 1000
-        if duration is None:
-            duration = 0.0
-        return duration
+        if duration:
+            return duration
 
     return samples(file) / sampling_rate(file)
 
