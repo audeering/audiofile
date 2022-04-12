@@ -16,7 +16,7 @@ logging.getLogger('sox').setLevel(logging.CRITICAL)
 
 # Import sox after disabling warning
 # as it is ok to not have the binary present
-import sox  # pragma: E402
+import sox  # noqa: E402
 
 
 def convert_to_wav(

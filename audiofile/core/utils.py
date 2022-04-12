@@ -2,9 +2,16 @@ import os
 import subprocess
 import shlex
 
-import sox
-
 import audeer
+
+
+# Disable warning outputs of sox as we use it with try
+logging.getLogger('sox').setLevel(logging.CRITICAL)
+
+
+# Import sox after disabling warning
+# as it is ok to not have the binary present
+import sox  # noqa: E402
 
 
 def broken_file_error(file: str) -> str:
