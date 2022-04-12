@@ -1,8 +1,6 @@
 import logging
 import subprocess
 
-import sox
-
 import audeer
 
 from audiofile.core.utils import (
@@ -14,6 +12,11 @@ from audiofile.core.utils import (
 
 # Disable warning outputs of sox as we use it with try
 logging.getLogger('sox').setLevel(logging.CRITICAL)
+
+
+# Import sox after disabling warning
+# as it is ok to not have the binary present
+import sox  # pragma: E402
 
 
 def convert_to_wav(
