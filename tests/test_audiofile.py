@@ -61,31 +61,6 @@ def non_audio_file(tmpdir, request):
 
 
 @pytest.fixture(scope='function')
-def hide_sox(tmpdir, request):
-    """Fixture to hide sox in test.
-
-    ffmpeg and mediainfo are still available.
-
-    """
-    hide = request.param
-    current_path = os.environ['PATH']
-
-    if hide:
-        path = audeer.mkdir(os.path.join(tmpdir, 'bin'))
-        for program in ['ffmpeg', 'mediainfo']:
-            command = shutil.which(program)
-            local_command = os.path.join(path, program)
-            if platform.system() == 'Windows':
-                local_command += '.EXE'
-            os.symlink(command, local_command)
-        os.environ['PATH'] = path
-
-    yield
-
-    os.environ['PATH'] = current_path
-
-
-@pytest.fixture(scope='function')
 def hide_system_path():
     """Fixture to hide system path in test."""
     current_path = os.environ['PATH']
@@ -180,16 +155,11 @@ def test_read(tmpdir, duration, offset):
 
 
 @pytest.mark.parametrize(
-    'hide_sox',
-    (True, False),
-    indirect=True,
-)
-@pytest.mark.parametrize(
     'empty_file',
     ('bin', 'mp3', 'wav'),
     indirect=True,
 )
-def test_empty_file(hide_sox, empty_file):
+def test_empty_file(empty_file):
     # Reading file
     signal, sampling_rate = af.read(empty_file)
     assert len(signal) == 0
@@ -206,11 +176,6 @@ def test_empty_file(hide_sox, empty_file):
 
 
 @pytest.mark.parametrize(
-    'hide_sox',
-    (True, False),
-    indirect=True,
-)
-@pytest.mark.parametrize(
     'ext, expected_error',
     [
         ('bin', OSError),
@@ -218,7 +183,7 @@ def test_empty_file(hide_sox, empty_file):
         ('wav', RuntimeError),
     ],
 )
-def test_missing_file(hide_sox, ext, expected_error):
+def test_missing_file(ext, expected_error):
     missing_file = f'missing_file.{ext}'
     # Reading file
     with pytest.raises(expected_error):
@@ -229,16 +194,11 @@ def test_missing_file(hide_sox, ext, expected_error):
 
 
 @pytest.mark.parametrize(
-    'hide_sox',
-    (True, False),
-    indirect=True,
-)
-@pytest.mark.parametrize(
     'non_audio_file',
     ('bin', 'mp3', 'wav'),
     indirect=True,
 )
-def test_broken_file(hide_sox, non_audio_file):
+def test_broken_file(non_audio_file):
     # Only match the beginning of error message
     # as the default soundfile message differs at the end on macOS
     error_msg = 'Error opening'
