@@ -17,13 +17,15 @@ from audiofile.core.utils import (
 )
 
 
-# Disable warning outputs of sox as we use it with try
-logging.getLogger('sox').setLevel(logging.CRITICAL)
-
-
 # Import sox after disabling warning
 # as it is ok to not have the binary present
+logging.disable(logging.WARNING)
 import sox  # noqa: E402
+logging.disable(logging.NOTSET)
+
+
+# Disable warning outputs of sox as we use it with try
+logging.getLogger('sox').setLevel(logging.CRITICAL)
 
 
 SOX_ERRORS = (
