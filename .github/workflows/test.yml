@@ -15,6 +15,7 @@ jobs:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
         python-version: [ 3.8 ]
         tasks: [ tests ]
+        sox: [ sox, no-sox ]
         include:
           - os: ubuntu-latest
             python-version: 3.7
@@ -40,6 +41,7 @@ jobs:
       uses: s-weigand/setup-conda@v1
       with:
         activate-conda: false  # don't switch Python version
+      if: matrix.sox == 'sox'
 
     - name: Install sox using conda
       # MP3 support under Linux and macOS, see
@@ -48,12 +50,13 @@ jobs:
         conda config --add channels conda-forge
         conda config --set channel_priority strict
         conda install sox
+      if: matrix.sox == 'sox'
 
-    #- name: Ubuntu - install libsndfile
-    #  run: |
-    #    sudo apt-get update
-    #    sudo apt-get install -y libsndfile1
-    #  if: matrix.os == 'ubuntu-latest' && matrix.sox == 'no-sox'
+    - name: Ubuntu - install libsndfile
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsndfile1
+      if: matrix.os == 'ubuntu-latest' && matrix.sox == 'no-sox'
 
     - name: Ubuntu - install ffmpeg/mediainfo
       run: |
