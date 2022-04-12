@@ -57,7 +57,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libsndfile1
-      if: matrix.os == 'ubuntu-latest' && matrix.sox == 'no-sox'
+      if: matrix.os == 'ubuntu-latest' && matrix.tasks == 'docs'
 
     - name: Ubuntu - install ffmpeg/mediainfo
       run: |
