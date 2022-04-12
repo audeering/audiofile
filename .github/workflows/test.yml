@@ -12,14 +12,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # Ubuntu 18.04: build documentation without sox/ffmpeg
-        os: [ ubuntu-18.04, ubuntu-20.04, macOS-latest, windows-latest ]
-        python-version: [3.8]
+        os: [ ubuntu-latest, macOS-latest, windows-latest ]
+        python-version: [ 3.8 ]
+        tasks: [ tests ]
         include:
           - os: ubuntu-latest
             python-version: 3.7
+            tasks: tests
           - os: ubuntu-latest
             python-version: 3.9
+            tasks: tests
+          - os: ubuntu-20.04
+            python-version: 3.8
+            tasks: docs
 
     steps:
     - uses: actions/checkout@v2
@@ -33,6 +38,7 @@ jobs:
       uses: s-weigand/setup-conda@v1
       with:
         activate-conda: false  # don't switch Python version
+      if: matrix.tasks == 'tests'
 
     - name: Install sox using conda
       # MP3 support under Linux and macOS, see
@@ -41,13 +47,13 @@ jobs:
         conda config --add channels conda-forge
         conda config --set channel_priority strict
         conda install sox
-      if: matrix.os != 'ubuntu-18-04'
+      if: matrix.tasks == 'tests'
 
     - name: Prepare Ubuntu
       run: |
         sudo apt-get update
         sudo apt-get install -y ffmpeg mediainfo
-      if: matrix.os == 'ubuntu-latest' || matrix.os == 'ubuntu-20.04'
+      if: matrix.os == 'ubuntu-latest' && matrix.tasks == 'tests'
 
     - name: Prepare OSX
       run: brew install ffmpeg mediainfo
@@ -66,19 +72,19 @@ jobs:
 
     - name: Test with pytest
       run: python -m pytest
-      if: matrix.os != 'ubuntu-18-04'
+      if: matrix.tasks == 'tests'
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
-      if: matrix.os == 'ubuntu-20.04'
+      if: matrix.os == 'ubuntu-latest' && matrix.tasks == 'tests'
 
     - name: Test building documentation
       run: python -m sphinx docs/ docs/_build/ -b html -W
-      if: matrix.os == 'ubuntu-18.04'
+      if: matrix.tasks == 'docs'
 
     - name: Check links in documentation
       run: python -m sphinx docs/ docs/_build/ -b linkcheck -W
-      if: matrix.os == 'ubuntu-18.04'
+      if: matrix.tasks == 'docs'
