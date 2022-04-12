@@ -3,11 +3,11 @@ Installation
 
 :mod:`audiofile` supports WAV, FLAC, OGG out of the box.
 In order to handle all possible audio files,
-please make sure ffmpeg_,
-sox_
-(with MP3 support for best performance),
+please make sure ffmpeg_
 and mediainfo_
-are installed on your system,
+are installed on your system.
+For faster access of MP3 files,
+please install sox_ with MP3 bindings as well,
 e.g.
 
 .. code-block:: bash
