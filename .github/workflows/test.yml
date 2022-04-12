@@ -25,7 +25,7 @@ jobs:
             python-version: 3.9
             tasks: tests
             sox: true
-          - os: ubuntu-20.04
+          - os: ubuntu-latest
             python-version: 3.8
             tasks: docs
             sox: false
@@ -57,7 +57,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libsndfile1
-      if: matrix.sox == false
+      if: matrix.os == 'ubuntu-latest' && matrix.sox == false
 
     - name: Ubuntu - install ffmpeg/mediainfo
       run: |
