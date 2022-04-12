@@ -15,13 +15,6 @@ from audiofile.core.utils import (
     run,
     SNDFORMATS,
 )
-from audiofile.core.sox import sox
-
-
-SOX_ERRORS = (
-    sox.core.SoxiError,
-    FileNotFoundError,  # sox binary missing
-)
 
 
 def bit_depth(file: str) -> typing.Optional[int]:
@@ -90,6 +83,11 @@ def channels(file: str) -> int:
         return soundfile.info(file).channels
     else:
         try:
+            from audiofile.core.sox import sox
+            SOX_ERRORS = (
+                sox.core.SoxiError,
+                FileNotFoundError,  # sox binary missing
+            )
             return int(sox.file_info.channels(file))
         except SOX_ERRORS:
             # For MP4 stored and returned number of channels can be different
@@ -144,6 +142,11 @@ def duration(file: str, sloppy=False) -> float:
 
     if sloppy:
         try:
+            from audiofile.core.sox import sox
+            SOX_ERRORS = (
+                sox.core.SoxiError,
+                FileNotFoundError,  # sox binary missing
+            )
             duration = sox.file_info.duration(file) or 0.0
         except SOX_ERRORS:
             cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
@@ -204,6 +207,11 @@ def sampling_rate(file: str) -> int:
         return soundfile.info(file).samplerate
     else:
         try:
+            from audiofile.core.sox import sox
+            SOX_ERRORS = (
+                sox.core.SoxiError,
+                FileNotFoundError,  # sox binary missing
+            )
             return int(sox.file_info.sample_rate(file))
         except SOX_ERRORS:
             cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'

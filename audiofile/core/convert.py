@@ -8,7 +8,6 @@ from audiofile.core.utils import (
     run_ffmpeg,
     run_sox,
 )
-from audiofile.core.sox import sox
 
 
 def convert(
@@ -36,6 +35,7 @@ def convert(
     """
     try:
         # Convert to WAV file with sox
+        from audiofile.core.sox import sox
         run_sox(infile, outfile, offset, duration)
     except (
             sox.core.SoxError,

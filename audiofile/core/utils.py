@@ -4,8 +4,6 @@ import shlex
 
 import audeer
 
-from audiofile.core.sox import sox
-
 
 def broken_file_error(file: str) -> str:
     r"""Broken file error message.
@@ -55,6 +53,7 @@ def run_ffmpeg(infile, outfile, offset, duration):
 
 def run_sox(infile, outfile, offset, duration):
     """Convert audio file to WAV file."""
+    from audiofile.core.sox import sox
     tfm = sox.Transformer()
     if duration:
         tfm.trim(offset, duration + offset)
