@@ -27,7 +27,8 @@ def convert_to_wav(
 ):
     """Convert any audio/video file to WAV.
 
-    It uses sox or ffmpeg for the conversion.
+    It uses soundfile for converting WAV, FLAC, OGG files,
+    and sox or ffmpeg for converting all other files.
     If ``duration`` and/or ``offset`` are specified
     the resulting WAV file
     will be shorter accordingly to those values.
