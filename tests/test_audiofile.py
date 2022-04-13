@@ -261,7 +261,7 @@ def test_convert_to_wav(tmpdir, file_extension):
     if file_extension == 'mp3':
         tmpfile = str(tmpdir.join('signal-tmp.wav'))
         af.write(tmpfile, signal, sampling_rate)
-        convert_to_mp3(tmpfile, infile)
+        convert_to_mp3(tmpfile, infile, sampling_rate, channels)
     else:
         af.write(infile, signal, sampling_rate)
     outfile = str(tmpdir.join('signal_converted.wav'))
@@ -273,7 +273,6 @@ def test_convert_to_wav(tmpdir, file_extension):
         assert np.abs(converted_signal - signal).max() < 0.06
     elif file_extension in ['wav', 'flac']:
         assert np.abs(converted_signal - signal).max() < 0.0001
->>>>>>> Use soundfile for SND files in convert_to_wav()
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])
