@@ -15,16 +15,20 @@ jobs:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
         python-version: [ 3.8 ]
         tasks: [ tests ]
+        sox: [ sox, no-sox ]  # sox binary present or not
         include:
           - os: ubuntu-latest
             python-version: 3.7
             tasks: tests
+            sox: sox
           - os: ubuntu-latest
             python-version: 3.9
             tasks: tests
+            sox: sox
           - os: ubuntu-latest
             python-version: 3.8
             tasks: docs
+            sox: sox
 
     steps:
     - uses: actions/checkout@v2
@@ -38,6 +42,7 @@ jobs:
       uses: s-weigand/setup-conda@v1
       with:
         activate-conda: false  # don't switch Python version
+      if: matrix.sox == 'sox'
 
     - name: Install sox using conda
       # MP3 support under Linux and macOS, see
@@ -46,6 +51,7 @@ jobs:
         conda config --add channels conda-forge
         conda config --set channel_priority strict
         conda install sox
+      if: matrix.sox == 'sox'
 
     - name: Prepare Ubuntu
       run: |
