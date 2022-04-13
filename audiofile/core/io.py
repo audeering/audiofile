@@ -40,8 +40,6 @@ def convert_to_wav(
         offset: start reading at offset in seconds
 
     Raises:
-        FileNotFoundError: if the ffmpeg binary is needed,
-            but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
