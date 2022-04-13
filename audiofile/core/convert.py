@@ -1,8 +1,6 @@
 import logging
 import subprocess
 
-import sox
-
 import audeer
 
 from audiofile.core.utils import (
@@ -10,10 +8,6 @@ from audiofile.core.utils import (
     run_ffmpeg,
     run_sox,
 )
-
-
-# Disable warning outputs of sox as we use it with try
-logging.getLogger('sox').setLevel(logging.CRITICAL)
 
 
 def convert(
@@ -42,8 +36,9 @@ def convert(
     """
     try:
         # Convert to WAV file with sox
+        from audiofile.core.sox import SOX_ERRORS
         run_sox(infile, outfile, offset, duration)
-    except (sox.core.SoxError, sox.core.SoxiError):
+    except SOX_ERRORS:
         try:
             # Convert to WAV file with ffmpeg
             run_ffmpeg(infile, outfile, offset, duration)

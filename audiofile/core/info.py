@@ -5,7 +5,6 @@ import tempfile
 import typing
 
 import soundfile
-import sox
 
 import audeer
 
@@ -16,10 +15,6 @@ from audiofile.core.utils import (
     run,
     SNDFORMATS,
 )
-
-
-# Disable warning outputs of sox as we use it with try
-logging.getLogger('sox').setLevel(logging.CRITICAL)
 
 
 def bit_depth(file: str) -> typing.Optional[int]:
@@ -90,8 +85,9 @@ def channels(file: str) -> int:
         return soundfile.info(file).channels
     else:
         try:
+            from audiofile.core.sox import sox, SOX_ERRORS
             return int(sox.file_info.channels(file))
-        except sox.core.SoxiError:
+        except SOX_ERRORS:
             # For MP4 stored and returned number of channels can be different
             cmd1 = f'mediainfo --Inform="Audio;%Channel(s)_Original%" "{file}"'
             cmd2 = f'mediainfo --Inform="Audio;%Channel(s)%" "{file}"'
@@ -147,19 +143,19 @@ def duration(file: str, sloppy=False) -> float:
 
     if sloppy:
         try:
-            duration = sox.file_info.duration(file)
-            if duration is None:
-                duration = 0.0
-
-            return duration
-        except sox.core.SoxiError:
+            from audiofile.core.sox import sox, SOX_ERRORS
+            duration = sox.file_info.duration(file) or 0.0
+        except SOX_ERRORS:
             cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
             duration = run(cmd)
             if duration:
                 # Convert to seconds, as mediainfo returns milliseconds
-                return float(duration) / 1000
+                duration = float(duration) / 1000
         except OSError:
             raise RuntimeError(broken_file_error(file))
+        if duration:
+            return duration
+
     return samples(file) / sampling_rate(file)
 
 
@@ -212,8 +208,9 @@ def sampling_rate(file: str) -> int:
         return soundfile.info(file).samplerate
     else:
         try:
+            from audiofile.core.sox import sox, SOX_ERRORS
             return int(sox.file_info.sample_rate(file))
-        except sox.core.SoxiError:
+        except SOX_ERRORS:
             cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
             sampling_rate = run(cmd)
             if sampling_rate:
