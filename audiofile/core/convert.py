@@ -36,7 +36,8 @@ def convert_to_wav(
         offset: start reading at offset in seconds
 
     Raises:
-        RuntimeError: if ``file`` is broken or not a supported format
+        RuntimeError: if ``file`` is missing,
+            broken or not a supported format
 
     """
     infile = audeer.safe_path(infile)
@@ -50,3 +51,5 @@ def convert_to_wav(
             run_ffmpeg(infile, outfile, offset, duration)
         except subprocess.CalledProcessError:
             raise RuntimeError(broken_file_error(infile))
+    except OSError:
+        raise RuntimeError(broken_file_error(infile))
