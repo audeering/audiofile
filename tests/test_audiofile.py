@@ -40,6 +40,17 @@ def empty_file(tmpdir, request):
 
 
 @pytest.fixture(scope='function')
+def hide_system_path():
+    """Fixture to hide system path in test."""
+    current_path = os.environ['PATH']
+    os.environ['PATH'] = ''
+
+    yield
+
+    os.environ['PATH'] = current_path
+
+
+@pytest.fixture(scope='function')
 def non_audio_file(tmpdir, request):
     """Fixture to generate broken audio files.
 
@@ -184,6 +195,31 @@ def test_empty_file(tmpdir, convert, empty_file):
         assert af.bit_depth(empty_file) == 16
     else:
         assert af.bit_depth(empty_file) is None
+
+
+@pytest.mark.parametrize(
+    'empty_file',
+    ('bin', 'mp3'),
+    indirect=True,
+)
+def test_missing_binaries(tmpdir, hide_system_path, empty_file):
+    expected_error = FileNotFoundError
+    # Reading file
+    with pytest.raises(expected_error):
+        signal, sampling_rate = af.read(empty_file)
+    # Metadata
+    with pytest.raises(expected_error):
+        af.sampling_rate(empty_file)
+    with pytest.raises(expected_error):
+        af.duration(empty_file)
+    with pytest.raises(expected_error):
+        af.duration(empty_file, sloppy=True)
+    with pytest.raises(expected_error):
+        af.channels(empty_file)
+    # Convert
+    with pytest.raises(expected_error):
+        converted_file = str(tmpdir.join('signal-converted.wav'))
+        af.convert_to_wav(empty_file, converted_file)
 
 
 @pytest.mark.parametrize(

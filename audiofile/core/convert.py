@@ -4,6 +4,7 @@ import subprocess
 import audeer
 
 from audiofile.core.utils import (
+    binary_missing_error,
     broken_file_error,
     run_ffmpeg,
     run_sox,
@@ -33,6 +34,8 @@ def convert(
         try:
             # Convert to WAV file with ffmpeg
             run_ffmpeg(infile, outfile, offset, duration)
+        except FileNotFoundError:
+            raise RuntimeError(binary_missing_error('ffmpeg'))
         except subprocess.CalledProcessError:
             raise RuntimeError(broken_file_error(infile))
     except OSError:
