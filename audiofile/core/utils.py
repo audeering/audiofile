@@ -16,8 +16,8 @@ def binary_missing_error(binary: str) -> Exception:
 
     """
     return FileNotFoundError(
-        f'{binary} cannot be found. '
-        'Please make sure it is installed. '
+        f'{binary} cannot be found.\n'
+        'Please make sure it is installed.\n'
         'For further instructions visit: '
         'https://audeering.github.io/audiofile/installation.html'
     )
