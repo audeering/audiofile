@@ -76,7 +76,9 @@ def convert_to_mp3(infile, outfile, sampling_rate, channels):
 def tolerance(condition, sampling_rate=0):
     """Absolute tolerance for different condition."""
     tol = 0
-    if condition == 16:
+    if condition == 8:
+        tol = 2 ** -7
+    elif condition == 16:
         tol = 2 ** -11  # half precision
     elif condition == 24:
         tol = 2 ** -17  # to be checked
@@ -245,11 +247,12 @@ def test_broken_file(tmpdir, non_audio_file):
         af.convert_to_wav(non_audio_file, converted_file)
 
 
+@pytest.mark.parametrize("bit_depth", [8, 16, 24])
 @pytest.mark.parametrize(
     'file_extension',
     ('wav', 'flac', 'ogg', 'mp3'),
 )
-def test_convert_to_wav(tmpdir, file_extension):
+def test_convert_to_wav(tmpdir, bit_depth, file_extension):
     sampling_rate = 8000
     channels = 1
     signal = sine(
@@ -260,19 +263,24 @@ def test_convert_to_wav(tmpdir, file_extension):
     infile = str(tmpdir.join(f'signal.{file_extension}'))
     if file_extension == 'mp3':
         tmpfile = str(tmpdir.join('signal-tmp.wav'))
-        af.write(tmpfile, signal, sampling_rate)
+        af.write(tmpfile, signal, sampling_rate, bit_depth=bit_depth)
         convert_to_mp3(tmpfile, infile, sampling_rate, channels)
     else:
-        af.write(infile, signal, sampling_rate)
+        af.write(infile, signal, sampling_rate, bit_depth=bit_depth)
     outfile = str(tmpdir.join('signal_converted.wav'))
     af.convert_to_wav(infile, outfile)
     converted_signal, converted_sampling_rate = af.read(outfile)
     assert converted_sampling_rate == sampling_rate
-    # Don't compare signals for MP3 as duration differs as well
-    if file_extension == 'ogg':
+    if file_extension == 'mp3':
+        assert af.bit_depth(outfile) == 16
+        # Don't compare signals for MP3
+        # as duration differs as well
+    elif file_extension == 'ogg':
+        assert af.bit_depth(outfile) == 16
         assert np.abs(converted_signal - signal).max() < 0.06
     elif file_extension in ['wav', 'flac']:
-        assert np.abs(converted_signal - signal).max() < 0.0001
+        assert af.bit_depth(outfile) == bit_depth
+        assert np.abs(converted_signal - signal).max() < tolerance(bit_depth)
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])
