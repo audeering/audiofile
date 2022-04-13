@@ -68,7 +68,7 @@ jobs:
 
     # TESTS
     - name: Install tests requirements
-        pip install -r tests/requirements.txt
+      run: pip install -r tests/requirements.txt
       if: matrix.tasks == 'tests'
 
     - name: Test with pytest
@@ -84,8 +84,7 @@ jobs:
 
     # DOCS
     - name: Install docs requirements
-      run: |
-        pip install -r docs/requirements.txt
+      run: pip install -r docs/requirements.txt
       if: matrix.tasks == 'docs'
 
     - name: Test building documentation
