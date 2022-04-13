@@ -1,13 +1,12 @@
 from __future__ import division
 import os
 import subprocess
-import sys
 import tempfile
 
 import pytest
 import numpy as np
 from numpy.testing import assert_allclose
-import sox
+import soundfile
 
 import audeer
 import audiofile as af
@@ -264,16 +263,24 @@ def test_wav(tmpdir, bit_depth, duration, sampling_rate, channels, always_2d):
     )
     # Expected number of samples
     samples = int(np.ceil(duration * sampling_rate))
-    # Compare with sox implementation to check write()
-    assert_allclose(sox.file_info.duration(file), duration,
-                    rtol=0, atol=tolerance('duration', sampling_rate))
-    assert sox.file_info.sample_rate(file) == sampling_rate
-    assert sox.file_info.channels(file) == channels
-    assert sox.file_info.num_samples(file) == samples
-    assert sox.file_info.bitdepth(file) == bit_depth
+    # Compare with soundfile implementation to check write()
+    info = soundfile.info(file)
+    assert_allclose(
+        info.duration,
+        duration,
+        rtol=0,
+        atol=tolerance('duration', sampling_rate),
+    )
+    assert info.samplerate == sampling_rate
+    assert info.channels == channels
+    assert info.frames == samples
     # Compare with signal values to check read()
-    assert_allclose(_duration(sig, fs), duration,
-                    rtol=0, atol=tolerance('duration', sampling_rate))
+    assert_allclose(
+        _duration(sig, fs),
+        duration,
+        rtol=0,
+        atol=tolerance('duration', sampling_rate),
+    )
     assert fs == sampling_rate
     assert _channels(sig) == channels
     assert _samples(sig) == samples
@@ -329,41 +336,36 @@ def test_magnitude(tmpdir, magnitude, normalize, bit_depth, sampling_rate):
 @pytest.mark.parametrize("channels", [1, 2, 8, 255])
 @pytest.mark.parametrize('magnitude', [0.01])
 def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
-    use_sox = True
     file = str(tmpdir.join('signal.' + file_type))
-    signal = sine(magnitude=magnitude,
-                  sampling_rate=sampling_rate,
-                  channels=channels)
+    signal = sine(
+        magnitude=magnitude,
+        sampling_rate=sampling_rate,
+        channels=channels,
+    )
     # Skip unallowed combination
     if file_type == 'flac' and channels > 8:
         return 0
-    # Windows runners sox does not support flac
-    if sys.platform == 'win32' and file_type in ['flac', 'ogg']:
-        use_sox = False
     # Allowed combinations
     bit_depth = 16
     sig, fs = write_and_read(file, signal, sampling_rate, bit_depth=bit_depth)
     # Test file type
     assert audeer.file_extension(file) == file_type
     # Test magnitude
-    assert_allclose(_magnitude(sig), magnitude,
-                    rtol=0, atol=tolerance(16))
-    # Test sampling rate
+    assert_allclose(
+        _magnitude(sig),
+        magnitude,
+        rtol=0,
+        atol=tolerance(16),
+    )
+    # Test metadata
+    info = soundfile.info(file)
     assert fs == sampling_rate
-    if use_sox:
-        assert sox.file_info.sample_rate(file) == sampling_rate
-    # Test channels
+    assert info.samplerate == sampling_rate
     assert _channels(sig) == channels
-    if use_sox:
-        assert sox.file_info.channels(file) == channels
-    # Test samples
+    assert info.channels == channels
     assert _samples(sig) == _samples(signal)
-    if use_sox:
-        assert sox.file_info.num_samples(file) == _samples(signal)
-    # Test bit depth
-    if use_sox:
-        bit_depth = sox.file_info.bitdepth(file)
-    elif file_type == 'ogg':
+    assert info.frames == _samples(signal)
+    if file_type == 'ogg':
         bit_depth = None
     assert af.bit_depth(file) == bit_depth
 
@@ -376,7 +378,7 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     signal = sine(magnitude=magnitude,
                   sampling_rate=sampling_rate,
                   channels=channels)
-    # Create wav file and use sox to convert to mp3
+    # Create wav file and use ffmpeg to convert to mp3
     wav_file = str(tmpdir.join('signal.wav'))
     mp3_file = str(tmpdir.join('signal.mp3'))
     af.write(wav_file, signal, sampling_rate)
@@ -401,7 +403,7 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     )
     assert af.bit_depth(mp3_file) is None
 
-    # Test additional arguments to read with sox
+    # Test additional arguments to read MP3 files
     offset = 0.1
     duration = 0.5
     sig, fs = af.read(mp3_file, offset=offset, duration=duration)
