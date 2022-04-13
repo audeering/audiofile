@@ -28,7 +28,7 @@ jobs:
           - os: ubuntu-latest
             python-version: 3.8
             tasks: docs
-            sox: sox
+            sox: no-sox
 
     steps:
     - uses: actions/checkout@v2
