@@ -31,7 +31,7 @@ def convert_to_wav(
     and sox or ffmpeg for converting all other files.
     If ``duration`` and/or ``offset`` are specified
     the resulting WAV file
-    will be shorter accordingly to those values.
+    will be shortened accordingly.
 
     Args:
         infile: audio/video file name
