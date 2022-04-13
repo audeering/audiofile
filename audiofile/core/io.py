@@ -57,7 +57,7 @@ def read(
 
     Raises:
         RuntimeError: if ``file`` is missing,
-            broken or not a supported format
+            broken or format is not supported
 
     """
     file = audeer.safe_path(file)

@@ -36,7 +36,7 @@ def bit_depth(file: str) -> typing.Optional[int]:
 
     Raises:
         RuntimeError: if ``file`` is missing,
-            broken or not a supported format
+            broken or format is not supported
 
     """
     file = audeer.safe_path(file)
@@ -82,7 +82,7 @@ def channels(file: str) -> int:
 
     Raises:
         RuntimeError: if ``file`` is missing,
-            broken or not a supported format
+            broken or format is not supported
 
     """
     file = audeer.safe_path(file)
@@ -138,7 +138,7 @@ def duration(file: str, sloppy=False) -> float:
 
     Raises:
         RuntimeError: if ``file`` is missing,
-            broken or not a supported format
+            broken or format is not supported
 
     """
     file = audeer.safe_path(file)
@@ -174,7 +174,7 @@ def samples(file: str) -> int:
 
     Raises:
         RuntimeError: if ``file`` is missing,
-            broken or not a supported format
+            broken or format is not supported
 
     """
     def samples_as_int(file):
@@ -204,7 +204,7 @@ def sampling_rate(file: str) -> int:
 
     Raises:
         RuntimeError: if ``file`` is missing,
-            broken or not a supported format
+            broken or format is not supported
 
     """
     file = audeer.safe_path(file)
