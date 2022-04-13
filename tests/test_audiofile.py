@@ -58,6 +58,21 @@ def non_audio_file(tmpdir, request):
         os.remove(broken_file)
 
 
+def convert_to_mp3(infile, outfile, sampling_rate, channels):
+    """Convert file to MP3 using ffmpeg."""
+    subprocess.call(
+        [
+            'ffmpeg',
+            '-i', infile,
+            '-vn',
+            '-ar', str(sampling_rate),
+            '-ac', str(channels),
+            '-b:a', '192k',
+            outfile,
+        ]
+    )
+
+
 def tolerance(condition, sampling_rate=0):
     """Absolute tolerance for different condition."""
     tol = 0
@@ -336,11 +351,6 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
 @pytest.mark.parametrize('magnitude', [0.01])
 def test_mp3(tmpdir, magnitude, sampling_rate, channels):
 
-    # Currently we are not able to setup the Windows runner with MP3 support
-    # https://github.com/audeering/audiofile/issues/51
-    if sys.platform == 'win32':
-        return
-
     signal = sine(magnitude=magnitude,
                   sampling_rate=sampling_rate,
                   channels=channels)
@@ -348,7 +358,7 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     wav_file = str(tmpdir.join('signal.wav'))
     mp3_file = str(tmpdir.join('signal.mp3'))
     af.write(wav_file, signal, sampling_rate)
-    subprocess.call(['sox', wav_file, mp3_file])
+    convert_to_mp3(wav_file, mp3_file, sampling_rate, channels)
     assert audeer.file_extension(mp3_file) == 'mp3'
     sig, fs = af.read(mp3_file)
     assert_allclose(_magnitude(sig), magnitude,
