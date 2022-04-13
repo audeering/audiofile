@@ -10,13 +10,53 @@ import soundfile
 
 import audeer
 
-from audiofile.core.convert import convert_to_wav
-from audiofile.core.info import sampling_rate
+from audiofile.core.convert import convert
+import audiofile.core.info as info
 from audiofile.core.utils import (
     file_extension,
     MAX_CHANNELS,
     SNDFORMATS,
 )
+
+
+def convert_to_wav(
+        infile: str,
+        outfile: str,
+        offset: float = 0,
+        duration: float = None,
+):
+    """Convert any audio/video file to WAV.
+
+    It uses soundfile for converting WAV, FLAC, OGG files,
+    and sox or ffmpeg for converting all other files.
+    If ``duration`` and/or ``offset`` are specified
+    the resulting WAV file
+    will be shortened accordingly.
+
+    Args:
+        infile: audio/video file name
+        outfile: WAV file name
+        duration: return only a specified duration in seconds
+        offset: start reading at offset in seconds
+
+    Raises:
+        RuntimeError: if ``file`` is broken or not a supported format
+
+    """
+    infile = audeer.safe_path(infile)
+    outfile = audeer.safe_path(outfile)
+    if file_extension(infile) in SNDFORMATS:
+        bit_depth = info.bit_depth(infile)
+        if bit_depth is None:
+            bit_depth = 16
+        signal, sampling_rate = read(
+            infile,
+            offset=offset,
+            duration=duration,
+        )
+        write(outfile, signal, sampling_rate, bit_depth=bit_depth)
+    else:
+        convert(infile, outfile, offset, duration)
 
 
 def read(
@@ -75,8 +115,8 @@ def read(
         # libsndfile see https://github.com/erikd/libsndfile/issues/258.
         with tempfile.TemporaryDirectory(prefix='audiofile') as tmpdir:
             tmpfile = os.path.join(tmpdir, 'tmp.wav')
-            convert_to_wav(file, tmpfile, offset, duration)
-            signal, sample_rate = soundfile.read(
+            convert(file, tmpfile, offset, duration)
+            signal, sampling_rate = soundfile.read(
                 tmpfile,
                 dtype=dtype,
                 always_2d=always_2d,
@@ -84,12 +124,14 @@ def read(
             )
     else:
         if duration is not None or offset > 0:
-            sample_rate = sampling_rate(file)
+            sampling_rate = info.sampling_rate(file)
         if offset > 0:
-            offset = np.ceil(offset * sample_rate)  # samples
+            offset = np.ceil(offset * sampling_rate)  # samples
         if duration is not None:
-            duration = int(np.ceil(duration * sample_rate) + offset)  # samples
-        signal, sample_rate = soundfile.read(
+            duration = int(
+                np.ceil(duration * sampling_rate) + offset
+            )  # samples
+        signal, sampling_rate = soundfile.read(
             file,
             start=int(offset),
             stop=duration,
@@ -99,7 +141,7 @@ def read(
         )
     # [samples, channels] => [channels, samples]
     signal = signal.T
-    return signal, sample_rate
+    return signal, sampling_rate
 
 
 def write(
