@@ -24,20 +24,11 @@ def convert(
 ):
     """Convert any audio/video file to WAV.
 
-    It uses sox or ffmpeg for the conversion.
-    If ``duration`` and/or ``offset`` are specified
-    the resulting WAV file
-    will be shorter accordingly to those values.
-
     Args:
         infile: audio/video file name
         outfile: WAV file name
         duration: return only a specified duration in seconds
         offset: start reading at offset in seconds
-
-    Raises:
-        RuntimeError: if ``file`` is missing,
-            broken or format is not supported
 
     """
     try:
