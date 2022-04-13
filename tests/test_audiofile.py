@@ -142,11 +142,19 @@ def test_read(tmpdir, duration, offset):
 
 
 @pytest.mark.parametrize(
+    'convert',
+    (True, False),
+)
+@pytest.mark.parametrize(
     'empty_file',
     ('bin', 'mp3', 'wav'),
     indirect=True,
 )
-def test_empty_file(empty_file):
+def test_empty_file(tmpdir, convert, empty_file):
+    if convert:
+        converted_file = str(tmpdir.join('signal-converted.wav'))
+        af.convert_to_wav(empty_file, converted_file)
+        empty_file = converted_file
     # Reading file
     signal, sampling_rate = af.read(empty_file)
     assert len(signal) == 0
@@ -163,21 +171,28 @@ def test_empty_file(empty_file):
 
 
 @pytest.mark.parametrize(
-    'ext, expected_error',
-    [
-        ('bin', OSError),
-        ('mp3', OSError),
-        ('wav', RuntimeError),
-    ],
+    'ext',
+    ('bin', 'mp3', 'wav'),
 )
-def test_missing_file(ext, expected_error):
+def test_missing_file(tmpdir, ext):
     missing_file = f'missing_file.{ext}'
+    expected_error = RuntimeError
     # Reading file
     with pytest.raises(expected_error):
         signal, sampling_rate = af.read(missing_file)
     # Metadata
     with pytest.raises(expected_error):
         af.sampling_rate(missing_file)
+    with pytest.raises(expected_error):
+        af.channels(missing_file)
+    with pytest.raises(expected_error):
+        af.duration(missing_file)
+    with pytest.raises(expected_error):
+        af.duration(missing_file, sloppy=True)
+    # Convert
+    with pytest.raises(expected_error):
+        converted_file = str(tmpdir.join('signal-converted.wav'))
+        af.convert_to_wav(missing_file, converted_file)
 
 
 @pytest.mark.parametrize(
@@ -185,27 +200,34 @@ def test_missing_file(ext, expected_error):
     ('bin', 'mp3', 'wav'),
     indirect=True,
 )
-def test_broken_file(non_audio_file):
+def test_broken_file(tmpdir, non_audio_file):
     # Only match the beginning of error message
     # as the default soundfile message differs at the end on macOS
     error_msg = 'Error opening'
+    expected_error = RuntimeError
     # Reading file
-    with pytest.raises(RuntimeError, match=error_msg):
+    with pytest.raises(expected_error, match=error_msg):
         af.read(non_audio_file)
     # Metadata
     if audeer.file_extension(non_audio_file) == 'wav':
-        with pytest.raises(RuntimeError, match=error_msg):
+        with pytest.raises(expected_error, match=error_msg):
             af.bit_depth(non_audio_file)
     else:
         assert af.bit_depth(non_audio_file) is None
-    with pytest.raises(RuntimeError, match=error_msg):
+    with pytest.raises(expected_error, match=error_msg):
         af.channels(non_audio_file)
-    with pytest.raises(RuntimeError, match=error_msg):
+    with pytest.raises(expected_error, match=error_msg):
         af.duration(non_audio_file)
-    with pytest.raises(RuntimeError, match=error_msg):
+    with pytest.raises(expected_error, match=error_msg):
+        af.duration(non_audio_file, sloppy=True)
+    with pytest.raises(expected_error, match=error_msg):
         af.samples(non_audio_file)
-    with pytest.raises(RuntimeError, match=error_msg):
+    with pytest.raises(expected_error, match=error_msg):
         af.sampling_rate(non_audio_file)
+    # Convert
+    with pytest.raises(expected_error, match=error_msg):
+        converted_file = str(tmpdir.join('signal-converted.wav'))
+        af.convert_to_wav(non_audio_file, converted_file)
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])

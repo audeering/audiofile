@@ -35,7 +35,8 @@ def bit_depth(file: str) -> typing.Optional[int]:
         bit depth of audio file
 
     Raises:
-        RuntimeError: if ``file`` is broken or not a supported format
+        RuntimeError: if ``file`` is missing,
+            broken or format is not supported
 
     """
     file = audeer.safe_path(file)
@@ -80,7 +81,8 @@ def channels(file: str) -> int:
         number of channels in audio file
 
     Raises:
-        RuntimeError: if ``file`` is broken or not a supported format
+        RuntimeError: if ``file`` is missing,
+            broken or format is not supported
 
     """
     file = audeer.safe_path(file)
@@ -100,6 +102,8 @@ def channels(file: str) -> int:
                     return int(run(cmd2))
                 except ValueError:
                     raise RuntimeError(broken_file_error(file))
+        except OSError:
+            raise RuntimeError(broken_file_error(file))
 
 
 def duration(file: str, sloppy=False) -> float:
@@ -133,7 +137,8 @@ def duration(file: str, sloppy=False) -> float:
         duration in seconds of audio file
 
     Raises:
-        RuntimeError: if ``file`` is broken or not a supported format
+        RuntimeError: if ``file`` is missing,
+            broken or format is not supported
 
     """
     file = audeer.safe_path(file)
@@ -153,7 +158,8 @@ def duration(file: str, sloppy=False) -> float:
             if duration:
                 # Convert to seconds, as mediainfo returns milliseconds
                 return float(duration) / 1000
-
+        except OSError:
+            raise RuntimeError(broken_file_error(file))
     return samples(file) / sampling_rate(file)
 
 
@@ -167,7 +173,8 @@ def samples(file: str) -> int:
         number of samples in audio file
 
     Raises:
-        RuntimeError: if ``file`` is broken or not a supported format
+        RuntimeError: if ``file`` is missing,
+            broken or format is not supported
 
     """
     def samples_as_int(file):
@@ -196,7 +203,8 @@ def sampling_rate(file: str) -> int:
         sampling rate of audio file
 
     Raises:
-        RuntimeError: if ``file`` is broken or not a supported format
+        RuntimeError: if ``file`` is missing,
+            broken or format is not supported
 
     """
     file = audeer.safe_path(file)
@@ -212,3 +220,5 @@ def sampling_rate(file: str) -> int:
                 return int(sampling_rate)
             else:
                 raise RuntimeError(broken_file_error(file))
+        except OSError:
+            raise RuntimeError(broken_file_error(file))
