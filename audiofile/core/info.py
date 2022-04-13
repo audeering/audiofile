@@ -76,6 +76,8 @@ def channels(file: str) -> int:
         number of channels in audio file
 
     Raises:
+        FileNotFoundError: if ffmpeg binary is needed,
+            but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
@@ -133,6 +135,8 @@ def duration(file: str, sloppy=False) -> float:
         duration in seconds of audio file
 
     Raises:
+        FileNotFoundError: if ffmpeg binary is needed,
+            but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
@@ -199,6 +203,8 @@ def sampling_rate(file: str) -> int:
         sampling rate of audio file
 
     Raises:
+        FileNotFoundError: if ffmpeg binary is needed,
+            but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
