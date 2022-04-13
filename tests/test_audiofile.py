@@ -205,19 +205,22 @@ def test_empty_file(tmpdir, convert, empty_file):
 def test_missing_binaries(tmpdir, hide_system_path, empty_file):
     expected_error = FileNotFoundError
     # Reading file
-    with pytest.raises(expected_error):
+    with pytest.raises(expected_error, match='ffmpeg'):
         signal, sampling_rate = af.read(empty_file)
     # Metadata
-    with pytest.raises(expected_error):
-        af.sampling_rate(empty_file)
-    with pytest.raises(expected_error):
-        af.duration(empty_file)
-    with pytest.raises(expected_error):
-        af.duration(empty_file, sloppy=True)
-    with pytest.raises(expected_error):
+    with pytest.raises(expected_error, match='mediainfo'):
         af.channels(empty_file)
+    with pytest.raises(expected_error, match='ffmpeg'):
+        af.duration(empty_file)
+    with pytest.raises(expected_error, match='mediainfo'):
+        af.duration(empty_file, sloppy=True)
+    with pytest.raises(expected_error, match='ffmpeg'):
+        af.samples(empty_file)
+    with pytest.raises(expected_error, match='mediainfo'):
+        af.sampling_rate(empty_file)
+
     # Convert
-    with pytest.raises(expected_error):
+    with pytest.raises(expected_error, match='ffmpeg'):
         converted_file = str(tmpdir.join('signal-converted.wav'))
         af.convert_to_wav(empty_file, converted_file)
 

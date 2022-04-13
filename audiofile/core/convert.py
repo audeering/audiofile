@@ -35,8 +35,8 @@ def convert(
             # Convert to WAV file with ffmpeg
             run_ffmpeg(infile, outfile, offset, duration)
         except FileNotFoundError:
-            raise RuntimeError(binary_missing_error('ffmpeg'))
+            raise binary_missing_error('ffmpeg')
         except subprocess.CalledProcessError:
-            raise RuntimeError(broken_file_error(infile))
+            raise broken_file_error(infile)
     except OSError:
-        raise RuntimeError(broken_file_error(infile))
+        raise broken_file_error(infile)

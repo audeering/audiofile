@@ -97,14 +97,14 @@ def channels(file: str) -> int:
             try:
                 return int(run(cmd1))
             except FileNotFoundError:
-                raise RuntimeError(binary_missing_error('mediainfo'))
+                raise binary_missing_error('mediainfo')
             except ValueError:
                 try:
                     return int(run(cmd2))
                 except ValueError:
-                    raise RuntimeError(broken_file_error(file))
+                    raise broken_file_error(file)
         except OSError:
-            raise RuntimeError(broken_file_error(file))
+            raise broken_file_error(file)
 
 
 def duration(file: str, sloppy=False) -> float:
@@ -138,7 +138,7 @@ def duration(file: str, sloppy=False) -> float:
         duration in seconds of audio file
 
     Raises:
-        FileNotFoundError: if mediainfo binary is needed,
+        FileNotFoundError: if ffmpeg or mediainfo binary is needed,
             but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
@@ -160,9 +160,9 @@ def duration(file: str, sloppy=False) -> float:
                     # Convert to seconds, as mediainfo returns milliseconds
                     duration = float(duration) / 1000
             except FileNotFoundError:
-                raise RuntimeError(binary_missing_error('mediainfo'))
+                raise binary_missing_error('mediainfo')
         except OSError:
-            raise RuntimeError(broken_file_error(file))
+            raise broken_file_error(file)
         if duration:
             return duration
 
@@ -235,8 +235,8 @@ def sampling_rate(file: str) -> int:
                 if sampling_rate:
                     return int(sampling_rate)
                 else:
-                    raise RuntimeError(broken_file_error(file))
+                    raise broken_file_error(file)
             except FileNotFoundError:
-                raise RuntimeError(binary_missing_error('mediainfo'))
+                raise binary_missing_error('mediainfo')
         except OSError:
-            raise RuntimeError(broken_file_error(file))
+            raise broken_file_error(file)
