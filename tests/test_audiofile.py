@@ -373,8 +373,11 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     assert af.sampling_rate(mp3_file) == sampling_rate
     assert af.samples(mp3_file) == _samples(sig)
     assert af.duration(mp3_file) == _duration(sig, sampling_rate)
-    assert af.duration(mp3_file, sloppy=True) == sox.file_info.duration(
-        mp3_file
+    assert_allclose(
+        af.duration(mp3_file, sloppy=True),
+        _duration(sig, sampling_rate),
+        rtol=0,
+        atol=0.2,
     )
     assert af.bit_depth(mp3_file) is None
 
