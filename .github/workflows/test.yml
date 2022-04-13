@@ -53,17 +53,23 @@ jobs:
         conda install sox
       if: matrix.sox == 'sox'
 
-    - name: Prepare Ubuntu
+    - name: Ubuntu - install libsndfile
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsndfile1
+      if: matrix.sox == 'no-sox'
+
+    - name: Ubuntu - install ffmpeg/mediainfo
       run: |
         sudo apt-get update
         sudo apt-get install -y ffmpeg mediainfo
       if: matrix.os == 'ubuntu-latest'
 
-    - name: Prepare OSX
+    - name: OSX - install ffmpeg/mediainfo
       run: brew install ffmpeg mediainfo
       if: matrix.os == 'macOS-latest'
 
-    - name: Prepare Windows
+    - name: Windows - install ffmpeg/mediainfo
       run: choco install ffmpeg mediainfo-cli
       if: matrix.os == 'windows-latest'
 
