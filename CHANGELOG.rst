@@ -7,6 +7,25 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.1.0 (2022-04-14)
+--------------------------
+
+* Changed: use ``ffmpeg`` or ``mediainfo``
+  if ``sox`` binary is missing
+  instead of raising an error
+* Changed: improve ``FileNotFoundError`` message
+  when ``ffmpeg`` or ``mediainfo`` are required,
+  but not installed
+* Fixed: always raise ``RuntimeError``
+  for broken files or missing files
+* Fixed: mention expected ``FileNotFoundError``
+  when ``ffmpeg`` or ``mediainfo`` are required,
+  but not installed
+* Fixed: use ``soundfile``
+  for converting WAV, FLAC, OGG files
+  with ``audiofile.convert_to_wav()``
+
+
 Version 1.0.3 (2022-01-03)
 --------------------------
 
