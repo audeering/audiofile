@@ -198,10 +198,10 @@ content .viewcode-back {
     color: var(--black);
     font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",Courier,monospace;
 }
-dl.class em,
-dl.function em,
-dl.method em,
-dl.property em {
+dl.class dt em,
+dl.function dt em,
+dl.method dt em,
+dl.property dt em {
     font-style: normal;
 }
 .rst-content dl:not(.docutils) dt {

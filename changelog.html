@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                v1.0.3
+                v1.1.0
               </div>
             
           
@@ -108,6 +108,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0-2022-04-14">Version 1.1.0 (2022-04-14)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-3-2022-01-03">Version 1.0.3 (2022-01-03)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-2-2021-12-06">Version 1.0.2 (2021-12-06)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-1-2021-10-28">Version 1.0.1 (2021-10-28)</a></li>
@@ -173,6 +174,25 @@
 <p>All notable changes to this project will be documented in this file.</p>
 <p>The format is based on <a class="reference external" href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
 and this project adheres to <a class="reference external" href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<div class="section" id="version-1-1-0-2022-04-14">
+<h2>Version 1.1.0 (2022-04-14)<a class="headerlink" href="#version-1-1-0-2022-04-14" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Changed: use <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> or <code class="docutils literal notranslate"><span class="pre">mediainfo</span></code>
+if <code class="docutils literal notranslate"><span class="pre">sox</span></code> binary is missing
+instead of raising an error</p></li>
+<li><p>Changed: improve <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> message
+when <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> or <code class="docutils literal notranslate"><span class="pre">mediainfo</span></code> are required,
+but not installed</p></li>
+<li><p>Fixed: always raise <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>
+for broken files or missing files</p></li>
+<li><p>Fixed: mention expected <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>
+when <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> or <code class="docutils literal notranslate"><span class="pre">mediainfo</span></code> are required,
+but not installed</p></li>
+<li><p>Fixed: use <code class="docutils literal notranslate"><span class="pre">soundfile</span></code>
+for converting WAV, FLAC, OGG files
+with <code class="docutils literal notranslate"><span class="pre">audiofile.convert_to_wav()</span></code></p></li>
+</ul>
+</div>
 <div class="section" id="version-1-0-3-2022-01-03">
 <h2>Version 1.0.3 (2022-01-03)<a class="headerlink" href="#version-1-0-3-2022-01-03" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -358,7 +378,7 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/01/03 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/04/14 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -398,7 +418,7 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     
 
   

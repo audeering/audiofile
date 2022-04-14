@@ -81,7 +81,7 @@ and execute:
 .. code-block:: bash
 
     $ cd docs/benchmark/
-    $ bash generate_audiofiles.sh
+    $ bash generate_audio.sh
     $ # Install dependencies for building wheels
     $ sudo apt-get install -y libcairo2-dev libmad0-dev libgirepository1.0-dev python3-gst-1.0
     $ # Create and activate Python virtual environment, e.g.
