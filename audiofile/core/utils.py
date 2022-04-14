@@ -5,7 +5,25 @@ import shlex
 import audeer
 
 
-def broken_file_error(file: str) -> str:
+def binary_missing_error(binary: str) -> Exception:
+    r"""Missing binary error message.
+
+    Args:
+        binary: name of binary
+
+    Returns:
+        error message
+
+    """
+    return FileNotFoundError(
+        f'{binary} cannot be found.\n'
+        'Please make sure it is installed.\n'
+        'For further instructions visit: '
+        'https://audeering.github.io/audiofile/installation.html'
+    )
+
+
+def broken_file_error(file: str) -> Exception:
     r"""Broken file error message.
 
     If we encounter a broken file,
@@ -19,7 +37,7 @@ def broken_file_error(file: str) -> str:
         error message
 
     """
-    return (
+    return RuntimeError(
         f'Error opening {file}: '
         'File contains data in an unknown format.'
     )

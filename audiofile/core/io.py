@@ -40,6 +40,8 @@ def convert_to_wav(
         offset: start reading at offset in seconds
 
     Raises:
+        FileNotFoundError: if ffmpeg binary is needed,
+            but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
@@ -97,6 +99,8 @@ def read(
         * sample rate of the audio file
 
     Raises:
+        FileNotFoundError: if ffmpeg binary is needed,
+            but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 

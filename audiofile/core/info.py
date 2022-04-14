@@ -10,6 +10,7 @@ import audeer
 
 from audiofile.core.convert import convert
 from audiofile.core.utils import (
+    binary_missing_error,
     broken_file_error,
     file_extension,
     run,
@@ -76,6 +77,8 @@ def channels(file: str) -> int:
         number of channels in audio file
 
     Raises:
+        FileNotFoundError: if mediainfo binary is needed,
+            but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
@@ -93,13 +96,15 @@ def channels(file: str) -> int:
             cmd2 = f'mediainfo --Inform="Audio;%Channel(s)%" "{file}"'
             try:
                 return int(run(cmd1))
+            except FileNotFoundError:
+                raise binary_missing_error('mediainfo')
             except ValueError:
                 try:
                     return int(run(cmd2))
                 except ValueError:
-                    raise RuntimeError(broken_file_error(file))
+                    raise broken_file_error(file)
         except OSError:
-            raise RuntimeError(broken_file_error(file))
+            raise broken_file_error(file)
 
 
 def duration(file: str, sloppy=False) -> float:
@@ -133,6 +138,8 @@ def duration(file: str, sloppy=False) -> float:
         duration in seconds of audio file
 
     Raises:
+        FileNotFoundError: if ffmpeg or mediainfo binary is needed,
+            but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
@@ -146,13 +153,16 @@ def duration(file: str, sloppy=False) -> float:
             from audiofile.core.sox import sox, SOX_ERRORS
             duration = sox.file_info.duration(file) or 0.0
         except SOX_ERRORS:
-            cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
-            duration = run(cmd)
-            if duration:
-                # Convert to seconds, as mediainfo returns milliseconds
-                duration = float(duration) / 1000
+            try:
+                cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
+                duration = run(cmd)
+                if duration:
+                    # Convert to seconds, as mediainfo returns milliseconds
+                    duration = float(duration) / 1000
+            except FileNotFoundError:
+                raise binary_missing_error('mediainfo')
         except OSError:
-            raise RuntimeError(broken_file_error(file))
+            raise broken_file_error(file)
         if duration:
             return duration
 
@@ -162,6 +172,10 @@ def duration(file: str, sloppy=False) -> float:
 def samples(file: str) -> int:
     """Number of samples in audio file.
 
+    Audio files that are not WAV, FLAC, or OGG
+    are first converted to WAV,
+    before counting the samples.
+
     Args:
         file: file name of input audio file
 
@@ -169,6 +183,8 @@ def samples(file: str) -> int:
         number of samples in audio file
 
     Raises:
+        FileNotFoundError: if ffmpeg binary is needed,
+            but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
@@ -199,6 +215,8 @@ def sampling_rate(file: str) -> int:
         sampling rate of audio file
 
     Raises:
+        FileNotFoundError: if mediainfo binary is needed,
+            but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
@@ -211,11 +229,14 @@ def sampling_rate(file: str) -> int:
             from audiofile.core.sox import sox, SOX_ERRORS
             return int(sox.file_info.sample_rate(file))
         except SOX_ERRORS:
-            cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
-            sampling_rate = run(cmd)
-            if sampling_rate:
-                return int(sampling_rate)
-            else:
-                raise RuntimeError(broken_file_error(file))
+            try:
+                cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
+                sampling_rate = run(cmd)
+                if sampling_rate:
+                    return int(sampling_rate)
+                else:
+                    raise broken_file_error(file)
+            except FileNotFoundError:
+                raise binary_missing_error('mediainfo')
         except OSError:
-            raise RuntimeError(broken_file_error(file))
+            raise broken_file_error(file)
