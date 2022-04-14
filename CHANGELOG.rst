@@ -18,6 +18,9 @@ Version 1.1.0 (2022-04-14)
   but not installed
 * Fixed: always raise ``RuntimeError``
   for broken files or missing files
+* Fixed: mention expected ``FileNotFoundError``
+  when ``ffmpeg`` or ``mediainfo`` are required,
+  but not installed
 * Fixed: use ``soundfile``
   for converting WAV, FLAC, OGG files
   with ``audiofile.convert_to_wav()``
