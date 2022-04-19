@@ -269,10 +269,6 @@ def test_broken_file(tmpdir, non_audio_file):
             af.bit_depth(non_audio_file)
     else:
         assert af.bit_depth(non_audio_file) is None
-    if os.name == 'nt':
-        expected_error = ValueError
-    else:
-        expected_error = RuntimeError
     with pytest.raises(expected_error, match=error_msg):
         af.channels(non_audio_file)
     with pytest.raises(expected_error, match=error_msg):
@@ -281,6 +277,10 @@ def test_broken_file(tmpdir, non_audio_file):
         af.duration(non_audio_file, sloppy=True)
     with pytest.raises(expected_error, match=error_msg):
         af.samples(non_audio_file)
+    if os.name == 'nt':
+        expected_error = ValueError
+    else:
+        expected_error = RuntimeError
     with pytest.raises(expected_error, match=error_msg):
         af.sampling_rate(non_audio_file)
     # Convert
