@@ -259,10 +259,7 @@ def test_broken_file(tmpdir, non_audio_file):
     # Only match the beginning of error message
     # as the default soundfile message differs at the end on macOS
     error_msg = 'Error opening'
-    if os.name == 'nt':
-        expected_error = ValueError
-    else:
-        expected_error = RuntimeError
+    expected_error = RuntimeError
     # Reading file
     with pytest.raises(expected_error, match=error_msg):
         af.read(non_audio_file)
@@ -272,6 +269,10 @@ def test_broken_file(tmpdir, non_audio_file):
             af.bit_depth(non_audio_file)
     else:
         assert af.bit_depth(non_audio_file) is None
+    if os.name == 'nt':
+        expected_error = ValueError
+    else:
+        expected_error = RuntimeError
     with pytest.raises(expected_error, match=error_msg):
         af.channels(non_audio_file)
     with pytest.raises(expected_error, match=error_msg):
