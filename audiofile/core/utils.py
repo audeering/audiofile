@@ -1,5 +1,5 @@
-import subprocess
 import shlex
+import subprocess
 
 import audeer
 

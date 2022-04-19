@@ -1,7 +1,4 @@
-import logging
 import subprocess
-
-import audeer
 
 from audiofile.core.utils import (
     binary_missing_error,
