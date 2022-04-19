@@ -234,7 +234,9 @@ def sampling_rate(file: str) -> int:
                 if sampling_rate:
                     return int(sampling_rate)
                 else:
-                    raise broken_file_error(file)
+                    # Raise CalledProcessError
+                    # to align coverage under Windows and Linux
+                    raise subprocess.CalledProcessError(-2, cmd)
             except FileNotFoundError:
                 raise binary_missing_error('mediainfo')
             except subprocess.CalledProcessError:
