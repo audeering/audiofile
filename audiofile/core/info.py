@@ -1,5 +1,4 @@
 """Read, write, and get information about audio files."""
-import logging
 import os
 import subprocess
 import tempfile

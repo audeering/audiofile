@@ -1,9 +1,7 @@
 from __future__ import division
 import os
-import sys
 import tempfile
 import typing
-import warnings
 
 import numpy as np
 import soundfile
