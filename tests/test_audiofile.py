@@ -273,14 +273,14 @@ def test_broken_file(tmpdir, non_audio_file):
         af.channels(non_audio_file)
     with pytest.raises(expected_error, match=error_msg):
         af.duration(non_audio_file)
-    with pytest.raises(expected_error, match=error_msg):
-        af.duration(non_audio_file, sloppy=True)
-    with pytest.raises(expected_error, match=error_msg):
-        af.samples(non_audio_file)
     if os.name == 'nt':
         expected_error = ValueError
     else:
         expected_error = RuntimeError
+    with pytest.raises(expected_error, match=error_msg):
+        af.duration(non_audio_file, sloppy=True)
+    with pytest.raises(expected_error, match=error_msg):
+        af.samples(non_audio_file)
     with pytest.raises(expected_error, match=error_msg):
         af.sampling_rate(non_audio_file)
     # Convert
