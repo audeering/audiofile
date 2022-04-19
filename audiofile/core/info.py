@@ -164,7 +164,7 @@ def duration(file: str, sloppy=False) -> float:
             # where no error is raised,
             # but an empty duration is returned.
             # The error under Windows is then raised
-            # when callinmg 'samples(file)'
+            # when calling 'samples(file)'
             except subprocess.CalledProcessError:  # pragma: nocover
                 raise broken_file_error(file)
         if duration:
