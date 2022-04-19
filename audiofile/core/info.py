@@ -1,6 +1,7 @@
 """Read, write, and get information about audio files."""
 import logging
 import os
+import subprocess
 import tempfile
 import typing
 
@@ -88,9 +89,9 @@ def channels(file: str) -> int:
         return soundfile.info(file).channels
     else:
         try:
-            from audiofile.core.sox import sox, SOX_ERRORS
-            return int(sox.file_info.channels(file))
-        except SOX_ERRORS:
+            cmd = 'soxi -c "{file}"'
+            return int(run(cmd))
+        except (FileNotFoundError, subprocess.CalledProcessError):
             # For MP4 stored and returned number of channels can be different
             cmd1 = f'mediainfo --Inform="Audio;%Channel(s)_Original%" "{file}"'
             cmd2 = f'mediainfo --Inform="Audio;%Channel(s)%" "{file}"'
@@ -101,10 +102,10 @@ def channels(file: str) -> int:
             except ValueError:
                 try:
                     return int(run(cmd2))
-                except ValueError:
+                except (ValueError, subprocess.CalledProcessError):
                     raise broken_file_error(file)
-        except OSError:
-            raise broken_file_error(file)
+            except subprocess.CalledProcessError:
+                raise broken_file_error(file)
 
 
 def duration(file: str, sloppy=False) -> float:
@@ -150,9 +151,9 @@ def duration(file: str, sloppy=False) -> float:
 
     if sloppy:
         try:
-            from audiofile.core.sox import sox, SOX_ERRORS
-            duration = sox.file_info.duration(file) or 0.0
-        except SOX_ERRORS:
+            cmd = f'soxi -D "{file}"'
+            duration = float(run(cmd))
+        except (FileNotFoundError, subprocess.CalledProcessError):
             try:
                 cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
                 duration = run(cmd)
@@ -161,8 +162,8 @@ def duration(file: str, sloppy=False) -> float:
                     duration = float(duration) / 1000
             except FileNotFoundError:
                 raise binary_missing_error('mediainfo')
-        except OSError:
-            raise broken_file_error(file)
+            except subprocess.CalledProcessError:
+                raise broken_file_error(file)
         if duration:
             return duration
 
@@ -226,9 +227,9 @@ def sampling_rate(file: str) -> int:
         return soundfile.info(file).samplerate
     else:
         try:
-            from audiofile.core.sox import sox, SOX_ERRORS
-            return int(sox.file_info.sample_rate(file))
-        except SOX_ERRORS:
+            cmd = f'soxi -r "{file}"'
+            return int(run(cmd))
+        except (FileNotFoundError, subprocess.CalledProcessError):
             try:
                 cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
                 sampling_rate = run(cmd)
@@ -238,5 +239,5 @@ def sampling_rate(file: str) -> int:
                     raise broken_file_error(file)
             except FileNotFoundError:
                 raise binary_missing_error('mediainfo')
-        except OSError:
-            raise broken_file_error(file)
+            except subprocess.CalledProcessError:
+                raise broken_file_error(file)

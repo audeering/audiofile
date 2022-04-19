@@ -28,9 +28,8 @@ def convert(
     """
     try:
         # Convert to WAV file with sox
-        from audiofile.core.sox import SOX_ERRORS
         run_sox(infile, outfile, offset, duration)
-    except SOX_ERRORS:
+    except (FileNotFoundError, subprocess.CalledProcessError):
         try:
             # Convert to WAV file with ffmpeg
             run_ffmpeg(infile, outfile, offset, duration)
@@ -38,5 +37,3 @@ def convert(
             raise binary_missing_error('ffmpeg')
         except subprocess.CalledProcessError:
             raise broken_file_error(infile)
-    except OSError:
-        raise broken_file_error(infile)
