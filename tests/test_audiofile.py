@@ -259,7 +259,10 @@ def test_broken_file(tmpdir, non_audio_file):
     # Only match the beginning of error message
     # as the default soundfile message differs at the end on macOS
     error_msg = 'Error opening'
-    expected_error = RuntimeError
+    if os.name == 'nt':
+        expected_error = ValueError
+    else:
+        expected_error = RuntimeError
     # Reading file
     with pytest.raises(expected_error, match=error_msg):
         af.read(non_audio_file)
