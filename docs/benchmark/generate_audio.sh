@@ -4,6 +4,7 @@
 NBFILES=10
 DIR=AUDIO
 
+rm -rf ${DIR}
 for k in $(seq -f "%02g" 1 10 151); do
     mkdir -p $DIR/$k
     for i in $(seq 1 $NBFILES); do

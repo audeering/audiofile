@@ -1,3 +1,4 @@
+import contextlib
 import os
 import os.path
 import time
@@ -55,23 +56,25 @@ if __name__ == "__main__":
 
     # libraries to be benchmarked
     libs = [
+        'ar_ffmpeg',
+        'ar_mad',
         'aubio',
-        'soundfile',
-        'sox',
-        'audioread',
-        # 'librosa',  # no direct support
         'audiofile',
         'audiofile_sloppy',
+        'soundfile',
+        'sox',
     ]
 
     for lib in libs:
-        print("Testing: %s" % lib)
+        print(f"Benchmark metadata {args.ext} with {lib}")
         for root, dirs, fnames in sorted(os.walk('AUDIO')):
             for audio_dir in dirs:
                 # MP4 and MP3 is not supported by all libraries
-                if lib in ['aubio', 'soundfile', 'sox'] and args.ext == 'mp4':
+                if lib in ['soundfile', 'sox'] and args.ext == 'mp4':
                     continue
-                if lib in ['aubio', 'soundfile'] and args.ext == 'mp3':
+                if lib in ['soundfile'] and args.ext == 'mp3':
+                    continue
+                if lib == 'ar_mad' and args.ext != 'mp3':
                     continue
                 duration = int(audio_dir)
                 dataset = AudioFolder(
@@ -82,6 +85,7 @@ if __name__ == "__main__":
 
                 start = time.time()
 
+                # with contextlib.suppress(UserWarning):
                 for fp in dataset.audio_files:
                     info = dataset.loader_function(fp)
                     info['duration']

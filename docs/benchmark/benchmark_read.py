@@ -60,45 +60,49 @@ if __name__ == "__main__":
 
     store = utils.DF_writer(columns)
 
-    # audio formats to be bench
     # libraries to be benchmarked
     libs = [
-        'ar_gstreamer',
         'ar_ffmpeg',
         'ar_mad',
         'aubio',
-        'soundfile',
+        'audiofile',
         'librosa',
         'scipy',
-        'audiofile',
+        'soundfile',
     ]
 
     for lib in libs:
-        print("Testing: %s" % lib)
+        print(f"Benchmark read {args.ext} with {lib}")
         for root, dirs, fnames in sorted(os.walk('AUDIO')):
             for audio_dir in dirs:
-                try:
-                    duration = int(audio_dir)
-                    dataset = AudioFolder(
-                        os.path.join(root, audio_dir),
-                        lib='load_' + lib,
-                        extension=args.ext,
-                    )
 
-                    start = time.time()
-
-                    for fp in dataset.audio_files:
-                        audio = dataset.loader_function(fp)
-                        np.max(audio)
-
-                    end = time.time()
-                    store.append(
-                        ext=args.ext,
-                        lib=lib,
-                        duration=duration,
-                        time=float(end - start) / len(dataset),
-                    )
-                except:  # noqa: E722
+                # Not all libraries support all file formats
+                if lib == 'scipy' and args.ext != 'wav':
                     continue
+                if lib == 'ar_mad' and args.ext != 'mp3':
+                    continue
+                if lib == 'soundfile' and args.ext in ['mp3', 'mp4']:
+                    continue
+
+                duration = int(audio_dir)
+                dataset = AudioFolder(
+                    os.path.join(root, audio_dir),
+                    lib='load_' + lib,
+                    extension=args.ext,
+                )
+
+                start = time.time()
+
+                for fp in dataset.audio_files:
+                    audio = dataset.loader_function(fp)
+                    np.max(audio)
+
+                end = time.time()
+                store.append(
+                    ext=args.ext,
+                    lib=lib,
+                    duration=duration,
+                    time=float(end - start) / len(dataset),
+                )
 
     store.df.to_pickle(f'results/benchmark_read_{args.ext}.pickle')
