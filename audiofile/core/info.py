@@ -160,7 +160,12 @@ def duration(file: str, sloppy=False) -> float:
                     duration = float(duration) / 1000
             except FileNotFoundError:
                 raise binary_missing_error('mediainfo')
-            except subprocess.CalledProcessError:
+            # Behavior for broken files is different on Windows
+            # where no error is raised,
+            # but an empty duration is returned.
+            # The error under Windows is then raised
+            # when callinmg 'samples(file)'
+            except subprocess.CalledProcessError:  # pragma: nocover
                 raise broken_file_error(file)
         if duration:
             return duration
