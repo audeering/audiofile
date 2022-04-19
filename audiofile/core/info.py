@@ -99,13 +99,11 @@ def channels(file: str) -> int:
                 return int(run(cmd1))
             except FileNotFoundError:
                 raise binary_missing_error('mediainfo')
-            except ValueError:
+            except (ValueError, subprocess.CalledProcessError):
                 try:
                     return int(run(cmd2))
                 except (ValueError, subprocess.CalledProcessError):
                     raise broken_file_error(file)
-            except subprocess.CalledProcessError:
-                raise broken_file_error(file)
 
 
 def duration(file: str, sloppy=False) -> float:
