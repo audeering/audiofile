@@ -1,5 +1,5 @@
 ## declare an array variable
-declare -a exts=("wav" "mp3" "mp4" "ogg" "flac")
+declare -a exts=("wav" "ogg" "flac" "mp3" "mp4")
 
 mkdir -p results
 

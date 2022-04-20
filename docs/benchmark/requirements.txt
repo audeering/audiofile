@@ -1,4 +1,4 @@
-aubio
+aubio ==0.4.5
 audiofile
 audioread
 librosa

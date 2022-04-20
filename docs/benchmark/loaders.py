@@ -23,7 +23,8 @@ def load_aubio(fp):
     total_frames = 0
     while True:
         samples, read = f()
-        sig[total_frames:total_frames + read] = samples[:read]
+        if total_frames + read <= f.duration:
+            sig[total_frames:total_frames + read] = samples[:read]
         total_frames += read
         if read < f.hop_size:
             break
@@ -119,6 +120,32 @@ def info_audioread(fp):
     with audioread.audio_open(fp) as f:
         info['channels'] = f.channels
     with audioread.audio_open(fp) as f:
+        info['sampling_rate'] = f.samplerate
+    return info
+
+
+def info_ar_mad(fp):
+    info = {}
+    with audioread.maddec.MadAudioFile(fp) as f:
+        info['duration'] = f.duration
+    with audioread.maddec.MadAudioFile(fp) as f:
+        info['samples'] = int(f.duration * f.samplerate)
+    with audioread.maddec.MadAudioFile(fp) as f:
+        info['channels'] = f.channels
+    with audioread.maddec.MadAudioFile(fp) as f:
+        info['sampling_rate'] = f.samplerate
+    return info
+
+
+def info_ar_ffmpeg(fp):
+    info = {}
+    with audioread.ffdec.FFmpegAudioFile(fp) as f:
+        info['duration'] = f.duration
+    with audioread.ffdec.FFmpegAudioFile(fp) as f:
+        info['samples'] = int(f.duration * f.samplerate)
+    with audioread.ffdec.FFmpegAudioFile(fp) as f:
+        info['channels'] = f.channels
+    with audioread.ffdec.FFmpegAudioFile(fp) as f:
         info['sampling_rate'] = f.samplerate
     return info
 

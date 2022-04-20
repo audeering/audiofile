@@ -7,6 +7,17 @@ import matplotlib.pyplot as plt
 
 NBFILES = 10  # must be identical to generate_audio.sh
 
+MAPPINGS = {  # library name mappings
+    'aubio': 'aubio',
+    'audiofile': 'audiofile',
+    'audiofile_sloppy': 'audiofile (sloppy)',
+    'ar_ffmpeg': 'audioread (ffmpeg)',
+    'ar_mad': 'audioread (mad)',
+    'librosa': 'librosa',
+    'scipy': 'scipy',
+    'soundfile': 'soundfile',
+    'sox': 'sox',
+}
 
 for package in ['read', 'info']:
     dfs = []
@@ -21,55 +32,67 @@ for package in ['read', 'info']:
     df_ = df_[df_['lib'] == 'audiofile']
     number_of_files = len(df_) * NBFILES
 
+    df['lib'] = df['lib'].map(MAPPINGS)
+
     for exts in [['wav', 'flac', 'ogg'], ['mp3', 'mp4']]:
 
         y = df[df['ext'].isin(exts)]
 
-        # Find best audioread entry
-        for ext in exts:
-            z = df[df['ext'] == ext]
-            best_time = 1000000
-            for lib in ['ar_mad', 'ar_ffmpeg', 'ar_gstreamer']:
-                z_lib = z.loc[z['lib'] == lib, :]
-                z_lib['lib'] = 'audioread'
-                y = y[y['lib'] != lib]
-                current_time = z_lib['time'].mean()
-                if current_time < best_time:
-                    best_lib = z_lib
-                    best_time = current_time
-            y = pd.concat([y, best_lib])
-
-        common_libs = ['audiofile', 'soundfile', 'aubio', 'librosa']
         # Define what to show in each figure
         if 'wav' in exts and package == 'read':
-            lib_order = ['audiofile', 'soundfile', 'aubio', 'librosa', 'scipy']
+            lib_order = [
+                MAPPINGS['audiofile'],
+                MAPPINGS['soundfile'],
+                MAPPINGS['aubio'],
+                MAPPINGS['librosa'],
+                MAPPINGS['ar_ffmpeg'],
+                MAPPINGS['scipy'],
+            ]
             height = 5.6
             aspect = 1.2
         elif 'wav' in exts and package == 'info':
-            lib_order = ['audiofile', 'soundfile', 'aubio']
+            lib_order = [
+                MAPPINGS['audiofile'],
+                MAPPINGS['soundfile'],
+                MAPPINGS['aubio'],
+            ]
             height = 3.36
             aspect = 2.0
         elif 'mp3' in exts and package == 'read':
-            lib_order = ['audiofile', 'librosa', 'audioread']
+            lib_order = [
+                MAPPINGS['audiofile'],
+                MAPPINGS['librosa'],
+                MAPPINGS['aubio'],
+                MAPPINGS['ar_ffmpeg'],
+                MAPPINGS['ar_mad'],
+            ]
             height = 3.36
             aspect = 2.0
         elif 'mp3' in exts and package == 'info':
-            lib_order = ['audiofile', 'audiofile_sloppy', 'audioread']
-            height = 3.36
-            aspect = 2.0
+            lib_order = [
+                MAPPINGS['audiofile'],
+                MAPPINGS['audiofile_sloppy'],
+                MAPPINGS['aubio'],
+                MAPPINGS['ar_ffmpeg'],
+                MAPPINGS['ar_mad'],
+                MAPPINGS['sox'],
+            ]
+            height = 3.7
+            aspect = 1.82
 
         fig = plt.figure()
 
         # Define colors for the libraries
-        #
         palette = {
-            'audiofile': '#4a74b5',
-            'audiofile_sloppy': '#6b93d7',
-            'soundfile': '#db8548',
-            'aubio': '#5dab64',
-            'librosa': '#c34c4d',
-            'scipy': '#8174b8',
-            'audioread': '#94785e',
+            MAPPINGS['audiofile']: '#4a74b5',
+            MAPPINGS['audiofile_sloppy']: '#6b93d7',
+            MAPPINGS['soundfile']: '#db8548',
+            MAPPINGS['aubio']: '#5dab64',
+            MAPPINGS['librosa']: '#c34c4d',
+            MAPPINGS['scipy']: '#8174b8',
+            MAPPINGS['ar_mad']: '#94785e',
+            MAPPINGS['ar_ffmpeg']: '#94785e',
+            MAPPINGS['sox']: '#db8cc5',
         }
 
         g = sns.catplot(
@@ -85,8 +108,6 @@ for package in ['read', 'info']:
             aspect=aspect,
             legend=False
         )
-        if 'mp3' in exts:
-            plt.ylim(2, -1)
         g.despine(left=True)
         plt.legend(loc='upper right')
         plt.xlabel('time / s per file')

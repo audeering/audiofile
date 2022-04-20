@@ -30,11 +30,11 @@ Python packages
 
 The following Python packages are benchmarked against each other:
 
-* aubio_ 0.4.9
+* aubio_ 0.4.5
 * audioread_ 2.1.9
-* :mod:`audiofile` 1.0.0
-* librosa_ 0.8.0
-* scipy_ 1.5.3
+* :mod:`audiofile` 1.1.0
+* librosa_ 0.9.1
+* scipy_ 1.8.0
 * soundfile_ 0.10.3.post1
 * sox_ 1.4.1
 
@@ -42,8 +42,10 @@ scipy_ and librosa_ are only tested for reading files,
 whereas sox_ is only tested for accessing metadata information.
 audioread_ can use three different libraries under the hood:
 ffmpeg_, gstreamer_, mad_.
-All three are benchmarked,
-but results are only reported for the best one.
+mad_ works only for MP3 files,
+and is only benchmarked for those.
+As gstreamer_ is slow and complicated to install
+it is not included in the benchmarks.
 
 Reading files
 ^^^^^^^^^^^^^
@@ -69,10 +71,10 @@ Running the benchmark
 The benchmark was executed on the following machine:
 
 * CPU: Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz x 12
-* RAM: '15.37 GiB'
+* RAM: 15.37 GB
 * Hard drive: Samsung SSD 860
-* Linux: Ubuntu 18.04.5
-* Python: 3.6.9
+* Linux: Ubuntu 18.04.6
+* Python: 3.8.13
 
 To rerun the benchmark yourself,
 clone the repository
@@ -81,14 +83,13 @@ and execute:
 .. code-block:: bash
 
     $ cd docs/benchmark/
+    $ bash install_dependencies.sh
     $ bash generate_audio.sh
-    $ # Install dependencies for building wheels
-    $ sudo apt-get install -y libcairo2-dev libmad0-dev libgirepository1.0-dev python3-gst-1.0
-    $ # Create and activate Python virtual environment, e.g.
-    $ # virtualenv --no-download --python=python3 ${HOME}/.envs/audiofile-benchmark
-    $ # source ${HOME}/.envs/audiofile-benchmark/bin/activate
-    $ pip install -r requirements.txt.lock
     $ bash run.sh
+
+This requires that Python 3.8 is installed
+and will ask for a sudo password
+to install missing apt packages.
 
 
 WAV, FLAC, OGG
@@ -99,18 +100,20 @@ Reading files
 
 audioread_ has been removed from the results
 as it was the slowest library.
+scipy_ is only meant for reading WAV files,
+and only included in this figure.
 
 .. image:: ./benchmark/results/benchmark_wav-flac-ogg_read.png
 
-Results for :mod:`audiofile`, soundfile_ and librosa_ are identical here
+Results for :mod:`audiofile`, soundfile_ and librosa_ are similar here
 as all of them use soundfile_ under the hood to read the data.
 
 Accessing metadata
 ^^^^^^^^^^^^^^^^^^
 
-sox_ and audioread_ have been removed from the results
-as they were at least one magnitude slower.
-scipy_ is only meant for reading WAV files.
+audioread_ (ffmpeg) and sox_ have been removed from the results
+as they take around 0.17s and 0.035s per file
+for WAV, FLAC, and OGG.
 
 .. image:: ./benchmark/results/benchmark_wav-flac-ogg_info.png
 
@@ -121,16 +124,18 @@ MP3, MP4
 Reading files
 ^^^^^^^^^^^^^
 
-aubio_, soundfile_, and sox_ do not support
-reading MP3 and MP4 files.
+soundfile_ does not support
+reading MP3 and MP4 files,
+audioread_ (mad) only MP3 files.
 
 .. image:: ./benchmark/results/benchmark_mp3-mp4_read.png
 
 Accessing metadata
 ^^^^^^^^^^^^^^^^^^
 
-aubio_, librosa_, soundfile_, and sox_ do not support
+soundfile_ does not support
 accessing MP3 and MP4 metadata.
+sox_ and audioread_ (mad) only for MP3 files.
 
 .. image:: ./benchmark/results/benchmark_mp3-mp4_info.png
 
@@ -143,7 +148,7 @@ as the duration will depend on the used decoder.
 You can speed up the processing by setting ``sloppy=True``
 as argument to :func:`audiofile.duration`.
 This tries to read the duration from the header of the file
-and is shown as audiofile_sloppy
+and is shown as audiofile (sloppy)
 in the figure.
 
 

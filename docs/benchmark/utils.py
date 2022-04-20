@@ -18,8 +18,10 @@ class DF_writer(object):
 
     def append(self, **row_data):
         if set(self.columns) == set(row_data):
-            s = pd.Series(row_data)
-            self.df = self.df.append(s, ignore_index=True)
+            self.df = pd.concat(
+                [self.df, pd.DataFrame.from_records([row_data])],
+                ignore_index=True,
+            )
 
 
 def plot_results(df, target_lib="", audio_format="", ext="png"):
