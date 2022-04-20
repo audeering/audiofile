@@ -44,8 +44,8 @@ for package in ['read', 'info']:
                 MAPPINGS['soundfile'],
                 MAPPINGS['aubio'],
                 MAPPINGS['librosa'],
-                MAPPINGS['pedalboard'],
                 MAPPINGS['ar_ffmpeg'],
+                MAPPINGS['pedalboard'],
                 MAPPINGS['scipy'],
             ]
             height = 5.6
@@ -64,9 +64,9 @@ for package in ['read', 'info']:
                 MAPPINGS['audiofile'],
                 MAPPINGS['aubio'],
                 MAPPINGS['librosa'],
-                MAPPINGS['pedalboard'],
                 MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['ar_mad'],
+                MAPPINGS['pedalboard'],
             ]
             height = 3.36
             aspect = 2.0
@@ -75,9 +75,9 @@ for package in ['read', 'info']:
                 MAPPINGS['audiofile'],
                 MAPPINGS['audiofile_sloppy'],
                 MAPPINGS['aubio'],
-                MAPPINGS['pedalboard'],
                 MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['ar_mad'],
+                MAPPINGS['pedalboard'],
                 MAPPINGS['sox'],
             ]
             height = 3.7
