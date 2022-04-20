@@ -44,9 +44,9 @@ for package in ['read', 'info']:
                 MAPPINGS['soundfile'],
                 MAPPINGS['aubio'],
                 MAPPINGS['librosa'],
+                MAPPINGS['pedalboard'],
                 MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['scipy'],
-                MAPPINGS['pedalboard'],
             ]
             height = 5.6
             aspect = 1.2
@@ -62,11 +62,11 @@ for package in ['read', 'info']:
         elif 'mp3' in exts and package == 'read':
             lib_order = [
                 MAPPINGS['audiofile'],
-                MAPPINGS['librosa'],
                 MAPPINGS['aubio'],
+                MAPPINGS['librosa'],
+                MAPPINGS['pedalboard'],
                 MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['ar_mad'],
-                MAPPINGS['pedalboard'],
             ]
             height = 3.36
             aspect = 2.0
@@ -75,10 +75,10 @@ for package in ['read', 'info']:
                 MAPPINGS['audiofile'],
                 MAPPINGS['audiofile_sloppy'],
                 MAPPINGS['aubio'],
+                MAPPINGS['pedalboard'],
                 MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['ar_mad'],
                 MAPPINGS['sox'],
-                MAPPINGS['pedalboard'],
             ]
             height = 3.7
             aspect = 1.82
