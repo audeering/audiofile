@@ -66,6 +66,7 @@ if __name__ == "__main__":
         'aubio',
         'audiofile',
         'librosa',
+        'pedalboard',
         'scipy',
         'soundfile',
     ]
@@ -81,6 +82,8 @@ if __name__ == "__main__":
                 if lib == 'ar_mad' and args.ext != 'mp3':
                     continue
                 if lib == 'soundfile' and args.ext in ['mp3', 'mp4']:
+                    continue
+                if lib == 'pedalboard' and args.ext == 'mp4':
                     continue
 
                 duration = int(audio_dir)

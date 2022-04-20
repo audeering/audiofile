@@ -60,6 +60,7 @@ if __name__ == "__main__":
         'aubio',
         'audiofile',
         'audiofile_sloppy',
+        'pedalboard',
         'soundfile',
         'sox',
     ]
@@ -68,13 +69,18 @@ if __name__ == "__main__":
         print(f"Benchmark metadata {args.ext} with {lib}")
         for root, dirs, fnames in sorted(os.walk('AUDIO')):
             for audio_dir in dirs:
+
                 # MP4 and MP3 is not supported by all libraries
-                if lib in ['soundfile', 'sox'] and args.ext == 'mp4':
+                if (
+                        lib in ['soundfile', 'sox', 'pedalboard']
+                        and args.ext == 'mp4'
+                ):
                     continue
                 if lib in ['soundfile'] and args.ext == 'mp3':
                     continue
                 if lib == 'ar_mad' and args.ext != 'mp3':
                     continue
+
                 duration = int(audio_dir)
                 dataset = AudioFolder(
                     os.path.join(root, audio_dir),

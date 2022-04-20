@@ -56,6 +56,7 @@ numpy==1.21.6
     #   matplotlib
     #   numba
     #   pandas
+    #   pedalboard
     #   resampy
     #   scikit-learn
     #   scipy
@@ -70,6 +71,8 @@ pandas==1.4.2
     # via
     #   -r requirements.txt
     #   seaborn
+pedalboard==0.5.3
+    # via -r requirements.txt
 pillow==9.1.0
     # via matplotlib
 pooch==1.6.0

@@ -1,13 +1,14 @@
-from scipy.io import wavfile
+import aubio
+import audiofile as af
 import audioread.rawread
 import audioread.gstdec
 import audioread.maddec
 import audioread.ffdec
+import pedalboard
 import soundfile as sf
-import audiofile as af
-import aubio
 import numpy as np
 import librosa
+from scipy.io import wavfile
 import sox
 
 """
@@ -88,6 +89,12 @@ def load_librosa(fp):
 def load_audiofile(fp):
     sig, rate = af.read(fp)
     return sig
+
+
+def load_pedalboard(fp):
+    with pedalboard.io.AudioFile(fp) as f:
+        # Pedalboard output is (num_channels, num_samples)
+        return f.read(f.frames)[0]
 
 
 def _convert_buffer_to_float(buf, n_bytes=2, dtype=np.float32):
@@ -186,4 +193,17 @@ def info_audiofile_sloppy(fp):
     info['samples'] = af.samples(fp)
     info['channels'] = af.channels
     info['sampling_rate'] = af.sampling_rate
+    return info
+
+
+def info_pedalboard(fp):
+    info = {}
+    with pedalboard.io.AudioFile(fp) as af:
+        info["duration"] = af.duration
+    with pedalboard.io.AudioFile(fp) as af:
+        info["samples"] = af.frames
+    with pedalboard.io.AudioFile(fp) as af:
+        info["channels"] = af.num_channels
+    with pedalboard.io.AudioFile(fp) as af:
+        info["sampling_rate"] = af.samplerate
     return info
