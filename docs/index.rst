@@ -12,7 +12,7 @@
     :caption: API Documentation
     :hidden:
 
-    api
+    api/audiofile
 
 .. toctree::
     :caption: Development
