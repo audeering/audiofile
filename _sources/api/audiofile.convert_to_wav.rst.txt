@@ -1,0 +1,6 @@
+﻿convert\_to\_wav\(\)
+====================
+
+.. currentmodule:: audiofile
+
+.. autofunction:: audiofile.convert_to_wav

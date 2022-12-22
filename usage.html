@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; audiofile Documentation</title>
+  <title>Usage &mdash; Documentation</title>
   
 
   
@@ -25,12 +25,8 @@
     
 
   
-
-  
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/audeering.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/css/audeering.css" type="text/css" />
   <link rel="stylesheet" href="_static/jupyter-sphinx.css" type="text/css" />
   <link rel="stylesheet" href="_static/thebelab.css" type="text/css" />
@@ -71,7 +67,7 @@
             
             
               <div class="version">
-                v1.1.0
+                v1.1.1
               </div>
             
           
@@ -109,7 +105,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html">audiofile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/audiofile.html">audiofile</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -152,8 +148,8 @@
            <div itemprop="articleBody">
             
   <div class="section" id="usage">
-<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="api.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a> can read and get metadata information
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h1>
+<p><a class="reference internal" href="api/audiofile.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a> can read and get metadata information
 for all files that are supported by
 <a class="reference external" href="https://www.ffmpeg.org/">ffmpeg</a>,
 <a class="reference external" href="http://sox.sourceforge.net/">sox</a>,
@@ -161,12 +157,12 @@ and <a class="reference external" href="https://mediaarea.net/en/MediaInfo/">med
 if those are available on your system.
 In addition, it can create WAV, FLAC, or OGG files.</p>
 <div class="section" id="write-a-file">
-<h2>Write a file<a class="headerlink" href="#write-a-file" title="Permalink to this headline">¶</a></h2>
+<h2>Write a file<a class="headerlink" href="#write-a-file" title="Permalink to this heading">¶</a></h2>
 <p>First,
 let’s create a dummy signal containing noise:</p>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">audiofile</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">audiofile</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">sampling_rate</span> <span class="o">=</span> <span class="mi">8000</span>  <span class="c1"># in Hz</span>
@@ -181,11 +177,11 @@ let’s create a dummy signal containing noise:</p>
 </div>
 </div>
 <div class="section" id="file-information">
-<h2>File information<a class="headerlink" href="#file-information" title="Permalink to this headline">¶</a></h2>
+<h2>File information<a class="headerlink" href="#file-information" title="Permalink to this heading">¶</a></h2>
 <p>Now you can get metadata information on that signal:</p>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">channels</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">channels</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -197,7 +193,7 @@ let’s create a dummy signal containing noise:</p>
 </div>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">duration</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">duration</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -209,7 +205,7 @@ let’s create a dummy signal containing noise:</p>
 </div>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">samples</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">samples</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -221,7 +217,7 @@ let’s create a dummy signal containing noise:</p>
 </div>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -233,7 +229,7 @@ let’s create a dummy signal containing noise:</p>
 </div>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">bit_depth</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">bit_depth</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -245,11 +241,11 @@ let’s create a dummy signal containing noise:</p>
 </div>
 </div>
 <div class="section" id="read-a-file">
-<h2>Read a file<a class="headerlink" href="#read-a-file" title="Permalink to this headline">¶</a></h2>
+<h2>Read a file<a class="headerlink" href="#read-a-file" title="Permalink to this heading">¶</a></h2>
 <p>You can read the signal:</p>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sig</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">audiofile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sig</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">audiofile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;sampling rate: </span><span class="si">{</span><span class="n">fs</span><span class="si">}</span><span class="s1">, signal shape: </span><span class="si">{</span><span class="n">sig</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -265,7 +261,7 @@ that returns a 2D signal with channel as the first dimension,
 enforce it with:</p>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sig</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">audiofile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">,</span> <span class="n">always_2d</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sig</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">audiofile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">,</span> <span class="n">always_2d</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;sampling rate: </span><span class="si">{</span><span class="n">fs</span><span class="si">}</span><span class="s1">, signal shape: </span><span class="si">{</span><span class="n">sig</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -279,7 +275,7 @@ enforce it with:</p>
 <p>If you just want to read from 500 ms to 900 ms of the signal:</p>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sig</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">audiofile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sig</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">audiofile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;sampling rate: </span><span class="si">{</span><span class="n">fs</span><span class="si">}</span><span class="s1">, signal shape: </span><span class="si">{</span><span class="n">sig</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -292,11 +288,11 @@ enforce it with:</p>
 </div>
 </div>
 <div class="section" id="convert-a-file">
-<h2>Convert a file<a class="headerlink" href="#convert-a-file" title="Permalink to this headline">¶</a></h2>
+<h2>Convert a file<a class="headerlink" href="#convert-a-file" title="Permalink to this heading">¶</a></h2>
 <p>You can convert any file to WAV using:</p>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">convert_to_wav</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">,</span> <span class="s1">&#39;noise.wav&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">audiofile</span><span class="o">.</span><span class="n">convert_to_wav</span><span class="p">(</span><span class="s1">&#39;noise.flac&#39;</span><span class="p">,</span> <span class="s1">&#39;noise.wav&#39;</span><span class="p">)</span>
 <span class="n">audiofile</span><span class="o">.</span><span class="n">samples</span><span class="p">(</span><span class="s1">&#39;noise.wav&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -337,7 +333,7 @@ enforce it with:</p>
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/04/14 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/12/22 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -372,12 +368,14 @@ enforce it with:</p>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/thebelab-helper.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     
 
   

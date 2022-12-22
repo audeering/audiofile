@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Changelog &mdash; audiofile Documentation</title>
+  <title>Changelog &mdash; Documentation</title>
   
 
   
@@ -25,12 +25,8 @@
     
 
   
-
-  
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/audeering.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/css/audeering.css" type="text/css" />
   <link rel="stylesheet" href="_static/jupyter-sphinx.css" type="text/css" />
   <link rel="stylesheet" href="_static/thebelab.css" type="text/css" />
@@ -70,7 +66,7 @@
             
             
               <div class="version">
-                v1.1.0
+                v1.1.1
               </div>
             
           
@@ -102,12 +98,13 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html">audiofile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/audiofile.html">audiofile</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-1-1-2022-12-22">Version 1.1.1 (2022-12-22)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-1-0-2022-04-14">Version 1.1.0 (2022-04-14)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-3-2022-01-03">Version 1.0.3 (2022-01-03)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-2-2021-12-06">Version 1.0.2 (2021-12-06)</a></li>
@@ -170,12 +167,22 @@
            <div itemprop="articleBody">
             
   <div class="section" id="changelog">
-<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this heading">¶</a></h1>
 <p>All notable changes to this project will be documented in this file.</p>
 <p>The format is based on <a class="reference external" href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
 and this project adheres to <a class="reference external" href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<div class="section" id="version-1-1-1-2022-12-22">
+<h2>Version 1.1.1 (2022-12-22)<a class="headerlink" href="#version-1-1-1-2022-12-22" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Added: support for Python 3.11</p></li>
+<li><p>Added: support for Python 3.10</p></li>
+<li><p>Changed: split API documentation into sub-pages
+for each function</p></li>
+<li><p>Removed: dependency on <code class="docutils literal notranslate"><span class="pre">pysox</span></code></p></li>
+</ul>
+</div>
 <div class="section" id="version-1-1-0-2022-04-14">
-<h2>Version 1.1.0 (2022-04-14)<a class="headerlink" href="#version-1-1-0-2022-04-14" title="Permalink to this headline">¶</a></h2>
+<h2>Version 1.1.0 (2022-04-14)<a class="headerlink" href="#version-1-1-0-2022-04-14" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Changed: use <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> or <code class="docutils literal notranslate"><span class="pre">mediainfo</span></code>
 if <code class="docutils literal notranslate"><span class="pre">sox</span></code> binary is missing
@@ -194,20 +201,20 @@ with <code class="docutils literal notranslate"><span class="pre">audiofile.conv
 </ul>
 </div>
 <div class="section" id="version-1-0-3-2022-01-03">
-<h2>Version 1.0.3 (2022-01-03)<a class="headerlink" href="#version-1-0-3-2022-01-03" title="Permalink to this headline">¶</a></h2>
+<h2>Version 1.0.3 (2022-01-03)<a class="headerlink" href="#version-1-0-3-2022-01-03" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Removed: Python 3.6 support</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-0-2-2021-12-06">
-<h2>Version 1.0.2 (2021-12-06)<a class="headerlink" href="#version-1-0-2-2021-12-06" title="Permalink to this headline">¶</a></h2>
+<h2>Version 1.0.2 (2021-12-06)<a class="headerlink" href="#version-1-0-2-2021-12-06" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: raise <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>
 for broken or empty non SND files</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-0-1-2021-10-28">
-<h2>Version 1.0.1 (2021-10-28)<a class="headerlink" href="#version-1-0-1-2021-10-28" title="Permalink to this headline">¶</a></h2>
+<h2>Version 1.0.1 (2021-10-28)<a class="headerlink" href="#version-1-0-1-2021-10-28" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: <code class="docutils literal notranslate"><span class="pre">audiofile.duration()</span></code> returns now <code class="docutils literal notranslate"><span class="pre">0.0</span></code>
 for an empty WAV file with wrong file extension
@@ -215,7 +222,7 @@ instead of <code class="docutils literal notranslate"><span class="pre">None</sp
 </ul>
 </div>
 <div class="section" id="version-1-0-0-2021-08-05">
-<h2>Version 1.0.0 (2021-08-05)<a class="headerlink" href="#version-1-0-0-2021-08-05" title="Permalink to this headline">¶</a></h2>
+<h2>Version 1.0.0 (2021-08-05)<a class="headerlink" href="#version-1-0-0-2021-08-05" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added: support for Python 3.9</p></li>
 <li><p>Added: tests for Windows</p></li>
@@ -230,19 +237,19 @@ when accessing metadata of MP3 and MP4 files in the benchmarks</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-4-3-2021-07-30">
-<h2>Version 0.4.3 (2021-07-30)<a class="headerlink" href="#version-0-4-3-2021-07-30" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.4.3 (2021-07-30)<a class="headerlink" href="#version-0-4-3-2021-07-30" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: make <code class="docutils literal notranslate"><span class="pre">dtype</span></code> keyword argument available in <code class="docutils literal notranslate"><span class="pre">audiofile.read()</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="version-0-4-2-2021-04-26">
-<h2>Version 0.4.2 (2021-04-26)<a class="headerlink" href="#version-0-4-2-2021-04-26" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.4.2 (2021-04-26)<a class="headerlink" href="#version-0-4-2-2021-04-26" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: allow for <code class="docutils literal notranslate"><span class="pre">duration=0.0</span></code> in <code class="docutils literal notranslate"><span class="pre">audiofile.read()</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="version-0-4-1-2020-12-17">
-<h2>Version 0.4.1 (2020-12-17)<a class="headerlink" href="#version-0-4-1-2020-12-17" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.4.1 (2020-12-17)<a class="headerlink" href="#version-0-4-1-2020-12-17" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added: <code class="docutils literal notranslate"><span class="pre">bit_depth</span></code> to usage section of documentation</p></li>
 <li><p>Fixed: handling of file names that include <code class="docutils literal notranslate"><span class="pre">~</span></code> or <code class="docutils literal notranslate"><span class="pre">..</span></code>
@@ -250,7 +257,7 @@ by using <code class="docutils literal notranslate"><span class="pre">audeer.saf
 </ul>
 </div>
 <div class="section" id="version-0-4-0-2020-11-26">
-<h2>Version 0.4.0 (2020-11-26)<a class="headerlink" href="#version-0-4-0-2020-11-26" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.4.0 (2020-11-26)<a class="headerlink" href="#version-0-4-0-2020-11-26" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">audiofile.bit_depth()</span></code>
 which returns bit depth of WAV and FLAC files</p></li>
@@ -260,13 +267,13 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
 </ul>
 </div>
 <div class="section" id="version-0-3-4-2020-10-29">
-<h2>Version 0.3.4 (2020-10-29)<a class="headerlink" href="#version-0-3-4-2020-10-29" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.3.4 (2020-10-29)<a class="headerlink" href="#version-0-3-4-2020-10-29" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: several typos in the documentation</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-3-3-2020-10-29">
-<h2>Version 0.3.3 (2020-10-29)<a class="headerlink" href="#version-0-3-3-2020-10-29" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.3.3 (2020-10-29)<a class="headerlink" href="#version-0-3-3-2020-10-29" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added: more tests to increase code coverage to 100%</p></li>
 <li><p>Added: link to benchmark page in README</p></li>
@@ -274,7 +281,7 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
 </ul>
 </div>
 <div class="section" id="version-0-3-2-2020-10-29">
-<h2>Version 0.3.2 (2020-10-29)<a class="headerlink" href="#version-0-3-2-2020-10-29" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.3.2 (2020-10-29)<a class="headerlink" href="#version-0-3-2-2020-10-29" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added: benchmark results page in docs</p></li>
 <li><p>Fixed: multi-line release changelogs on Github</p></li>
@@ -282,13 +289,13 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
 </ul>
 </div>
 <div class="section" id="version-0-3-1-2020-10-27">
-<h2>Version 0.3.1 (2020-10-27)<a class="headerlink" href="#version-0-3-1-2020-10-27" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.3.1 (2020-10-27)<a class="headerlink" href="#version-0-3-1-2020-10-27" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: missing dependencies for publishing documentation</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-3-0-2020-10-27">
-<h2>Version 0.3.0 (2020-10-27)<a class="headerlink" href="#version-0-3-0-2020-10-27" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.3.0 (2020-10-27)<a class="headerlink" href="#version-0-3-0-2020-10-27" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Changed: use <code class="docutils literal notranslate"><span class="pre">audiofile.core</span></code> structure under the hood</p></li>
 <li><p>Changed: use Github Actions for tests</p></li>
@@ -298,33 +305,33 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
 </ul>
 </div>
 <div class="section" id="version-0-2-4-2020-08-31">
-<h2>Version 0.2.4 (2020-08-31)<a class="headerlink" href="#version-0-2-4-2020-08-31" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.2.4 (2020-08-31)<a class="headerlink" href="#version-0-2-4-2020-08-31" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: <code class="docutils literal notranslate"><span class="pre">CHANGELOG</span></code> format for PyPI server</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-2-3-2020-08-31">
-<h2>Version 0.2.3 (2020-08-31)<a class="headerlink" href="#version-0-2-3-2020-08-31" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.2.3 (2020-08-31)<a class="headerlink" href="#version-0-2-3-2020-08-31" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: catch <code class="docutils literal notranslate"><span class="pre">SoxiError</span></code> in <code class="docutils literal notranslate"><span class="pre">audiofile.read()</span></code></p></li>
 <li><p>Fixed: test for more advanced audio files like OPUS, AMR, …</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-2-2-2019-10-04">
-<h2>Version 0.2.2 (2019-10-04)<a class="headerlink" href="#version-0-2-2-2019-10-04" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.2.2 (2019-10-04)<a class="headerlink" href="#version-0-2-2-2019-10-04" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Changed: switch to keep a changelog format</p></li>
 <li><p>Changed: define package in <code class="docutils literal notranslate"><span class="pre">setup.cfg</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="version-0-2-1-2019-05-02">
-<h2>Version 0.2.1 (2019-05-02)<a class="headerlink" href="#version-0-2-1-2019-05-02" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.2.1 (2019-05-02)<a class="headerlink" href="#version-0-2-1-2019-05-02" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: module only package</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-2-0-2019-05-02">
-<h2>Version 0.2.0 (2019-05-02)<a class="headerlink" href="#version-0-2-0-2019-05-02" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.2.0 (2019-05-02)<a class="headerlink" href="#version-0-2-0-2019-05-02" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Changed: improve documentation</p></li>
 <li><p>Changed: switch to single <code class="docutils literal notranslate"><span class="pre">audiofile.py</span></code> module</p></li>
@@ -332,25 +339,25 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
 </ul>
 </div>
 <div class="section" id="version-0-1-3-2019-03-27">
-<h2>Version 0.1.3 (2019-03-27)<a class="headerlink" href="#version-0-1-3-2019-03-27" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.1.3 (2019-03-27)<a class="headerlink" href="#version-0-1-3-2019-03-27" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: metadata samples and duration for MP3 files</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-1-2-2019-03-25">
-<h2>Version 0.1.2 (2019-03-25)<a class="headerlink" href="#version-0-1-2-2019-03-25" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.1.2 (2019-03-25)<a class="headerlink" href="#version-0-1-2-2019-03-25" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: metadata for pypi.org</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-1-1-2019-03-25">
-<h2>Version 0.1.1 (2019-03-25)<a class="headerlink" href="#version-0-1-1-2019-03-25" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.1.1 (2019-03-25)<a class="headerlink" href="#version-0-1-1-2019-03-25" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Fixed: license statement in PyPI package</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-1-0-2019-03-25">
-<h2>Version 0.1.0 (2019-03-25)<a class="headerlink" href="#version-0-1-0-2019-03-25" title="Permalink to this headline">¶</a></h2>
+<h2>Version 0.1.0 (2019-03-25)<a class="headerlink" href="#version-0-1-0-2019-03-25" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Added: First public release</p></li>
 </ul>
@@ -378,7 +385,7 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/04/14 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/12/22 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -413,12 +420,14 @@ use <code class="docutils literal notranslate"><span class="pre">bit_depth</span
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/thebelab-helper.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     
 
   

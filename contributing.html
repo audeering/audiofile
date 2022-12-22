@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contributing &mdash; audiofile Documentation</title>
+  <title>Contributing &mdash; Documentation</title>
   
 
   
@@ -25,12 +25,8 @@
     
 
   
-
-  
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/audeering.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/css/audeering.css" type="text/css" />
   <link rel="stylesheet" href="_static/jupyter-sphinx.css" type="text/css" />
   <link rel="stylesheet" href="_static/thebelab.css" type="text/css" />
@@ -38,7 +34,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Changelog" href="changelog.html" />
-    <link rel="prev" title="audiofile" href="api.html" />
+    <link rel="prev" title="convert_to_wav()" href="api/audiofile.convert_to_wav.html" />
     
   
 
@@ -71,7 +67,7 @@
             
             
               <div class="version">
-                v1.1.0
+                v1.1.1
               </div>
             
           
@@ -103,7 +99,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api.html">audiofile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/audiofile.html">audiofile</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul class="current">
@@ -152,14 +148,14 @@
            <div itemprop="articleBody">
             
   <div class="section" id="contributing">
-<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">¶</a></h1>
 <p>If you would like to add new functionality fell free to create a
 <a class="reference external" href="https://github.com/audeering/audiofile/compare">pull request</a>.
 If you find errors, omissions, inconsistencies or other things that need
 improvement, please create an <a class="reference external" href="https://github.com/audeering/audiofile/issues/new">issue</a>.
 Contributions are always welcome!</p>
 <div class="section" id="development-installation">
-<h2>Development Installation<a class="headerlink" href="#development-installation" title="Permalink to this headline">¶</a></h2>
+<h2>Development Installation<a class="headerlink" href="#development-installation" title="Permalink to this heading">¶</a></h2>
 <p>Instead of pip-installing the latest release from <a class="reference external" href="https://pypi.org/project/audiofile/">PyPI</a>, you should get the
 newest development version from <a class="reference external" href="https://github.com/audeering/audiofile/">Github</a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">audeering</span><span class="o">/</span><span class="n">audiofile</span><span class="o">/</span>
@@ -178,7 +174,7 @@ changes from the <a class="reference external" href="https://github.com/audeerin
 </div>
 </div>
 <div class="section" id="building-the-documentation">
-<h2>Building the Documentation<a class="headerlink" href="#building-the-documentation" title="Permalink to this headline">¶</a></h2>
+<h2>Building the Documentation<a class="headerlink" href="#building-the-documentation" title="Permalink to this heading">¶</a></h2>
 <p>If you make changes to the documentation, you can re-create the HTML pages
 using <a class="reference external" href="http://sphinx-doc.org/">Sphinx</a>.
 You can install it and a few other necessary packages with:</p>
@@ -196,7 +192,7 @@ You can install it and a few other necessary packages with:</p>
 </div>
 </div>
 <div class="section" id="running-the-tests">
-<h2>Running the Tests<a class="headerlink" href="#running-the-tests" title="Permalink to this headline">¶</a></h2>
+<h2>Running the Tests<a class="headerlink" href="#running-the-tests" title="Permalink to this heading">¶</a></h2>
 <p>You’ll need <a class="reference external" href="https://pytest.org/">pytest</a> for that.
 It can be installed with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">tests</span><span class="o">/</span><span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
@@ -208,7 +204,7 @@ It can be installed with:</p>
 </div>
 </div>
 <div class="section" id="creating-a-new-release">
-<h2>Creating a New Release<a class="headerlink" href="#creating-a-new-release" title="Permalink to this headline">¶</a></h2>
+<h2>Creating a New Release<a class="headerlink" href="#creating-a-new-release" title="Permalink to this heading">¶</a></h2>
 <p>New releases are made using the following steps:</p>
 <ol class="arabic simple">
 <li><p>Update <code class="docutils literal notranslate"><span class="pre">CHANGELOG.rst</span></code></p></li>
@@ -230,7 +226,7 @@ It can be installed with:</p>
         <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="api.html" class="btn btn-neutral float-left" title="audiofile" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="api/audiofile.convert_to_wav.html" class="btn btn-neutral float-left" title="convert_to_wav()" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -242,7 +238,7 @@ It can be installed with:</p>
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/04/14 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/12/22 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -277,12 +273,14 @@ It can be installed with:</p>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script src="_static/thebelab-helper.js"></script>
         <script src="_static/clipboard.min.js"></script>
         <script src="_static/copybutton.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     
 
   

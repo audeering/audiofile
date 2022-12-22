@@ -1,0 +1,6 @@
+﻿samples\(\)
+===========
+
+.. currentmodule:: audiofile
+
+.. autofunction:: audiofile.samples

@@ -1,0 +1,6 @@
+﻿read\(\)
+========
+
+.. currentmodule:: audiofile
+
+.. autofunction:: audiofile.read

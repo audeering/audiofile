@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>audiofile.core.info &mdash; audiofile Documentation</title>
+  <title>audiofile.core.info &mdash; Documentation</title>
   
 
   
@@ -25,12 +25,8 @@
     
 
   
-
-  
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/css/audeering.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/css/audeering.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/jupyter-sphinx.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/thebelab.css" type="text/css" />
@@ -69,7 +65,7 @@
             
             
               <div class="version">
-                v1.1.0
+                v1.1.1
               </div>
             
           
@@ -101,7 +97,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">audiofile</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/audiofile.html">audiofile</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -145,8 +141,8 @@
             
   <h1>Source code for audiofile.core.info</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Read, write, and get information about audio files.&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">typing</span>
 
@@ -164,7 +160,7 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="bit_depth"><a class="viewcode-back" href="../../../api.html#audiofile.bit_depth">[docs]</a><span class="k">def</span> <span class="nf">bit_depth</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<div class="viewcode-block" id="bit_depth"><a class="viewcode-back" href="../../../api/audiofile.bit_depth.html#audiofile.bit_depth">[docs]</a><span class="k">def</span> <span class="nf">bit_depth</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bit depth of audio file.</span>
 
 <span class="sd">    For lossy audio files,</span>
@@ -213,7 +209,7 @@
     <span class="k">return</span> <span class="n">depth</span></div>
 
 
-<div class="viewcode-block" id="channels"><a class="viewcode-back" href="../../../api.html#audiofile.channels">[docs]</a><span class="k">def</span> <span class="nf">channels</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="channels"><a class="viewcode-back" href="../../../api/audiofile.channels.html#audiofile.channels">[docs]</a><span class="k">def</span> <span class="nf">channels</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Number of channels in audio file.</span>
 
 <span class="sd">    Args:</span>
@@ -234,9 +230,9 @@
         <span class="k">return</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">channels</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">audiofile.core.sox</span> <span class="kn">import</span> <span class="n">sox</span><span class="p">,</span> <span class="n">SOX_ERRORS</span>
-            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sox</span><span class="o">.</span><span class="n">file_info</span><span class="o">.</span><span class="n">channels</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
-        <span class="k">except</span> <span class="n">SOX_ERRORS</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;soxi -c &quot;</span><span class="si">{file}</span><span class="s1">&quot;&#39;</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
             <span class="c1"># For MP4 stored and returned number of channels can be different</span>
             <span class="n">cmd1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Channel(s)_Original%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
             <span class="n">cmd2</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Channel(s)%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
@@ -244,16 +240,14 @@
                 <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd1</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">binary_missing_error</span><span class="p">(</span><span class="s1">&#39;mediainfo&#39;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd2</span><span class="p">))</span>
-                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="duration"><a class="viewcode-back" href="../../../api.html#audiofile.duration">[docs]</a><span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sloppy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="duration"><a class="viewcode-back" href="../../../api/audiofile.duration.html#audiofile.duration">[docs]</a><span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sloppy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Duration in seconds of audio file.</span>
 
 <span class="sd">    The default behavior (``sloppy=False``)</span>
@@ -296,9 +290,9 @@
 
     <span class="k">if</span> <span class="n">sloppy</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">audiofile.core.sox</span> <span class="kn">import</span> <span class="n">sox</span><span class="p">,</span> <span class="n">SOX_ERRORS</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="n">sox</span><span class="o">.</span><span class="n">file_info</span><span class="o">.</span><span class="n">duration</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">or</span> <span class="mf">0.0</span>
-        <span class="k">except</span> <span class="n">SOX_ERRORS</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;soxi -D &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Duration%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
                 <span class="n">duration</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
@@ -307,15 +301,20 @@
                     <span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>
             <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">binary_missing_error</span><span class="p">(</span><span class="s1">&#39;mediainfo&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="c1"># Behavior for broken files is different on Windows</span>
+            <span class="c1"># where no error is raised,</span>
+            <span class="c1"># but an empty duration is returned.</span>
+            <span class="c1"># The error under Windows is then raised</span>
+            <span class="c1"># when calling &#39;samples(file)&#39;</span>
+            <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>  <span class="c1"># pragma: nocover</span>
+                <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">duration</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">duration</span>
 
     <span class="k">return</span> <span class="n">samples</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">/</span> <span class="n">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="samples"><a class="viewcode-back" href="../../../api.html#audiofile.samples">[docs]</a><span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="samples"><a class="viewcode-back" href="../../../api/audiofile.samples.html#audiofile.samples">[docs]</a><span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Number of samples in audio file.</span>
 
 <span class="sd">    Audio files that are not WAV, FLAC, or OGG</span>
@@ -351,7 +350,7 @@
             <span class="k">return</span> <span class="n">samples_as_int</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="sampling_rate"><a class="viewcode-back" href="../../../api.html#audiofile.sampling_rate">[docs]</a><span class="k">def</span> <span class="nf">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="sampling_rate"><a class="viewcode-back" href="../../../api/audiofile.sampling_rate.html#audiofile.sampling_rate">[docs]</a><span class="k">def</span> <span class="nf">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Sampling rate of audio file.</span>
 
 <span class="sd">    Args:</span>
@@ -372,20 +371,22 @@
         <span class="k">return</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">samplerate</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">audiofile.core.sox</span> <span class="kn">import</span> <span class="n">sox</span><span class="p">,</span> <span class="n">SOX_ERRORS</span>
-            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sox</span><span class="o">.</span><span class="n">file_info</span><span class="o">.</span><span class="n">sample_rate</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
-        <span class="k">except</span> <span class="n">SOX_ERRORS</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;soxi -r &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%SamplingRate%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
                 <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">sampling_rate</span><span class="p">:</span>
                     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sampling_rate</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                    <span class="c1"># Raise CalledProcessError</span>
+                    <span class="c1"># to align coverage under Windows and Linux</span>
+                    <span class="k">raise</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">binary_missing_error</span><span class="p">(</span><span class="s1">&#39;mediainfo&#39;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
+            <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -401,7 +402,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/04/14 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/12/22 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -436,12 +437,14 @@
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
         <script src="../../../_static/thebelab-helper.js"></script>
         <script src="../../../_static/clipboard.min.js"></script>
         <script src="../../../_static/copybutton.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     
 
   

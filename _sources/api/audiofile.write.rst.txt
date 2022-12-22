@@ -1,0 +1,6 @@
+﻿write\(\)
+=========
+
+.. currentmodule:: audiofile
+
+.. autofunction:: audiofile.write

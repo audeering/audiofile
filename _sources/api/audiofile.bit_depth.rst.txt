@@ -1,0 +1,6 @@
+﻿bit\_depth\(\)
+==============
+
+.. currentmodule:: audiofile
+
+.. autofunction:: audiofile.bit_depth

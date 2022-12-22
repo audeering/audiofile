@@ -1,0 +1,6 @@
+﻿sampling\_rate\(\)
+==================
+
+.. currentmodule:: audiofile
+
+.. autofunction:: audiofile.sampling_rate

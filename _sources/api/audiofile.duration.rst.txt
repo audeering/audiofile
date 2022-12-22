@@ -1,0 +1,6 @@
+﻿duration\(\)
+============
+
+.. currentmodule:: audiofile
+
+.. autofunction:: audiofile.duration

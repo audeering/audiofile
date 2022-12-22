@@ -1,0 +1,6 @@
+﻿channels\(\)
+============
+
+.. currentmodule:: audiofile
+
+.. autofunction:: audiofile.channels
