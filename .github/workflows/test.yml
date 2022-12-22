@@ -13,22 +13,9 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
-        python-version: [ 3.8 ]
+        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
         tasks: [ tests ]
         sox: [ sox, no-sox ]  # sox binary present or not
-        include:
-          - os: ubuntu-latest
-            python-version: 3.7
-            tasks: tests
-            sox: sox
-          - os: ubuntu-latest
-            python-version: 3.9
-            tasks: tests
-            sox: sox
-          - os: ubuntu-latest
-            python-version: 3.8
-            tasks: docs
-            sox: no-sox
 
     steps:
     - uses: actions/checkout@v3
