@@ -1,7 +1,6 @@
 from __future__ import division
 import os
 import subprocess
-import tempfile
 
 import pytest
 import numpy as np
