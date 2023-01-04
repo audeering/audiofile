@@ -1,5 +1,3 @@
-import numpy as np
-import subprocess as sp
 import os
 import pandas as pd
 import seaborn as sns

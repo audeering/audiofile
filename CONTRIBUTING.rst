@@ -7,10 +7,9 @@ If you find errors, omissions, inconsistencies or other things that need
 improvement, please create an issue_.
 Contributions are always welcome!
 
-.. _issue:
-    https://github.com/audeering/audiofile/issues/new
-.. _pull request:
-    https://github.com/audeering/audiofile/compare
+.. _issue: https://github.com/audeering/audiofile/issues/new
+.. _pull request: https://github.com/audeering/audiofile/compare
+
 
 Development Installation
 ------------------------
@@ -35,6 +34,40 @@ If you prefer, you can also replace the last command with::
 
    pip install -r requirements.txt
 
+
+Coding Convention
+-----------------
+
+We follow the PEP8_ convention for Python code
+and check for correct syntax with flake8_.
+Exceptions are defined under the ``[flake8]`` section
+in :file:`setup.cfg`.
+
+The checks are executed in the CI using `pre-commit`_.
+You can enable those checks locally by executing::
+
+    pip install pre-commit  # consider system wide installation
+    pre-commit install
+    pre-commit run --all-files
+
+Afterwards flake8_ is executed
+every time you create a commit.
+
+You can also install flake8_
+and call it directly::
+
+    pip install flake8  # consider system wide installation
+    flake8
+
+It can be restricted to specific folders::
+
+    flake8 audfoo/ tests/
+
+.. _PEP8: http://www.python.org/dev/peps/pep-0008/
+.. _flake8: https://flake8.pycqa.org/en/latest/index.html
+.. _pre-commit: https://pre-commit.com
+
+
 Building the Documentation
 --------------------------
 
@@ -56,6 +89,7 @@ It is also possible to automatically check if all links are still valid::
 
 .. _Sphinx: http://sphinx-doc.org/
 
+
 Running the Tests
 -----------------
 
@@ -69,6 +103,7 @@ To execute the tests, simply run::
    python -m pytest
 
 .. _pytest: https://pytest.org/
+
 
 Creating a New Release
 ----------------------

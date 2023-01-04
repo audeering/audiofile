@@ -3,7 +3,6 @@ import audioread.rawread
 import audioread.gstdec
 import audioread.maddec
 import audioread.ffdec
-import matplotlib.pyplot as plt
 import soundfile as sf
 import audiofile as af
 import aubio
