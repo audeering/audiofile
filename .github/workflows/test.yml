@@ -31,15 +31,14 @@ jobs:
       with:
         cache-env: true
         environment-file: false
-        environment-name: venv-sox
+        environment-name: venv
         extra-specs: |
           pip
           python=${{ matrix.python-version }}
-          sox
         channels: conda-forge
 
     - name: Activate Python virtual environment
-      run: micromamba activate venv-sox
+      run: micromamba activate venv
 
     - name: Install sox with Micromamba
       run: micromamba install sox
