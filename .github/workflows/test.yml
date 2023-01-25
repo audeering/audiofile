@@ -25,19 +25,16 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Set up conda
-      uses: s-weigand/setup-conda@v1
+    - name: Install Conda environment with Micromamba
+      uses: mamba-org/provision-with-micromamba@main
       with:
-        activate-conda: false  # don't switch Python version
-      if: matrix.sox == 'sox'
-
-    - name: Install sox using conda
-      # MP3 support under Linux and macOS, see
-      # https://github.com/conda-forge/sox-feedstock/pull/18
-      run: |
-        conda config --add channels conda-forge
-        conda config --set channel_priority strict
-        conda install sox
+        cache-env: true
+        environment-file: false
+        environment-name: venv-sox
+        extra-specs: |
+          python=${{ matrix.python-version }}
+          sox
+        channels: conda-forge
       if: matrix.sox == 'sox'
 
     - name: Ubuntu - install libsndfile
