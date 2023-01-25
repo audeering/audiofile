@@ -74,7 +74,8 @@ jobs:
       if: matrix.tasks == 'tests'
 
     - name: Show sox version
-      run: sox --version
+      run: |
+        if $(which sox >/dev/null); then sox --version; else echo "No sox installed"; fi
 
     - name: Test with pytest
       run: python -m pytest
