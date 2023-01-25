@@ -60,7 +60,9 @@ jobs:
       if: matrix.os == 'windows-latest'
 
     - name: Activate micromamba env
-      run: micromamba activate venv-sox
+      run: |
+        micromamba shell init --shell=bash --prefix=~/micromamba
+        micromamba activate venv-sox
       if: matrix.sox == 'sox'
 
     - name: Install package
