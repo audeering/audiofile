@@ -24,14 +24,16 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
+      if: matrix.sox == 'no-sox'
 
-    - name: Install Conda environment with Micromamba
+    - name: Set up Python ${{ matrix.python-version }} with Micromamba
       uses: mamba-org/provision-with-micromamba@main
       with:
         cache-env: true
         environment-file: false
         environment-name: venv-sox
         extra-specs: |
+          pip
           python=${{ matrix.python-version }}
           sox
         channels: conda-forge
@@ -57,9 +59,13 @@ jobs:
       run: choco install ffmpeg mediainfo-cli
       if: matrix.os == 'windows-latest'
 
+    - name: Activate micromamba env
+      run: micromamba activate venv-sox
+      if: matrix.sox == 'sox'
+
     - name: Install package
       run: |
-        python -m pip install --upgrade pip
+        # python -m pip install --upgrade pip
         pip install -r requirements.txt
 
     # TESTS
