@@ -37,6 +37,8 @@ jobs:
           python=${{ matrix.python-version }}
           sox
         channels: conda-forge
+
+    - name: Activate Python virtual environment
       run: micromamba activate venv-sox
 
     - name: Install sox with Micromamba
