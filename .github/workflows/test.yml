@@ -9,6 +9,12 @@ on:
 jobs:
   build:
 
+    # Make sure .bashrc is read by shell for micromamba,
+    # see https://github.com/mamba-org/provision-with-micromamba#important
+    defaults:
+      run:
+        shell: bash -l {0}
+
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -20,24 +26,22 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+    - name: Set up Python ${{ matrix.python-version }} with Micromamba
+      uses: mamba-org/provision-with-micromamba@main
       with:
-        python-version: ${{ matrix.python-version }}
+        cache-env: true
+        environment-file: false
+        environment-name: venv
+        extra-specs: |
+          pip
+          python=${{ matrix.python-version }}
+        channels: conda-forge
 
-    - name: Set up conda
-      uses: s-weigand/setup-conda@v1
-      with:
-        activate-conda: false  # don't switch Python version
-      if: matrix.sox == 'sox'
+    - name: Activate Python virtual environment
+      run: micromamba activate venv
 
-    - name: Install sox using conda
-      # MP3 support under Linux and macOS, see
-      # https://github.com/conda-forge/sox-feedstock/pull/18
-      run: |
-        conda config --add channels conda-forge
-        conda config --set channel_priority strict
-        conda install sox
+    - name: Install sox with Micromamba
+      run: micromamba install sox
       if: matrix.sox == 'sox'
 
     - name: Ubuntu - install libsndfile
@@ -62,13 +66,16 @@ jobs:
 
     - name: Install package
       run: |
-        python -m pip install --upgrade pip
         pip install -r requirements.txt
 
     # TESTS
     - name: Install tests requirements
       run: pip install -r tests/requirements.txt
       if: matrix.tasks == 'tests'
+
+    - name: Show sox version
+      run: |
+        if $(which sox >/dev/null); then sox --version; else echo "No sox installed"; fi
 
     - name: Test with pytest
       run: python -m pytest
