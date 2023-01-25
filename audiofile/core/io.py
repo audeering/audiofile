@@ -60,8 +60,8 @@ def convert_to_wav(
         duration=duration,
     )
     write(outfile, signal, sampling_rate, bit_depth=bit_depth, **kwargs)
-    
-    
+
+
 def read(
         file: str,
         duration: float = None,
