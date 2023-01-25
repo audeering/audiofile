@@ -20,21 +20,24 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+    # - name: Set up Python ${{ matrix.python-version }}
+    #  - uses: actions/setup-python@v4
+    #  - with:
+    #  -   python-version: ${{ matrix.python-version }}
 
-    - name: Install Conda environment with Micromamba
+    - name: Set up Python ${{ matrix.python-version }} with Micromamba
       uses: mamba-org/provision-with-micromamba@main
       with:
         cache-env: true
         environment-file: false
-        environment-name: venv-sox
+        environment-name: venv
         extra-specs: |
+          pip
           python=${{ matrix.python-version }}
-          sox
         channels: conda-forge
+
+    - name: Install sox
+      run: micromamba install sox
       if: matrix.sox == 'sox'
 
     - name: Ubuntu - install libsndfile
@@ -59,7 +62,6 @@ jobs:
 
     - name: Install package
       run: |
-        python -m pip install --upgrade pip
         pip install -r requirements.txt
 
     # TESTS
