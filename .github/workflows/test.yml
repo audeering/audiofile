@@ -67,6 +67,10 @@ jobs:
       run: pip install -r tests/requirements.txt
       if: matrix.tasks == 'tests'
 
+    - name: Show sox version
+      run: sox --version
+      if: matrix.sox == 'sox'
+
     - name: Test with pytest
       run: python -m pytest
       if: matrix.tasks == 'tests'
