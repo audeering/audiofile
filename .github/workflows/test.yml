@@ -9,6 +9,12 @@ on:
 jobs:
   build:
 
+    # Make sure .bashrc is read by shell for micromamba,
+    # see https://github.com/mamba-org/provision-with-micromamba#important
+    defaults:
+      run:
+        shell: bash -l {0}
+
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
