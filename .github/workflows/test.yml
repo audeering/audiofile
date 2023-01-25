@@ -63,6 +63,7 @@ jobs:
       run: |
         eval "$(micromamba shell hook --shell=bash)"
         micromamba activate venv-sox
+        sox --version
       if: matrix.sox == 'sox'
 
     - name: Install package
