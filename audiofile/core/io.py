@@ -8,7 +8,6 @@ import soundfile
 import audeer
 
 from audiofile.core.convert import convert
-import audiofile.core.info as info
 from audiofile.core.utils import (
     file_extension,
     MAX_CHANNELS,
@@ -21,20 +20,30 @@ def convert_to_wav(
         outfile: str,
         offset: float = 0,
         duration: float = None,
+        bit_depth: int = 16,
+        normalize: bool = False,
+        **kwargs,
 ):
     """Convert any audio/video file to WAV.
 
-    It uses soundfile for converting WAV, FLAC, OGG files,
-    and sox or ffmpeg for converting all other files.
+    It uses soundfile for reading WAV, FLAC, OGG files,
+    and sox or ffmpeg for reading all other files.
     If ``duration`` and/or ``offset`` are specified
     the resulting WAV file
     will be shortened accordingly.
+
+    It then uses :func:`soundfile.write` to write the WAV file,
+    which limits the number of supported channels to 65535.
 
     Args:
         infile: audio/video file name
         outfile: WAV file name
         duration: return only a specified duration in seconds
         offset: start reading at offset in seconds
+        bit_depth: bit depth of written file in bit,
+            can be 8, 16, 24
+        normalize: normalize audio data before writing
+        kwargs: pass on further arguments to :func:`soundfile.write`
 
     Raises:
         FileNotFoundError: if ffmpeg binary is needed,
@@ -45,18 +54,12 @@ def convert_to_wav(
     """
     infile = audeer.safe_path(infile)
     outfile = audeer.safe_path(outfile)
-    if file_extension(infile) in SNDFORMATS:
-        bit_depth = info.bit_depth(infile)
-        if bit_depth is None:
-            bit_depth = 16
-        signal, sampling_rate = read(
-            infile,
-            offset=offset,
-            duration=duration,
-        )
-        write(outfile, signal, sampling_rate, bit_depth=bit_depth)
-    else:
-        convert(infile, outfile, offset, duration)
+    signal, sampling_rate = read(
+        infile,
+        offset=offset,
+        duration=duration,
+    )
+    write(outfile, signal, sampling_rate, bit_depth=bit_depth, **kwargs)
 
 
 def read(
@@ -126,7 +129,9 @@ def read(
             )
     else:
         if duration is not None or offset > 0:
-            sampling_rate = info.sampling_rate(file)
+            # We don't use audiofile.sampling_rate(file) here
+            # to avoid circular imports
+            sampling_rate = soundfile.info(file).samplerate
         if offset > 0:
             offset = np.ceil(offset * sampling_rate)  # samples
         if duration is not None:
