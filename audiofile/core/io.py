@@ -104,6 +104,19 @@ def read(
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
+    Examples:
+        >>> signal, sampling_rate = read('mono.wav')
+        >>> sampling_rate
+        8000
+        >>> signal.shape
+        (1000,)
+        >>> signal, sampling_rate = read('mono.wav', always_2d=True)
+        >>> signal.shape
+        (1, 1000)
+        >>> signal, sampling_rate = read('stereo.wav', duration=0.1)
+        >>> signal.shape
+        (2, 800)
+
     """
     file = audeer.safe_path(file)
     tmpdir = None
