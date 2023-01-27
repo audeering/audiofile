@@ -17,7 +17,7 @@ from audiofile.core.utils import (
 
 def convert_to_wav(
         infile: str,
-        outfile: str,
+        outfile: str = None,
         offset: float = 0,
         duration: float = None,
         bit_depth: int = 16,
@@ -37,7 +37,9 @@ def convert_to_wav(
 
     Args:
         infile: audio/video file name
-        outfile: WAV file name
+        outfile: WAV file name.
+            If ``None`` same path as ``infile``
+            but file extension is replaced by ``'wav'``
         duration: return only a specified duration in seconds
         offset: start reading at offset in seconds
         bit_depth: bit depth of written file in bit,
@@ -55,13 +57,16 @@ def convert_to_wav(
             broken or format is not supported
 
     Examples:
-        >>> path = convert_to_wav('stereo.flac', 'stereo.wav')
+        >>> path = convert_to_wav('stereo.flac')
         >>> os.path.basename(path)
         'stereo.wav'
 
     """
     infile = audeer.safe_path(infile)
-    outfile = audeer.safe_path(outfile)
+    if outfile is None:
+        outfile = audeer.replace_file_extension(infile, 'wav')
+    else:
+        outfile = audeer.safe_path(outfile)
     signal, sampling_rate = read(
         infile,
         offset=offset,
