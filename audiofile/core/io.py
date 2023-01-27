@@ -23,7 +23,7 @@ def convert_to_wav(
         bit_depth: int = 16,
         normalize: bool = False,
         **kwargs,
-):
+) -> str:
     """Convert any audio/video file to WAV.
 
     It uses soundfile for reading WAV, FLAC, OGG files,
