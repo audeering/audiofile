@@ -67,6 +67,8 @@ def convert_to_wav(
         outfile = audeer.replace_file_extension(infile, 'wav')
     else:
         outfile = audeer.safe_path(outfile)
+    if infile == outfile:
+        return outfile
     signal, sampling_rate = read(
         infile,
         offset=offset,

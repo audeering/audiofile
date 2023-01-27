@@ -305,7 +305,7 @@ def test_convert_to_wav(tmpdir, bit_depth, file_extension):
         convert_to_mp3(tmpfile, infile, sampling_rate, channels)
     else:
         af.write(infile, signal, sampling_rate, bit_depth=bit_depth)
-    if file_extension == 'mp3':
+    if file_extension in ['wav', 'mp3']:
         outfile = af.convert_to_wav(infile, bit_depth=bit_depth)
     else:
         outfile = str(tmpdir.join('signal_converted.wav'))
