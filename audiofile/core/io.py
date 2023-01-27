@@ -51,6 +51,9 @@ def convert_to_wav(
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
+    Examples:
+        >>> convert_to_wav('stereo.flac', 'stereo.wav')
+
     """
     infile = audeer.safe_path(infile)
     outfile = audeer.safe_path(outfile)
@@ -103,6 +106,19 @@ def read(
             but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
+
+    Examples:
+        >>> signal, sampling_rate = read('mono.wav')
+        >>> sampling_rate
+        8000
+        >>> signal.shape
+        (1000,)
+        >>> signal, sampling_rate = read('mono.wav', always_2d=True)
+        >>> signal.shape
+        (1, 1000)
+        >>> signal, sampling_rate = read('stereo.wav', duration=0.1)
+        >>> signal.shape
+        (2, 800)
 
     """
     file = audeer.safe_path(file)
@@ -184,7 +200,14 @@ def write(
     Raises:
         RuntimeError: for non-supported bit depth or number of channels
 
-    """
+    Examples:
+        >>> sampling_rate = 8000
+        >>> signal = np.random.uniform(-1, 1, (1, 1000))
+        >>> write('mono.wav', signal, sampling_rate)
+        >>> signal = np.random.uniform(-1.2, 1.2, (2, 1000))
+        >>> write('stereo.flac', signal, sampling_rate, normalize=True)
+
+    """  # noqa: E501
     file = audeer.safe_path(file)
     file_type = file_extension(file)
 

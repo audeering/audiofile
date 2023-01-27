@@ -34,6 +34,10 @@ def bit_depth(file: str) -> typing.Optional[int]:
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
+    Examples:
+        >>> bit_depth('stereo.wav')
+        16
+
     """
     file = audeer.safe_path(file)
     file_type = file_extension(file)
@@ -81,6 +85,10 @@ def channels(file: str) -> int:
             but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
+
+    Examples:
+        >>> channels('stereo.wav')
+        2
 
     """
     file = audeer.safe_path(file)
@@ -141,6 +149,10 @@ def duration(file: str, sloppy=False) -> float:
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
+    Examples:
+        >>> duration('stereo.wav')
+        0.125
+
     """
     file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
@@ -191,6 +203,10 @@ def samples(file: str) -> int:
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
 
+    Examples:
+        >>> samples('stereo.wav')
+        1000
+
     """
     def samples_as_int(file):
         return int(
@@ -222,6 +238,10 @@ def sampling_rate(file: str) -> int:
             but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
+
+    Examples:
+        >>> sampling_rate('stereo.wav')
+        8000
 
     """
     file = audeer.safe_path(file)
