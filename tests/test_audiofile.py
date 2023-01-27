@@ -492,6 +492,15 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
         atol=tolerance('duration', sampling_rate),
     )
 
+    # Test out-of-bounds offset argument,
+    # see https://github.com/audeering/audiofile/issues/88
+    offset = 2.0
+    sig, fs = af.read(mp3_file, offset=offset, always_2d=True)
+    np.testing.assert_array_equal(
+        sig,
+        np.zeros((channels, 0), dtype='float32'),
+    )
+
 
 def test_formats():
     files = [
