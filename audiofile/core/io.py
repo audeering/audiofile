@@ -23,7 +23,7 @@ def convert_to_wav(
         bit_depth: int = 16,
         normalize: bool = False,
         **kwargs,
-):
+) -> str:
     """Convert any audio/video file to WAV.
 
     It uses soundfile for reading WAV, FLAC, OGG files,
@@ -45,6 +45,9 @@ def convert_to_wav(
         normalize: normalize audio data before writing
         kwargs: pass on further arguments to :func:`soundfile.write`
 
+    Returns:
+        absolute path to resulting WAV file
+
     Raises:
         FileNotFoundError: if ffmpeg binary is needed,
             but cannot be found
@@ -52,7 +55,9 @@ def convert_to_wav(
             broken or format is not supported
 
     Examples:
-        >>> convert_to_wav('stereo.flac', 'stereo.wav')
+        >>> path = convert_to_wav('stereo.flac', 'stereo.wav')
+        >>> os.path.basename(path)
+        'stereo.wav'
 
     """
     infile = audeer.safe_path(infile)
@@ -63,6 +68,7 @@ def convert_to_wav(
         duration=duration,
     )
     write(outfile, signal, sampling_rate, bit_depth=bit_depth, **kwargs)
+    return outfile
 
 
 def read(

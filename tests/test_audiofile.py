@@ -179,7 +179,8 @@ def test_read(tmpdir, duration, offset):
 def test_empty_file(tmpdir, convert, empty_file):
     if convert:
         converted_file = str(tmpdir.join('signal-converted.wav'))
-        af.convert_to_wav(empty_file, converted_file)
+        path = af.convert_to_wav(empty_file, converted_file)
+        assert path == audeer.path(converted_file)
         empty_file = converted_file
     # Reading file
     signal, sampling_rate = af.read(empty_file)
