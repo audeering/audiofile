@@ -14,17 +14,22 @@ np.random.seed(1)
 def audio_file():
     # Create an audio file to be used in doctests
     sampling_rate = 8000
+    mono_wav_file = audeer.path('mono.wav')
+    stereo_wav_file = audeer.path('stereo.wav')
+    stereo_flac_file = audeer.path('stereo.flac')
     signal = np.random.uniform(-1, 1, (1, 1000))
-    mono_file = audeer.path('mono.wav')
-    audiofile.write('mono.wav', signal, sampling_rate)
+    audiofile.write(mono_wav_file, signal, sampling_rate)
     signal = np.random.uniform(-1, 1, (2, 1000))
-    stereo_file = audeer.path('stereo.wav')
-    audiofile.write(stereo_file, signal, sampling_rate)
+    audiofile.write(stereo_wav_file, signal, sampling_rate)
+    audiofile.write(stereo_flac_file, signal, sampling_rate)
 
     yield
 
     # Clean up
-    if os.path.exists(mono_file):
-        os.remove(mono_file)
-    if os.path.exists(stereo_file):
-        os.remove(stereo_file)
+    for file in [
+            mono_wav_file,
+            stereo_wav_file,
+            stereo_flac_file,
+    ]:
+        if os.path.exists(file):
+            os.remove(file)
