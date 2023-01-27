@@ -52,7 +52,9 @@ def convert_to_wav(
             broken or format is not supported
 
     Examples:
-        >>> convert_to_wav('stereo.flac', 'stereo.wav')
+        >>> path = convert_to_wav('stereo.flac', 'stereo.wav')
+        >>> os.path.basename(path)
+        'stereo.wav'
 
     """
     infile = audeer.safe_path(infile)
@@ -63,6 +65,7 @@ def convert_to_wav(
         duration=duration,
     )
     write(outfile, signal, sampling_rate, bit_depth=bit_depth, **kwargs)
+    return outfile
 
 
 def read(
