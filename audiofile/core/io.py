@@ -45,6 +45,9 @@ def convert_to_wav(
         normalize: normalize audio data before writing
         kwargs: pass on further arguments to :func:`soundfile.write`
 
+    Returns:
+        absolute path to resulting WAV file
+
     Raises:
         FileNotFoundError: if ffmpeg binary is needed,
             but cannot be found
