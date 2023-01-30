@@ -46,8 +46,8 @@ def convert_to_wav(
         bit_depth: bit depth of written file in bit,
             can be 8, 16, 24
         normalize: normalize audio data before writing
-        overwrite: force overwriting of WAV ``infile``
-            if no ``outfile`` is provided
+        overwrite: force overwriting
+            if ``outfile`` is identical to ``outfile``
         kwargs: pass on further arguments to :func:`soundfile.write`
 
     Returns:
