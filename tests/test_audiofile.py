@@ -1,5 +1,6 @@
 from __future__ import division
 import os
+import re
 import subprocess
 
 import pytest
@@ -311,7 +312,7 @@ def test_convert_to_wav(tmpdir, bit_depth, file_extension):
             "Select 'overwrite=True', "
             "or provide an 'outfile' argument."
         )
-        with pytest.raises(RuntimeError, match=error_msg):
+        with pytest.raises(RuntimeError, match=re.escape(error_msg)):
             outfile = af.convert_to_wav(infile, bit_depth=bit_depth)
         outfile = af.convert_to_wav(
             infile,
