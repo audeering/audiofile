@@ -308,7 +308,7 @@ def test_convert_to_wav(tmpdir, bit_depth, file_extension):
         af.write(infile, signal, sampling_rate, bit_depth=bit_depth)
     if file_extension == 'wav':
         error_msg = (
-            f"'{infile}' would need to be overwritten. "
+            f"'{infile}' would be overwritten. "
             "Select 'overwrite=True', "
             "or provide an 'outfile' argument."
         )

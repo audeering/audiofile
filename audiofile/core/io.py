@@ -77,7 +77,7 @@ def convert_to_wav(
             and not overwrite
     ):
         raise RuntimeError(
-            f"'{infile}' would need to be overwritten. "
+            f"'{infile}' would be overwritten. "
             "Select 'overwrite=True', "
             "or provide an 'outfile' argument."
         )
