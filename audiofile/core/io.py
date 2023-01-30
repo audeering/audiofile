@@ -22,6 +22,7 @@ def convert_to_wav(
         duration: float = None,
         bit_depth: int = 16,
         normalize: bool = False,
+        overwrite: bool = False,
         **kwargs,
 ) -> str:
     """Convert any audio/video file to WAV.
@@ -45,6 +46,8 @@ def convert_to_wav(
         bit_depth: bit depth of written file in bit,
             can be 8, 16, 24
         normalize: normalize audio data before writing
+        overwrite: force overwriting of WAV ``infile``
+            if no ``outfile`` is provided
         kwargs: pass on further arguments to :func:`soundfile.write`
 
     Returns:
@@ -55,6 +58,8 @@ def convert_to_wav(
             but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
+        RuntimeError: if ``infile`` would need to be overwritten
+            and ``overwrite`` is ``False``
 
     Examples:
         >>> path = convert_to_wav('stereo.flac')
@@ -67,8 +72,15 @@ def convert_to_wav(
         outfile = audeer.replace_file_extension(infile, 'wav')
     else:
         outfile = audeer.safe_path(outfile)
-    if infile == outfile:
-        return outfile
+    if (
+            infile == outfile
+            and not overwrite
+    ):
+        raise RuntimeError(
+            f"'{infile}' would need to be overwritten. "
+            "Select 'overwrite=True', "
+            "or provide an 'outfile' argument."
+        )
     signal, sampling_rate = read(
         infile,
         offset=offset,
