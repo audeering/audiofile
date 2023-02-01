@@ -1,6 +1,22 @@
 import subprocess
+import typing
+
+import numpy as np
+import soundfile
 
 import audeer
+import audmath
+
+
+MAX_CHANNELS = {
+    'wav': 65535,
+    'ogg': 255,
+    'flac': 8,
+}
+r"""Maximum number of channels per format."""
+
+SNDFORMATS = ['wav', 'flac', 'ogg']
+r"""File formats handled by soundfile"""
 
 
 def binary_missing_error(binary: str) -> Exception:
@@ -39,6 +55,24 @@ def broken_file_error(file: str) -> Exception:
         f'Error opening {file}: '
         'File contains data in an unknown format.'
     )
+
+
+def duration_in_seconds(
+        duration: typing.Union[float, int, str, np.timedelta64],
+        sampling_rate: typing.Union[float, int],
+) -> np.floating:
+    r"""Duration in seconds.
+
+    This mirrors the behavior of audmath.duration_in_seconds()
+    but handles only string values without unit,
+    e.g. ``'2000'`` as representing samples.
+
+    """
+    if isinstance(duration, str):
+        duration = audmath.duration_in_seconds(duration, sampling_rate)
+    else:
+        duration = audmath.duration_in_seconds(duration)
+    return duration
 
 
 def file_extension(path):
@@ -98,12 +132,44 @@ def run_sox(infile, outfile, offset, duration):
     run(cmd)
 
 
-MAX_CHANNELS = {
-    'wav': 65535,
-    'ogg': 255,
-    'flac': 8,
-}
-r"""Maximum number of channels per format."""
+def sampling_rate(file: str) -> int:
+    """Sampling rate of audio file.
 
-SNDFORMATS = ['wav', 'flac', 'ogg']
-r"""File formats handled by soundfile"""
+    Args:
+        file: file name of input audio file
+
+    Returns:
+        sampling rate of audio file
+
+    Raises:
+        FileNotFoundError: if mediainfo binary is needed,
+            but cannot be found
+        RuntimeError: if ``file`` is missing,
+            broken or format is not supported
+
+    Examples:
+        >>> sampling_rate('stereo.wav')
+        8000
+
+    """
+    file = audeer.safe_path(file)
+    if file_extension(file) in SNDFORMATS:
+        return soundfile.info(file).samplerate
+    else:
+        try:
+            cmd = f'soxi -r "{file}"'
+            return int(run(cmd))
+        except (FileNotFoundError, subprocess.CalledProcessError):
+            try:
+                cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
+                sampling_rate = run(cmd)
+                if sampling_rate:
+                    return int(sampling_rate)
+                else:
+                    # Raise CalledProcessError
+                    # to align coverage under Windows and Linux
+                    raise subprocess.CalledProcessError(-2, cmd)
+            except FileNotFoundError:
+                raise binary_missing_error('mediainfo')
+            except subprocess.CalledProcessError:
+                raise broken_file_error(file)

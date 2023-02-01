@@ -14,6 +14,7 @@ from audiofile.core.utils import (
     broken_file_error,
     file_extension,
     run,
+    sampling_rate,
     SNDFORMATS,
 )
 
@@ -226,46 +227,3 @@ def samples(file: str) -> int:
             tmpfile = os.path.join(tmpdir, 'tmp.wav')
             convert_to_wav(file, tmpfile)
             return samples_as_int(tmpfile)
-
-
-def sampling_rate(file: str) -> int:
-    """Sampling rate of audio file.
-
-    Args:
-        file: file name of input audio file
-
-    Returns:
-        sampling rate of audio file
-
-    Raises:
-        FileNotFoundError: if mediainfo binary is needed,
-            but cannot be found
-        RuntimeError: if ``file`` is missing,
-            broken or format is not supported
-
-    Examples:
-        >>> sampling_rate('stereo.wav')
-        8000
-
-    """
-    file = audeer.safe_path(file)
-    if file_extension(file) in SNDFORMATS:
-        return soundfile.info(file).samplerate
-    else:
-        try:
-            cmd = ['soxi', '-r', file]
-            return int(run(cmd))
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            try:
-                cmd = ['mediainfo', '--Inform=Audio;%SamplingRate%', file]
-                sampling_rate = run(cmd)
-                if sampling_rate:
-                    return int(sampling_rate)
-                else:
-                    # Raise CalledProcessError
-                    # to align coverage under Windows and Linux
-                    raise subprocess.CalledProcessError(-2, cmd)
-            except FileNotFoundError:
-                raise binary_missing_error('mediainfo')
-            except subprocess.CalledProcessError:
-                raise broken_file_error(file)

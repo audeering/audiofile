@@ -4,12 +4,14 @@ from audiofile.core.info import (
     channels,
     duration,
     samples,
-    sampling_rate,
 )
 from audiofile.core.io import (
     convert_to_wav,
     read,
     write,
+)
+from audiofile.core.utils import (
+    sampling_rate,
 )
 
 # Discourage from audeer import *
