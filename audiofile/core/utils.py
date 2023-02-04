@@ -50,7 +50,7 @@ def file_extension(path):
 def run(shell_command):
     """Return the output of a shell command provided as string."""
     out = subprocess.check_output(
-        shlex.split(shell_command),
+        shell_command,
         stderr=subprocess.STDOUT
     )
     try:
@@ -62,18 +62,18 @@ def run(shell_command):
 def run_ffmpeg(infile, outfile, offset, duration):
     """Convert audio file to WAV file."""
     if duration:
-        cmd = f'ffmpeg -ss {offset} -i "{infile}" -t {duration} "{outfile}"'
+        cmd = ['ffmpeg', '-ss', str(offset), '-i', infile, '-t', str(duration), outfile]
     else:
-        cmd = f'ffmpeg -ss {offset} -i "{infile}" "{outfile}"'
+        cmd = ['ffmpeg', '-ss', str(offset), '-i', infile, outfile]
     run(cmd)
 
 
 def run_sox(infile, outfile, offset, duration):
     """Convert audio file to WAV file."""
     if duration:
-        cmd = f'sox "{infile}" "{outfile}" trim {offset} {duration}'
+        cmd = ['sox' infile, outfile, 'trim' str(offset) str(duration)]
     else:
-        cmd = f'sox "{infile}" "{outfile}" trim {offset}'
+        cmd = ['sox' infile, outfile, 'trim' str(offset)]
     run(cmd)
 
 
