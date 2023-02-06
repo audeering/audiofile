@@ -79,7 +79,12 @@ def run_sox(infile, outfile, offset, duration):
     if duration:
         cmd = ['sox', infile, outfile, 'trim', str(offset), str(duration)]
     else:
-        cmd = ['sox', infile, outfile, 'trim', str(offset)]
+        cmd = [
+            'sox',
+            infile,
+            outfile,
+            'trim', str(offset),
+        ]
     run(cmd)
 
 
