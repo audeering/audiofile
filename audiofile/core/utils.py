@@ -82,7 +82,13 @@ def run_ffmpeg(infile, outfile, offset, duration):
 def run_sox(infile, outfile, offset, duration):
     """Convert audio file to WAV file."""
     if duration:
-        cmd = ['sox', infile, outfile, 'trim', str(offset), str(duration)]
+        cmd = [
+            'sox',
+            infile,
+            outfile,
+            'trim', str(offset),
+            str(duration),
+        ]
     else:
         cmd = [
             'sox',
