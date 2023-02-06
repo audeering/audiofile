@@ -63,12 +63,12 @@ def run_ffmpeg(infile, outfile, offset, duration):
     """Convert audio file to WAV file."""
     if duration:
         cmd = [
-                  'ffmpeg',
-                  '-ss', str(offset),
-                  '-i', infile,
-                  '-t', str(duration),
-                  outfile
-              ]
+            'ffmpeg',
+            '-ss', str(offset),
+            '-i', infile,
+            '-t', str(duration),
+            outfile
+        ]
     else:
         cmd = [
             'ffmpeg',
