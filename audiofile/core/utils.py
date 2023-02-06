@@ -70,7 +70,12 @@ def run_ffmpeg(infile, outfile, offset, duration):
                   outfile
               ]
     else:
-        cmd = ['ffmpeg', '-ss', str(offset), '-i', infile, outfile]
+        cmd = [
+            'ffmpeg',
+            '-ss', str(offset),
+            '-i', infile,
+            outfile,
+        ]
     run(cmd)
 
 
