@@ -117,13 +117,14 @@ def read(
     All other audio files are
     first converted to WAV by sox or ffmpeg.
 
-    The duration values ``duration`` and ``offset``
+    ``duration`` and ``offset``
     are expected to be given in seconds,
-    but they support all formats
+    but support all formats
     mentioned in :func:`audmath.duration_in_seconds`
-    with the exception of samples,
-    which can only be given as a string,
-    e.g. ``'200'``.
+    where ``sampling_rate``
+    is set to the sampling rate of the file,
+    i.e. strings without a unit
+    will be interpreted as samples.
 
     Args:
         file: file name of input audio file
