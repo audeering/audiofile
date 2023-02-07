@@ -118,13 +118,14 @@ def read(
     first converted to WAV by sox or ffmpeg.
 
     ``duration`` and ``offset``
-    are expected to be given in seconds,
-    but support all formats
-    mentioned in :func:`audmath.duration_in_seconds`
-    where ``sampling_rate``
-    is set to the sampling rate of the file,
-    i.e. strings without a unit
-    will be interpreted as samples.
+    support all formats
+    mentioned in :func:`audmath.duration_in_seconds`,
+    like ``'2 ms'``, or ``pd.to_timedelta(2, 's')``.
+    The exception is
+    that float and integer values
+    are always interpreted as seconds
+    and strings without unit
+    always as samples.
 
     Args:
         file: file name of input audio file
