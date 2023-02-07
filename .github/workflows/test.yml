@@ -57,7 +57,9 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
 
     - name: OSX - install ffmpeg/mediainfo
-      run: brew install ffmpeg mediainfo
+      run: |
+        brew install ffmpeg
+        brew install media-info
       if: matrix.os == 'macOS-latest'
 
     - name: Windows - install ffmpeg/mediainfo
