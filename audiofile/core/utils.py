@@ -161,7 +161,7 @@ def sampling_rate(file: str) -> int:
             return int(run(cmd))
         except (FileNotFoundError, subprocess.CalledProcessError):
             try:
-                cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
+                cmd = ['mediainfo', '--Inform=Audio;%SamplingRate%', file]
                 sampling_rate = run(cmd)
                 if sampling_rate:
                     return int(sampling_rate)
