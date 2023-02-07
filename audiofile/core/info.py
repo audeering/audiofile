@@ -96,12 +96,16 @@ def channels(file: str) -> int:
         return soundfile.info(file).channels
     else:
         try:
-            cmd = 'soxi -c "{file}"'
+            cmd = ['soxi', '-c', file]
             return int(run(cmd))
         except (FileNotFoundError, subprocess.CalledProcessError):
             # For MP4 stored and returned number of channels can be different
-            cmd1 = f'mediainfo --Inform="Audio;%Channel(s)_Original%" "{file}"'
-            cmd2 = f'mediainfo --Inform="Audio;%Channel(s)%" "{file}"'
+            cmd1 = [
+                'mediainfo', '--Inform=Audio;%Channel(s)_Original%', file
+            ]
+            cmd2 = [
+                'mediainfo', '--Inform=Audio;%Channel(s)%', file
+            ]
             try:
                 return int(run(cmd1))
             except FileNotFoundError:
@@ -160,11 +164,11 @@ def duration(file: str, sloppy=False) -> float:
 
     if sloppy:
         try:
-            cmd = f'soxi -D "{file}"'
+            cmd = ['soxi', '-D', file]
             duration = float(run(cmd))
         except (FileNotFoundError, subprocess.CalledProcessError):
             try:
-                cmd = f'mediainfo --Inform="Audio;%Duration%" "{file}"'
+                cmd = ['mediainfo', '--Inform=Audio;%Duration%', file]
                 duration = run(cmd)
                 if duration:
                     # Convert to seconds, as mediainfo returns milliseconds
@@ -249,11 +253,11 @@ def sampling_rate(file: str) -> int:
         return soundfile.info(file).samplerate
     else:
         try:
-            cmd = f'soxi -r "{file}"'
+            cmd = ['soxi', '-r', file]
             return int(run(cmd))
         except (FileNotFoundError, subprocess.CalledProcessError):
             try:
-                cmd = f'mediainfo --Inform="Audio;%SamplingRate%" "{file}"'
+                cmd = ['mediainfo', '--Inform=Audio;%SamplingRate%', file]
                 sampling_rate = run(cmd)
                 if sampling_rate:
                     return int(sampling_rate)
