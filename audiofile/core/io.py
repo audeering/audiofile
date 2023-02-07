@@ -144,6 +144,13 @@ def read(
         >>> signal, sampling_rate = read('stereo.wav', duration=0.1)
         >>> signal.shape
         (2, 800)
+        >>> # Use audresample for resampling and remixing
+        >>> import audresample
+        >>> target_rate = 16000
+        >>> signal = audresample.resample(signal, sampling_rate, target_rate)
+        >>> signal = audresample.remix(signal, mixdown=True)
+        >>> signal.shape
+        (1, 1600)
 
     """
     file = audeer.safe_path(file)
