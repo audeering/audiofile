@@ -58,8 +58,8 @@ jobs:
 
     - name: OSX - install ffmpeg/mediainfo
       run: |
-        micromamba install ffmpeg
-        micromamba install libmediainfo
+        brew install ffmpeg
+        brew install media-info
       if: matrix.os == 'macOS-latest'
 
     - name: Windows - install ffmpeg/mediainfo
