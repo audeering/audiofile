@@ -44,6 +44,7 @@ extensions = [
 ]
 
 intersphinx_mapping = {
+    'audmath': ('https://audeering.github.io/audmath/', None),
     'audresample': ('https://audeering.github.io/audresample/', None),
     'python': ('https://docs.python.org/3/', None),
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
