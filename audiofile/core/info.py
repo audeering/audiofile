@@ -253,7 +253,7 @@ def sampling_rate(file: str) -> int:
         return soundfile.info(file).samplerate
     else:
         try:
-            cmd = f'soxi -r "{file}"'
+            cmd = ['soxi', '-r', file]
             return int(run(cmd))
         except (FileNotFoundError, subprocess.CalledProcessError):
             try:
