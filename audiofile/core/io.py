@@ -9,6 +9,7 @@ import audeer
 
 from audiofile.core.convert import convert
 from audiofile.core.utils import (
+    duration_in_seconds,
     file_extension,
     MAX_CHANNELS,
     SNDFORMATS,
@@ -18,8 +19,8 @@ from audiofile.core.utils import (
 def convert_to_wav(
         infile: str,
         outfile: str = None,
-        offset: float = 0,
-        duration: float = None,
+        offset: typing.Union[float, int, str, np.timedelta64] = 0,
+        duration: typing.Union[float, int, str, np.timedelta64] = None,
         bit_depth: int = 16,
         normalize: bool = False,
         overwrite: bool = False,
@@ -33,6 +34,16 @@ def convert_to_wav(
     the resulting WAV file
     will be shortened accordingly.
 
+    ``duration`` and ``offset``
+    support all formats
+    mentioned in :func:`audmath.duration_in_seconds`,
+    like ``'2 ms'``, or ``pd.to_timedelta(2, 's')``.
+    The exception is
+    that float and integer values
+    are always interpreted as seconds
+    and strings without unit
+    always as samples.
+
     It then uses :func:`soundfile.write` to write the WAV file,
     which limits the number of supported channels to 65535.
 
@@ -41,8 +52,8 @@ def convert_to_wav(
         outfile: WAV file name.
             If ``None`` same path as ``infile``
             but file extension is replaced by ``'wav'``
-        duration: return only a specified duration in seconds
-        offset: start reading at offset in seconds
+        duration: return only a specified duration
+        offset: start reading at offset
         bit_depth: bit depth of written file in bit,
             can be 8, 16, 24
         normalize: normalize audio data before writing
@@ -60,6 +71,9 @@ def convert_to_wav(
             broken or format is not supported
         RuntimeError: if ``infile`` would need to be overwritten
             and ``overwrite`` is ``False``
+        ValueError: if ``duration`` is a string
+            that does not match a valid '<value><unit>' pattern
+            or the provided unit is not supported
 
     Examples:
         >>> path = convert_to_wav('stereo.flac')
@@ -92,8 +106,8 @@ def convert_to_wav(
 
 def read(
         file: str,
-        duration: float = None,
-        offset: float = 0,
+        duration: typing.Union[float, int, str, np.timedelta64] = None,
+        offset: typing.Union[float, int, str, np.timedelta64] = 0,
         always_2d: bool = False,
         dtype: str = 'float32',
         **kwargs,
@@ -104,10 +118,20 @@ def read(
     All other audio files are
     first converted to WAV by sox or ffmpeg.
 
+    ``duration`` and ``offset``
+    support all formats
+    mentioned in :func:`audmath.duration_in_seconds`,
+    like ``'2 ms'``, or ``pd.to_timedelta(2, 's')``.
+    The exception is
+    that float and integer values
+    are always interpreted as seconds
+    and strings without unit
+    always as samples.
+
     Args:
         file: file name of input audio file
-        duration: return only a specified duration in seconds
-        offset: start reading at offset in seconds
+        duration: return only the specified duration
+        offset: start reading at offset
         always_2d: if ``True`` it always returns a two-dimensional signal
             even for mono sound files
         dtype: data type of returned signal,
@@ -131,6 +155,9 @@ def read(
             but cannot be found
         RuntimeError: if ``file`` is missing,
             broken or format is not supported
+        ValueError: if ``duration`` is a string
+            that does not match a valid '<value><unit>' pattern
+            or the provided unit is not supported
 
     Examples:
         >>> signal, sampling_rate = read('mono.wav')
@@ -142,6 +169,9 @@ def read(
         >>> signal.shape
         (1, 1000)
         >>> signal, sampling_rate = read('stereo.wav', duration=0.1)
+        >>> signal.shape
+        (2, 800)
+        >>> signal, sampling_rate = read('stereo.wav', duration='800')
         >>> signal.shape
         (2, 800)
         >>> # Use audresample for resampling and remixing
@@ -156,6 +186,16 @@ def read(
 
     """
     file = audeer.safe_path(file)
+
+    if duration is not None or offset != 0:
+        # Import sampling_rate here to avoid circular imports
+        from audiofile.core.info import sampling_rate as get_sampling_rate
+        sampling_rate = get_sampling_rate(file)
+    if duration is not None:
+        duration = duration_in_seconds(duration, sampling_rate)
+    if offset != 0:
+        offset = duration_in_seconds(offset, sampling_rate)
+
     tmpdir = None
     if file_extension(file) not in SNDFORMATS:
         # Convert file formats not recognized by soundfile to WAV first.
@@ -178,10 +218,6 @@ def read(
                 **kwargs,
             )
     else:
-        if duration is not None or offset > 0:
-            # We don't use audiofile.sampling_rate(file) here
-            # to avoid circular imports
-            sampling_rate = soundfile.info(file).samplerate
         if offset > 0:
             offset = np.ceil(offset * sampling_rate)  # samples
         if duration is not None:

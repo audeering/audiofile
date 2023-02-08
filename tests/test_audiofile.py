@@ -497,19 +497,6 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     )
     assert af.bit_depth(mp3_file) is None
 
-    # Test additional arguments to read MP3 files
-    offset = 0.1
-    duration = 0.5
-    sig, fs = af.read(mp3_file, offset=offset, duration=duration)
-    assert _duration(sig, sampling_rate) == duration
-    sig, fs = af.read(mp3_file, offset=offset)
-    assert_allclose(
-        _duration(sig, sampling_rate),
-        af.duration(mp3_file) - offset,
-        rtol=0,
-        atol=tolerance('duration', sampling_rate),
-    )
-
 
 def test_formats():
     files = [
@@ -544,14 +531,57 @@ def test_formats():
             assert sloppy_duration == header_duration
         assert af.bit_depth(file) is None
 
-        if file.endswith('m4a'):
-            # Test additional arguments to read with ffmpeg
-            offset = 0.1
-            duration = 0.5
-            sig, fs = af.read(file, offset=offset, duration=duration)
-            assert _duration(sig, sampling_rate) == duration
-            sig, fs = af.read(file, offset=offset)
-            assert _duration(sig, sampling_rate) == af.duration(file) - offset
+
+def test_read_duration_and_offset(tmpdir):
+
+    # Prepare signals
+    sampling_rate = 44100
+    channels = 1
+    signal = sine(
+        magnitude=1,
+        sampling_rate=sampling_rate,
+        channels=channels,
+    )
+    wav_file = str(tmpdir.join('signal.wav'))
+    mp3_file = str(tmpdir.join('signal.mp3'))
+    m4a_file = audeer.path(ASSETS_DIR, 'gs-16b-1c-44100hz.m4a')
+    af.write(wav_file, signal, sampling_rate)
+    convert_to_mp3(wav_file, mp3_file, sampling_rate, channels)
+
+    for file in [wav_file, mp3_file, m4a_file]:
+        # Duration and offset in seconds
+        offset = 0.1
+        duration = 0.5
+        sig, fs = af.read(file, offset=offset, duration=duration)
+        assert _duration(sig, sampling_rate) == duration
+        sig, fs = af.read(file, offset=offset)
+        assert_allclose(
+            _duration(sig, sampling_rate),
+            af.duration(file) - offset,
+            rtol=0,
+            atol=tolerance('duration', sampling_rate),
+        )
+
+        # Duration and offset in samples
+        offset = '100'
+        duration = '200'
+        duration_s = float(duration) / sampling_rate
+        offset_s = float(offset) / sampling_rate
+        sig, fs = af.read(
+            file,
+            offset=offset,
+            duration=duration,
+            always_2d=True,
+        )
+        assert _duration(sig, sampling_rate) == duration_s
+        assert sig.shape[1] == float(duration)
+        sig, fs = af.read(file, offset=offset)
+        assert_allclose(
+            _duration(sig, sampling_rate),
+            af.duration(file) - offset_s,
+            rtol=0,
+            atol=tolerance('duration', sampling_rate),
+        )
 
 
 def test_write_errors():
