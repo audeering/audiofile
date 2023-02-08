@@ -61,7 +61,9 @@ You can read the signal:
 .. jupyter-execute::
 
     signal, sampling_rate = audiofile.read('noise.flac')
-    print(f'sampling rate: {sampling_rate}, signal shape: {signal.shape}')
+
+    print(f'sampling rate: {sampling_rate}')
+    print(f'signal shape: {signal.shape}')
 
 If you prefer a workflow
 that returns a 2D signal with channel as the first dimension,
@@ -70,14 +72,18 @@ enforce it with:
 .. jupyter-execute::
 
     signal, sampling_rate = audiofile.read('noise.flac', always_2d=True)
-    print(f'sampling rate: {sampling_rate}, signal shape: {signal.shape}')
+
+    print(f'sampling rate: {sampling_rate}')
+    print(f'signal shape: {signal.shape}')
 
 If you just want to read from 500 ms to 900 ms of the signal:
 
 .. jupyter-execute::
 
     signal, sampling_rate = audiofile.read('noise.flac', offset=0.5, duration=0.4)
-    print(f'sampling rate: {sampling_rate}, signal shape: {signal.shape}')
+
+    print(f'sampling rate: {sampling_rate}')
+    print(f'signal shape: {signal.shape}')
 
 
 Convert a file
@@ -87,8 +93,11 @@ You can convert any file to WAV using:
 
 .. jupyter-execute::
 
+    import audeer
+
     audiofile.convert_to_wav('noise.flac', 'noise.wav')
-    audiofile.samples('noise.wav')
+
+    audeer.list_file_names('.', filetype='wav', basenames=True)
 
 
 Resample/Remix a file
@@ -111,8 +120,7 @@ But it can be easily achieved with :mod:`audresample`.
     audiofile.write('noise-remix.flac', signal, target_rate)
 
     print(f'sampling rate: {audiofile.sampling_rate("noise-remix.flac")}')
-    print(f'channels: {audiofile.channels("noise-remix.flac")}')
-    print(f'samples: {audiofile.samples("noise-remix.flac")}')
+    print(f'signal shape: {signal.shape}')
 
 
 .. _soundfile: https://pysoundfile.readthedocs.io/
