@@ -14,7 +14,6 @@ from audiofile.core.utils import (
     MAX_CHANNELS,
     SNDFORMATS,
 )
-from audiofile.core.utils import sampling_rate as get_sampling_rate
 
 
 def convert_to_wav(
@@ -189,6 +188,8 @@ def read(
     file = audeer.safe_path(file)
 
     if duration is not None or offset != 0:
+        # Import sampling_rate here to avoid circular imports
+        from audiofile.core.info import sampling_rate as get_sampling_rate
         sampling_rate = get_sampling_rate(file)
     if duration is not None:
         duration = duration_in_seconds(duration, sampling_rate)
