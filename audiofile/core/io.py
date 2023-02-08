@@ -35,13 +35,15 @@ def convert_to_wav(
     the resulting WAV file
     will be shortened accordingly.
 
-    The duration values ``duration`` and ``offset``
-    are expected to be given in seconds,
-    but they support all formats
-    mentioned in :func:`audmath.duration_in_seconds`
-    with the exception of samples,
-    which can only be given as a string,
-    e.g. ``'200'``.
+    ``duration`` and ``offset``
+    support all formats
+    mentioned in :func:`audmath.duration_in_seconds`,
+    like ``'2 ms'``, or ``pd.to_timedelta(2, 's')``.
+    The exception is
+    that float and integer values
+    are always interpreted as seconds
+    and strings without unit
+    always as samples.
 
     It then uses :func:`soundfile.write` to write the WAV file,
     which limits the number of supported channels to 65535.
