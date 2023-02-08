@@ -148,6 +148,8 @@ def read(
         >>> import audresample
         >>> target_rate = 16000
         >>> signal = audresample.resample(signal, sampling_rate, target_rate)
+        >>> signal.shape
+        (2, 1600)
         >>> signal = audresample.remix(signal, mixdown=True)
         >>> signal.shape
         (1, 1600)
