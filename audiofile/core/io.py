@@ -170,9 +170,9 @@ def read(
         >>> signal, sampling_rate = read('stereo.wav', duration=0.1)
         >>> signal.shape
         (2, 800)
-        >>> signal, sampling_rate = read('stereo.wav', duration='400')
+        >>> signal, sampling_rate = read('stereo.wav', duration='800')
         >>> signal.shape
-        (2, 400)
+        (2, 800)
         >>> # Use audresample for resampling and remixing
         >>> import audresample
         >>> target_rate = 16000
