@@ -100,7 +100,14 @@ def convert_to_wav(
         offset=offset,
         duration=duration,
     )
-    write(outfile, signal, sampling_rate, bit_depth=bit_depth, **kwargs)
+    write(
+        outfile,
+        signal,
+        sampling_rate,
+        bit_depth=bit_depth,
+        normalize=normalize,
+        **kwargs,
+    )
     return outfile
 
 

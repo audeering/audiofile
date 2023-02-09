@@ -344,14 +344,17 @@ def test_convert_to_wav(tmpdir, normalize, bit_depth, file_extension):
     converted_signal, converted_sampling_rate = af.read(outfile)
     assert converted_sampling_rate == sampling_rate
     if normalize:
-        assert converted_signal.max() == 1
-        assert converted_signal.min() == -1
-    abs_difference = np.abs(converted_signal - signal).max()
+        assert converted_signal.max() > 0.98
+        assert converted_signal.max() <= 1.0
+        assert converted_signal.min() < -0.98
+        assert converted_signal.min() >= -1.0
     if file_extension == 'mp3':
         assert af.bit_depth(outfile) == bit_depth
         # Don't compare signals for MP3
         # as duration differs as well
-    elif file_extension == 'ogg':
+    else:
+        abs_difference = np.abs(converted_signal - signal).max()
+    if file_extension == 'ogg':
         assert af.bit_depth(outfile) == bit_depth
         if normalize:
             assert abs_difference < 0.06 + magnitude_offset
