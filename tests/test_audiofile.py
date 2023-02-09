@@ -6,6 +6,7 @@ import subprocess
 import pytest
 import numpy as np
 from numpy.testing import assert_allclose
+import pandas as pd
 import soundfile
 
 import audeer
@@ -542,6 +543,10 @@ def test_formats():
         # None | None
         (None, None, [[.0, .0, .1, .1, .2, .2]]),
         ('None', 'None', [[.0, .0, .1, .1, .2, .2]]),
+        ('NaN', 'NaN', [[.0, .0, .1, .1, .2, .2]]),
+        ('NaT', 'NaT', [[.0, .0, .1, .1, .2, .2]]),
+        (np.NaN, np.NaN, [[.0, .0, .1, .1, .2, .2]]),
+        (pd.NaT, pd.NaT, [[.0, .0, .1, .1, .2, .2]]),
         # positive | None
         (0.0, None, [[.0, .0, .1, .1, .2, .2]]),
         (0.5, None, [[.0, .1, .1, .2, .2]]),

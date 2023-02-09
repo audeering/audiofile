@@ -200,8 +200,12 @@ def read(
 
     if duration is not None:
         duration = duration_in_seconds(duration, sampling_rate)
+        if np.isnan(duration):
+            duration = None
     if offset is not None and offset != 0:
         offset = duration_in_seconds(offset, sampling_rate)
+        if np.isnan(offset):
+            offset = None
 
     # Support for negative offset/duration values
     # by counting them from end of signal
