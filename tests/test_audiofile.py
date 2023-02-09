@@ -286,16 +286,19 @@ def test_broken_file(tmpdir, non_audio_file):
         af.convert_to_wav(non_audio_file, converted_file)
 
 
-@pytest.mark.parametrize("bit_depth", [8, 16, 24])
+@pytest.mark.parametrize('normalize', [False, True])
+@pytest.mark.parametrize('bit_depth', [8, 16, 24])
 @pytest.mark.parametrize(
     'file_extension',
     ('wav', 'flac', 'ogg', 'mp3'),
 )
-def test_convert_to_wav(tmpdir, bit_depth, file_extension):
+def test_convert_to_wav(tmpdir, normalize, bit_depth, file_extension):
     sampling_rate = 8000
     channels = 1
+    magnitude_offset = 0.5
     signal = sine(
         duration=0.1,
+        magnitude=1 - magnitude_offset,
         sampling_rate=sampling_rate,
         channels=channels,
     )
@@ -313,29 +316,53 @@ def test_convert_to_wav(tmpdir, bit_depth, file_extension):
             "or provide an 'outfile' argument."
         )
         with pytest.raises(RuntimeError, match=re.escape(error_msg)):
-            outfile = af.convert_to_wav(infile, bit_depth=bit_depth)
+            outfile = af.convert_to_wav(
+                infile,
+                bit_depth=bit_depth,
+                normalize=normalize,
+            )
         outfile = af.convert_to_wav(
             infile,
             bit_depth=bit_depth,
+            normalize=normalize,
             overwrite=True,
         )
     elif file_extension == 'mp3':
-        outfile = af.convert_to_wav(infile, bit_depth=bit_depth)
+        outfile = af.convert_to_wav(
+            infile,
+            bit_depth=bit_depth,
+            normalize=normalize,
+        )
     else:
         outfile = str(tmpdir.join('signal_converted.wav'))
-        af.convert_to_wav(infile, outfile, bit_depth=bit_depth)
+        af.convert_to_wav(
+            infile,
+            outfile,
+            bit_depth=bit_depth,
+            normalize=normalize,
+        )
     converted_signal, converted_sampling_rate = af.read(outfile)
     assert converted_sampling_rate == sampling_rate
+    if normalize:
+        assert converted_signal.max() == 1
+        assert converted_signal.min() == -1
+    abs_difference = np.abs(converted_signal - signal).max()
     if file_extension == 'mp3':
         assert af.bit_depth(outfile) == bit_depth
         # Don't compare signals for MP3
         # as duration differs as well
     elif file_extension == 'ogg':
         assert af.bit_depth(outfile) == bit_depth
-        assert np.abs(converted_signal - signal).max() < 0.06
+        if normalize:
+            assert abs_difference < 0.06 + magnitude_offset
+        else:
+            assert abs_difference < 0.06
     elif file_extension in ['wav', 'flac']:
         assert af.bit_depth(outfile) == bit_depth
-        assert np.abs(converted_signal - signal).max() < tolerance(bit_depth)
+        if normalize:
+            assert abs_difference < tolerance(bit_depth) + magnitude_offset
+        else:
+            assert abs_difference < tolerance(bit_depth)
 
 
 @pytest.mark.parametrize("bit_depth", [8, 16, 24, 32])
