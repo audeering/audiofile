@@ -243,7 +243,13 @@ def read(
             offset is not None and offset < 0
             and duration is not None and duration > 0
     ):
-        offset = max([0, signal_duration + offset])
+        offset = signal_duration + offset
+        if offset < 0:
+            duration = max([0, duration + offset])
+        else:
+            duration = min([duration, signal_duration - offset])
+        offset = max([0, offset])
+
     # < 0    | < 0
     elif (
             offset is not None and offset < 0
