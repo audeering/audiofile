@@ -344,9 +344,11 @@ def test_convert_to_wav(tmpdir, normalize, bit_depth, file_extension):
     converted_signal, converted_sampling_rate = af.read(outfile)
     assert converted_sampling_rate == sampling_rate
     if normalize:
-        assert converted_signal.max() > 0.98
+        # The actual maximum/minimum value can vary
+        # based on the used codec/format
+        assert converted_signal.max() > 0.95
         assert converted_signal.max() <= 1.0
-        assert converted_signal.min() < -0.98
+        assert converted_signal.min() < -0.95
         assert converted_signal.min() >= -1.0
     if file_extension == 'mp3':
         assert af.bit_depth(outfile) == bit_depth
