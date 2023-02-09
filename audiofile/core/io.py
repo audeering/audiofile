@@ -107,7 +107,7 @@ def convert_to_wav(
 def read(
         file: str,
         duration: typing.Union[float, int, str, np.timedelta64] = None,
-        offset: typing.Union[float, int, str, np.timedelta64] = 0,
+        offset: typing.Union[float, int, str, np.timedelta64] = None,
         always_2d: bool = False,
         dtype: str = 'float32',
         **kwargs,
@@ -187,14 +187,82 @@ def read(
     """
     file = audeer.safe_path(file)
 
-    if duration is not None or offset != 0:
+    # Parse offset and duration values
+    if (
+            duration is not None
+            or isinstance(duration, str)
+            or (offset is not None and isinstance(offset, str))
+            or (offset is not None and offset != 0)
+    ):
         # Import sampling_rate here to avoid circular imports
         from audiofile.core.info import sampling_rate as get_sampling_rate
         sampling_rate = get_sampling_rate(file)
+
     if duration is not None:
         duration = duration_in_seconds(duration, sampling_rate)
-    if offset != 0:
+    if offset is not None and offset != 0:
         offset = duration_in_seconds(offset, sampling_rate)
+
+    # Support for negative offset/duration values
+    # by counting them from end of signal
+    #
+    if (
+            offset is not None and offset < 0
+            or duration is not None and duration < 0
+    ):
+        # Import duration here to avoid circular imports
+        from audiofile.core.info import duration as get_duration
+        signal_duration = get_duration(file)
+    # offset | duration
+    # None   | < 0
+    if (
+            offset is None
+            and duration is not None and duration < 0
+    ):
+        offset = max([0, signal_duration + duration])
+        duration = None
+    # >= 0   | < 0
+    elif (
+            offset is not None and offset >= 0
+            and duration is not None and duration < 0
+    ):
+        orig_offset = offset
+        offset = max([0, offset + duration])
+        duration = min([-duration, orig_offset])
+    # < 0    | None
+    elif (
+            offset is not None and offset < 0
+            and duration is None
+    ):
+        offset = max([0, signal_duration + offset])
+    # < 0    | > 0
+    elif (
+            offset is not None and offset < 0
+            and duration is not None and duration > 0
+    ):
+        offset = max([0, signal_duration + offset])
+    # < 0    | < 0
+    elif (
+            offset is not None and offset < 0
+            and duration is not None and duration < 0
+    ):
+        orig_offset = offset
+        offset = max([0, signal_duration + offset + duration])
+        duration = min([-duration, signal_duration + orig_offset])
+        duration = max([0, duration])
+
+    if offset is None:
+        offset = 0
+
+    # Return immediately if duration == 0
+    if duration == 0:
+        from audiofile.core.info import channels as get_channels
+        channels = get_channels(file)
+        if channels > 1 or always_2d:
+            signal = np.zeros((channels, 0))
+        else:
+            signal = np.zeros((0,))
+        return signal, sampling_rate
 
     tmpdir = None
     if file_extension(file) not in SNDFORMATS:
@@ -218,9 +286,9 @@ def read(
                 **kwargs,
             )
     else:
-        if offset > 0:
+        if offset is not None and offset != 0:
             offset = np.ceil(offset * sampling_rate)  # samples
-        if duration is not None:
+        if duration is not None and duration != 0:
             duration = int(
                 np.ceil(duration * sampling_rate) + offset
             )  # samples
