@@ -218,7 +218,7 @@ def read(
         .. plot::
             :context: close-figs
 
-            >>> signal, sampling_rate = read('mono.wav', offset=0.5, duration=0.5)
+            >>> signal, sampling_rate = read('mono.wav', offset='4000', duration='4000')
             >>> # Extend signal to original length
             >>> signal = np.pad(signal, (4000, 4000))
             >>> audplot.waveform(signal)
@@ -229,18 +229,16 @@ def read(
 
             >>> # Use audresample for resampling and remixing
             >>> import audresample
-            >>> signal, sampling_rate = read('stereo.wav', duration='4000')
+            >>> signal, sampling_rate = read('stereo.wav')
             >>> signal.shape
-            (2, 4000)
+            (2, 12000)
             >>> target_rate = 16000
             >>> signal = audresample.resample(signal, sampling_rate, target_rate)
             >>> signal.shape
-            (2, 8000)
+            (2, 24000)
             >>> signal = audresample.remix(signal, mixdown=True)
             >>> signal.shape
-            (1, 8000)
-            >>> # Extend signal to original length
-            >>> signal = np.pad(signal[0], (0, 16000))
+            (1, 24000)
             >>> audplot.waveform(signal)
 
     """  # noqa: E501
