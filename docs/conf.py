@@ -4,6 +4,8 @@ import shutil
 import os
 
 import audeer
+from audiofile.core.conftest import create_audio_files
+
 
 config = configparser.ConfigParser()
 config.read(os.path.join('..', 'setup.cfg'))
@@ -41,6 +43,7 @@ extensions = [
     'sphinx_copybutton',
     'sphinx.ext.viewcode',
     'sphinx.ext.intersphinx',
+    'matplotlib.sphinxext.plot_directive',  # include resulting figures in doc
 ]
 
 intersphinx_mapping = {
@@ -56,6 +59,16 @@ autodoc_mock_imports = ['soundfile']
 
 copybutton_prompt_text = r'>>> |\.\.\. |\$ '
 copybutton_prompt_is_regexp = True
+
+# Plotting
+plot_include_source = True
+plot_html_show_source_link = False
+plot_html_show_formats = False
+plot_pre_code = ''
+plot_rcparams = {
+    'figure.figsize': '5, 3.8',  # inch
+}
+plot_formats = ['png']
 
 # Disable auto-generation of TOC entries in the API
 # https://github.com/sphinx-doc/sphinx/issues/6316
@@ -86,3 +99,7 @@ api_dst_files = [
 ]
 for src_file, dst_file in zip(api_src_files, api_dst_files):
     shutil.copyfile(src_file, dst_file)
+
+
+# Create audio files ------------------------------------------------------
+create_audio_files('api')

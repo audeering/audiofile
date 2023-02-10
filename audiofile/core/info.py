@@ -155,7 +155,7 @@ def duration(file: str, sloppy=False) -> float:
 
     Examples:
         >>> duration('stereo.wav')
-        0.125
+        1.5
 
     """
     file = audeer.safe_path(file)
@@ -209,7 +209,7 @@ def samples(file: str) -> int:
 
     Examples:
         >>> samples('stereo.wav')
-        1000
+        12000
 
     """
     def samples_as_int(file):
