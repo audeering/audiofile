@@ -1,3 +1,4 @@
+audplot
 audresample
 pandas
 pytest
