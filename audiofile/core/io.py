@@ -43,6 +43,15 @@ def convert_to_wav(
     are always interpreted as seconds
     and strings without unit
     always as samples.
+    If ``duration`` and/or ``offset`` are negative,
+    they are interpreted from right to left,
+    whereas ``duration`` starts from the end of the signal
+    for ``offset=None``.
+    If the signal is shorter than the requested ``duration`` and/or ``offset``
+    only the part of the signal overlapping with the requested signal
+    is returned,
+    e.g. for a file containing the signal ``[0, 1, 2]``,
+    ``duration=2``, ``offset=-4`` will return ``[0]``.
 
     It then uses :func:`soundfile.write` to write the WAV file,
     which limits the number of supported channels to 65535.
