@@ -280,41 +280,85 @@ def read(
     ):
         offset = max([0, signal_duration + duration])
         duration = None
+    # None   | >= 0
+    if (
+            offset is None
+            and duration is not None and duration >= 0
+    ):
+        if np.isinf(duration):
+            duration = None
     # >= 0   | < 0
     elif (
             offset is not None and offset >= 0
             and duration is not None and duration < 0
     ):
-        orig_offset = offset
-        offset = max([0, offset + duration])
-        duration = min([-duration, orig_offset])
+        if np.isinf(offset) and np.isinf(duration):
+            offset = 0
+            duration = None
+        elif np.isinf(offset):
+            duration = 0
+        else:
+            if np.isinf(duration):
+                offset = min([offset, signal_duration])
+                duration = np.sign(duration) * signal_duration
+            orig_offset = offset
+            offset = max([0, offset + duration])
+            duration = min([-duration, orig_offset])
+    # >= 0   | >= 0
+    elif (
+            offset is not None and offset >= 0
+            and duration is not None and duration >= 0
+    ):
+        if np.isinf(offset):
+            duration = 0
+        elif np.isinf(duration):
+            duration = None
     # < 0    | None
     elif (
             offset is not None and offset < 0
             and duration is None
     ):
         offset = max([0, signal_duration + offset])
+    # >= 0    | None
+    elif (
+            offset is not None and offset >= 0
+            and duration is None
+    ):
+        if np.isinf(offset):
+            duration = 0
     # < 0    | > 0
     elif (
             offset is not None and offset < 0
             and duration is not None and duration > 0
     ):
-        offset = signal_duration + offset
-        if offset < 0:
-            duration = max([0, duration + offset])
+        if np.isinf(offset) and np.isinf(duration):
+            offset = 0
+            duration = None
+        elif np.isinf(offset):
+            duration = 0
+        elif np.isinf(duration):
+            duration = None
         else:
-            duration = min([duration, signal_duration - offset])
-        offset = max([0, offset])
-
+            offset = signal_duration + offset
+            if offset < 0:
+                duration = max([0, duration + offset])
+            else:
+                duration = min([duration, signal_duration - offset])
+            offset = max([0, offset])
     # < 0    | < 0
     elif (
             offset is not None and offset < 0
             and duration is not None and duration < 0
     ):
-        orig_offset = offset
-        offset = max([0, signal_duration + offset + duration])
-        duration = min([-duration, signal_duration + orig_offset])
-        duration = max([0, duration])
+        if np.isinf(offset):
+            duration = 0
+        elif np.isinf(duration):
+            duration = -signal_duration
+        else:
+            orig_offset = offset
+            offset = max([0, signal_duration + offset + duration])
+            duration = min([-duration, signal_duration + orig_offset])
+            duration = max([0, duration])
 
     if offset is None:
         offset = 0
