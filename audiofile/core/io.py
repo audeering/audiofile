@@ -19,7 +19,7 @@ from audiofile.core.utils import (
 def convert_to_wav(
         infile: str,
         outfile: str = None,
-        offset: typing.Union[float, int, str, np.timedelta64] = 0,
+        offset: typing.Union[float, int, str, np.timedelta64] = None,
         duration: typing.Union[float, int, str, np.timedelta64] = None,
         bit_depth: int = 16,
         normalize: bool = False,
@@ -43,6 +43,15 @@ def convert_to_wav(
     are always interpreted as seconds
     and strings without unit
     always as samples.
+    If ``duration`` and/or ``offset`` are negative,
+    they are interpreted from right to left,
+    whereas ``duration`` starts from the end of the signal
+    for ``offset=None``.
+    If the signal is shorter than the requested ``duration`` and/or ``offset``
+    only the part of the signal overlapping with the requested signal
+    is returned,
+    e.g. for a file containing the signal ``[0, 1, 2]``,
+    ``duration=2``, ``offset=-4`` will return ``[0]``.
 
     It then uses :func:`soundfile.write` to write the WAV file,
     which limits the number of supported channels to 65535.
@@ -114,7 +123,7 @@ def convert_to_wav(
 def read(
         file: str,
         duration: typing.Union[float, int, str, np.timedelta64] = None,
-        offset: typing.Union[float, int, str, np.timedelta64] = 0,
+        offset: typing.Union[float, int, str, np.timedelta64] = None,
         always_2d: bool = False,
         dtype: str = 'float32',
         **kwargs,
@@ -134,6 +143,15 @@ def read(
     are always interpreted as seconds
     and strings without unit
     always as samples.
+    If ``duration`` and/or ``offset`` are negative,
+    they are interpreted from right to left,
+    whereas ``duration`` starts from the end of the signal
+    for ``offset=None``.
+    If the signal is shorter than the requested ``duration`` and/or ``offset``
+    only the part of the signal overlapping with the requested signal
+    is returned,
+    e.g. for a file containing the signal ``[0, 1, 2]``,
+    ``duration=2``, ``offset=-4`` will return ``[0]``.
 
     Args:
         file: file name of input audio file
@@ -167,41 +185,200 @@ def read(
             or the provided unit is not supported
 
     Examples:
-        >>> signal, sampling_rate = read('mono.wav')
-        >>> sampling_rate
-        8000
-        >>> signal.shape
-        (1000,)
-        >>> signal, sampling_rate = read('mono.wav', always_2d=True)
-        >>> signal.shape
-        (1, 1000)
-        >>> signal, sampling_rate = read('stereo.wav', duration=0.1)
-        >>> signal.shape
-        (2, 800)
-        >>> signal, sampling_rate = read('stereo.wav', duration='800')
-        >>> signal.shape
-        (2, 800)
-        >>> # Use audresample for resampling and remixing
-        >>> import audresample
-        >>> target_rate = 16000
-        >>> signal = audresample.resample(signal, sampling_rate, target_rate)
-        >>> signal.shape
-        (2, 1600)
-        >>> signal = audresample.remix(signal, mixdown=True)
-        >>> signal.shape
-        (1, 1600)
+        .. plot::
+            :context: reset
+            :include-source: false
 
-    """
+            import numpy as np
+            from audiofile.core.io import read
+
+        .. plot::
+            :context: close-figs
+
+            >>> signal, sampling_rate = read('mono.wav', always_2d=True)
+            >>> sampling_rate
+            8000
+            >>> signal.shape
+            (1, 12000)
+            >>> signal, sampling_rate = read('mono.wav')
+            >>> signal.shape
+            (12000,)
+            >>> import audplot
+            >>> audplot.waveform(signal)
+
+        .. plot::
+            :context: close-figs
+
+            >>> signal, sampling_rate = read('mono.wav', duration=0.5)
+            >>> # Extend signal to original length
+            >>> signal = np.pad(signal, (0, 8000))
+            >>> audplot.waveform(signal)
+
+        .. plot::
+            :context: close-figs
+
+            >>> signal, sampling_rate = read('mono.wav', duration=-0.5)
+            >>> # Extend signal to original length
+            >>> signal = np.pad(signal, (8000, 0))
+            >>> audplot.waveform(signal)
+
+        .. plot::
+            :context: close-figs
+
+            >>> signal, sampling_rate = read('mono.wav', offset='4000', duration='4000')
+            >>> # Extend signal to original length
+            >>> signal = np.pad(signal, (4000, 4000))
+            >>> audplot.waveform(signal)
+
+        .. plot::
+            :context: close-figs
+
+            >>> # Use audresample for resampling and remixing
+            >>> import audresample
+            >>> signal, sampling_rate = read('stereo.wav')
+            >>> signal.shape
+            (2, 12000)
+            >>> target_rate = 16000
+            >>> signal = audresample.resample(signal, sampling_rate, target_rate)
+            >>> signal.shape
+            (2, 24000)
+            >>> signal = audresample.remix(signal, mixdown=True)
+            >>> signal.shape
+            (1, 24000)
+            >>> audplot.waveform(signal)
+
+    """  # noqa: E501
     file = audeer.safe_path(file)
 
-    if duration is not None or offset != 0:
+    # Parse offset and duration values
+    if (
+            duration is not None
+            or isinstance(duration, str)
+            or (offset is not None and isinstance(offset, str))
+            or (offset is not None and offset != 0)
+    ):
         # Import sampling_rate here to avoid circular imports
         from audiofile.core.info import sampling_rate as get_sampling_rate
         sampling_rate = get_sampling_rate(file)
     if duration is not None:
         duration = duration_in_seconds(duration, sampling_rate)
-    if offset != 0:
+        if np.isnan(duration):
+            duration = None
+    if offset is not None and offset != 0:
         offset = duration_in_seconds(offset, sampling_rate)
+        if np.isnan(offset):
+            offset = None
+
+    # Support for negative offset/duration values
+    # by counting them from end of signal
+    #
+    if (
+            offset is not None and offset < 0
+            or duration is not None and duration < 0
+    ):
+        # Import duration here to avoid circular imports
+        from audiofile.core.info import duration as get_duration
+        signal_duration = get_duration(file)
+    # offset | duration
+    # None   | < 0
+    if (
+            offset is None
+            and duration is not None and duration < 0
+    ):
+        offset = max([0, signal_duration + duration])
+        duration = None
+    # None   | >= 0
+    if (
+            offset is None
+            and duration is not None and duration >= 0
+    ):
+        if np.isinf(duration):
+            duration = None
+    # >= 0   | < 0
+    elif (
+            offset is not None and offset >= 0
+            and duration is not None and duration < 0
+    ):
+        if np.isinf(offset) and np.isinf(duration):
+            offset = 0
+            duration = None
+        elif np.isinf(offset):
+            duration = 0
+        else:
+            if np.isinf(duration):
+                offset = min([offset, signal_duration])
+                duration = np.sign(duration) * signal_duration
+            orig_offset = offset
+            offset = max([0, offset + duration])
+            duration = min([-duration, orig_offset])
+    # >= 0   | >= 0
+    elif (
+            offset is not None and offset >= 0
+            and duration is not None and duration >= 0
+    ):
+        if np.isinf(offset):
+            duration = 0
+        elif np.isinf(duration):
+            duration = None
+    # < 0    | None
+    elif (
+            offset is not None and offset < 0
+            and duration is None
+    ):
+        offset = max([0, signal_duration + offset])
+    # >= 0    | None
+    elif (
+            offset is not None and offset >= 0
+            and duration is None
+    ):
+        if np.isinf(offset):
+            duration = 0
+    # < 0    | > 0
+    elif (
+            offset is not None and offset < 0
+            and duration is not None and duration > 0
+    ):
+        if np.isinf(offset) and np.isinf(duration):
+            offset = 0
+            duration = None
+        elif np.isinf(offset):
+            duration = 0
+        elif np.isinf(duration):
+            duration = None
+        else:
+            offset = signal_duration + offset
+            if offset < 0:
+                duration = max([0, duration + offset])
+            else:
+                duration = min([duration, signal_duration - offset])
+            offset = max([0, offset])
+    # < 0    | < 0
+    elif (
+            offset is not None and offset < 0
+            and duration is not None and duration < 0
+    ):
+        if np.isinf(offset):
+            duration = 0
+        elif np.isinf(duration):
+            duration = -signal_duration
+        else:
+            orig_offset = offset
+            offset = max([0, signal_duration + offset + duration])
+            duration = min([-duration, signal_duration + orig_offset])
+            duration = max([0, duration])
+
+    if offset is None:
+        offset = 0
+
+    # Return immediately if duration == 0
+    if duration == 0:
+        from audiofile.core.info import channels as get_channels
+        channels = get_channels(file)
+        if channels > 1 or always_2d:
+            signal = np.zeros((channels, 0))
+        else:
+            signal = np.zeros((0,))
+        return signal, sampling_rate
 
     tmpdir = None
     if file_extension(file) not in SNDFORMATS:
@@ -225,9 +402,9 @@ def read(
                 **kwargs,
             )
     else:
-        if offset > 0:
+        if offset is not None and offset != 0:
             offset = np.ceil(offset * sampling_rate)  # samples
-        if duration is not None:
+        if duration is not None and duration != 0:
             duration = int(
                 np.ceil(duration * sampling_rate) + offset
             )  # samples

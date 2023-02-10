@@ -1,3 +1,4 @@
+audplot
 audresample
 jupyter-sphinx
 sphinx
