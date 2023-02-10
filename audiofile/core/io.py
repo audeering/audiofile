@@ -223,7 +223,6 @@ def read(
             >>> signal = np.pad(signal, (4000, 4000))
             >>> audplot.waveform(signal)
 
-
         .. plot::
             :context: close-figs
 
