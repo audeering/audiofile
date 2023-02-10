@@ -127,6 +127,15 @@ def read(
     are always interpreted as seconds
     and strings without unit
     always as samples.
+    If ``duration`` and/or ``offset`` are negative,
+    they are interpreted from right to left,
+    whereas ``duration`` starts from the end of the signal
+    for ``offset=None``.
+    If the signal is shorter than the requested ``duration`` and/or ``offset``
+    only the part of the signal overlapping with the requested signal
+    is returned,
+    e.g. for a file containing the signal ``[0, 1, 2]``,
+    ``duration=2``, ``offset=-4`` will return ``[0]``.
 
     Args:
         file: file name of input audio file
