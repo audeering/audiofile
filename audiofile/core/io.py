@@ -19,7 +19,7 @@ from audiofile.core.utils import (
 def convert_to_wav(
         infile: str,
         outfile: str = None,
-        offset: typing.Union[float, int, str, np.timedelta64] = 0,
+        offset: typing.Union[float, int, str, np.timedelta64] = None,
         duration: typing.Union[float, int, str, np.timedelta64] = None,
         bit_depth: int = 16,
         normalize: bool = False,
