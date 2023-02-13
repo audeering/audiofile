@@ -7,6 +7,13 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.2.1 (2023-02-13)
+--------------------------
+
+* Fixed: missing ``pytest`` requirement
+  in ``docs/requirements.txt``
+
+
 Version 1.2.0 (2023-02-13)
 --------------------------
 
