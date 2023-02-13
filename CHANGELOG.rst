@@ -28,9 +28,9 @@ Version 1.2.0 (2023-02-13)
   and ``audiofile.convert_to_wav()``
   support negative values
 * Changed: if no output path is provided to
-   ``audiofile.convert_to_wav()``,
-   it is derived from the input path
-   by replacing the file extension with ``'wav'``
+  ``audiofile.convert_to_wav()``,
+  it is derived from the input path
+  by replacing the file extension with ``'wav'``
 * Fixed: ensure ``audiofile.convert_to_wav()``
   creates identical result
   as calling ``audiofile.read()``
