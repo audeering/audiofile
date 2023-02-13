@@ -35,8 +35,8 @@ Version 1.2.0 (2023-02-13)
   creates identical result
   as calling ``audiofile.read()``
   followed by ``audiofile.write()``
-* Fixed: support for non SND-files
-  (e.g. MKA, MP4 files)
+* Fixed: support for non WAV, FLAC, OGG files
+  like MKA or MP4
   on Windows network shares
 
 
