@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="../../../_static/jupyter-sphinx.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/thebelab.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/plot_directive.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     
@@ -65,7 +66,7 @@
             
             
               <div class="version">
-                v1.1.1
+                v1.2.1
               </div>
             
           
@@ -150,8 +151,8 @@
 <span class="kn">import</span> <span class="nn">audeer</span>
 
 <span class="kn">from</span> <span class="nn">audiofile.core.convert</span> <span class="kn">import</span> <span class="n">convert</span>
-<span class="kn">import</span> <span class="nn">audiofile.core.info</span> <span class="k">as</span> <span class="nn">info</span>
 <span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">duration_in_seconds</span><span class="p">,</span>
     <span class="n">file_extension</span><span class="p">,</span>
     <span class="n">MAX_CHANNELS</span><span class="p">,</span>
     <span class="n">SNDFORMATS</span><span class="p">,</span>
@@ -160,65 +161,145 @@
 
 <div class="viewcode-block" id="convert_to_wav"><a class="viewcode-back" href="../../../api/audiofile.convert_to_wav.html#audiofile.convert_to_wav">[docs]</a><span class="k">def</span> <span class="nf">convert_to_wav</span><span class="p">(</span>
         <span class="n">infile</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">outfile</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Convert any audio/video file to WAV.</span>
+        <span class="n">outfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">offset</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">duration</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">bit_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert any audio/video file to WAV.</span>
 
-<span class="sd">    It uses soundfile for converting WAV, FLAC, OGG files,</span>
-<span class="sd">    and sox or ffmpeg for converting all other files.</span>
+<span class="sd">    It uses soundfile for reading WAV, FLAC, OGG files,</span>
+<span class="sd">    and sox or ffmpeg for reading all other files.</span>
 <span class="sd">    If ``duration`` and/or ``offset`` are specified</span>
 <span class="sd">    the resulting WAV file</span>
 <span class="sd">    will be shortened accordingly.</span>
 
+<span class="sd">    ``duration`` and ``offset``</span>
+<span class="sd">    support all formats</span>
+<span class="sd">    mentioned in :func:`audmath.duration_in_seconds`,</span>
+<span class="sd">    like ``&#39;2 ms&#39;``, or ``pd.to_timedelta(2, &#39;s&#39;)``.</span>
+<span class="sd">    The exception is</span>
+<span class="sd">    that float and integer values</span>
+<span class="sd">    are always interpreted as seconds</span>
+<span class="sd">    and strings without unit</span>
+<span class="sd">    always as samples.</span>
+<span class="sd">    If ``duration`` and/or ``offset`` are negative,</span>
+<span class="sd">    they are interpreted from right to left,</span>
+<span class="sd">    whereas ``duration`` starts from the end of the signal</span>
+<span class="sd">    for ``offset=None``.</span>
+<span class="sd">    If the signal is shorter than the requested ``duration`` and/or ``offset``</span>
+<span class="sd">    only the part of the signal overlapping with the requested signal</span>
+<span class="sd">    is returned,</span>
+<span class="sd">    e.g. for a file containing the signal ``[0, 1, 2]``,</span>
+<span class="sd">    ``duration=2``, ``offset=-4`` will return ``[0]``.</span>
+
+<span class="sd">    It then uses :func:`soundfile.write` to write the WAV file,</span>
+<span class="sd">    which limits the number of supported channels to 65535.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        infile: audio/video file name</span>
-<span class="sd">        outfile: WAV file name</span>
-<span class="sd">        duration: return only a specified duration in seconds</span>
-<span class="sd">        offset: start reading at offset in seconds</span>
+<span class="sd">        outfile: WAV file name.</span>
+<span class="sd">            If ``None`` same path as ``infile``</span>
+<span class="sd">            but file extension is replaced by ``&#39;wav&#39;``</span>
+<span class="sd">        duration: return only a specified duration</span>
+<span class="sd">        offset: start reading at offset</span>
+<span class="sd">        bit_depth: bit depth of written file in bit,</span>
+<span class="sd">            can be 8, 16, 24</span>
+<span class="sd">        normalize: normalize audio data before writing</span>
+<span class="sd">        overwrite: force overwriting</span>
+<span class="sd">            if ``outfile`` is identical to ``outfile``</span>
+<span class="sd">        kwargs: pass on further arguments to :func:`soundfile.write`</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        absolute path to resulting WAV file</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        FileNotFoundError: if ffmpeg binary is needed,</span>
 <span class="sd">            but cannot be found</span>
 <span class="sd">        RuntimeError: if ``file`` is missing,</span>
 <span class="sd">            broken or format is not supported</span>
+<span class="sd">        RuntimeError: if ``infile`` would need to be overwritten</span>
+<span class="sd">            and ``overwrite`` is ``False``</span>
+<span class="sd">        ValueError: if ``duration`` is a string</span>
+<span class="sd">            that does not match a valid &#39;&lt;value&gt;&lt;unit&gt;&#39; pattern</span>
+<span class="sd">            or the provided unit is not supported</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; path = convert_to_wav(&#39;stereo.flac&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; os.path.basename(path)</span>
+<span class="sd">        &#39;stereo.wav&#39;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">infile</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
-    <span class="n">outfile</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
-        <span class="n">bit_depth</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">bit_depth</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">bit_depth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">bit_depth</span> <span class="o">=</span> <span class="mi">16</span>
-        <span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span>
-            <span class="n">infile</span><span class="p">,</span>
-            <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">,</span>
-            <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">write</span><span class="p">(</span><span class="n">outfile</span><span class="p">,</span> <span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">,</span> <span class="n">bit_depth</span><span class="o">=</span><span class="n">bit_depth</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">outfile</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">replace_file_extension</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="s1">&#39;wav&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">convert</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span></div>
+        <span class="n">outfile</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span>
+            <span class="n">infile</span> <span class="o">==</span> <span class="n">outfile</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">infile</span><span class="si">}</span><span class="s2">&#39; would be overwritten. &quot;</span>
+            <span class="s2">&quot;Select &#39;overwrite=True&#39;, &quot;</span>
+            <span class="s2">&quot;or provide an &#39;outfile&#39; argument.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span>
+        <span class="n">infile</span><span class="p">,</span>
+        <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">,</span>
+        <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">write</span><span class="p">(</span>
+        <span class="n">outfile</span><span class="p">,</span>
+        <span class="n">signal</span><span class="p">,</span>
+        <span class="n">sampling_rate</span><span class="p">,</span>
+        <span class="n">bit_depth</span><span class="o">=</span><span class="n">bit_depth</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">outfile</span></div>
 
 
 <div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../api/audiofile.read.html#audiofile.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span>
         <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">duration</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">offset</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">always_2d</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;float32&#39;</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Read audio file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read audio file.</span>
 
 <span class="sd">    It uses :func:`soundfile.read` for WAV, FLAC, and OGG files.</span>
 <span class="sd">    All other audio files are</span>
 <span class="sd">    first converted to WAV by sox or ffmpeg.</span>
 
+<span class="sd">    ``duration`` and ``offset``</span>
+<span class="sd">    support all formats</span>
+<span class="sd">    mentioned in :func:`audmath.duration_in_seconds`,</span>
+<span class="sd">    like ``&#39;2 ms&#39;``, or ``pd.to_timedelta(2, &#39;s&#39;)``.</span>
+<span class="sd">    The exception is</span>
+<span class="sd">    that float and integer values</span>
+<span class="sd">    are always interpreted as seconds</span>
+<span class="sd">    and strings without unit</span>
+<span class="sd">    always as samples.</span>
+<span class="sd">    If ``duration`` and/or ``offset`` are negative,</span>
+<span class="sd">    they are interpreted from right to left,</span>
+<span class="sd">    whereas ``duration`` starts from the end of the signal</span>
+<span class="sd">    for ``offset=None``.</span>
+<span class="sd">    If the signal is shorter than the requested ``duration`` and/or ``offset``</span>
+<span class="sd">    only the part of the signal overlapping with the requested signal</span>
+<span class="sd">    is returned,</span>
+<span class="sd">    e.g. for a file containing the signal ``[0, 1, 2]``,</span>
+<span class="sd">    ``duration=2``, ``offset=-4`` will return ``[0]``.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
-<span class="sd">        duration: return only a specified duration in seconds</span>
-<span class="sd">        offset: start reading at offset in seconds</span>
+<span class="sd">        duration: return only the specified duration</span>
+<span class="sd">        offset: start reading at offset</span>
 <span class="sd">        always_2d: if ``True`` it always returns a two-dimensional signal</span>
 <span class="sd">            even for mono sound files</span>
 <span class="sd">        dtype: data type of returned signal,</span>
@@ -242,9 +323,206 @@
 <span class="sd">            but cannot be found</span>
 <span class="sd">        RuntimeError: if ``file`` is missing,</span>
 <span class="sd">            broken or format is not supported</span>
+<span class="sd">        ValueError: if ``duration`` is a string</span>
+<span class="sd">            that does not match a valid &#39;&lt;value&gt;&lt;unit&gt;&#39; pattern</span>
+<span class="sd">            or the provided unit is not supported</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        .. plot::</span>
+<span class="sd">            :context: reset</span>
+<span class="sd">            :include-source: false</span>
+
+<span class="sd">            import numpy as np</span>
+<span class="sd">            from audiofile.core.io import read</span>
+
+<span class="sd">        .. plot::</span>
+<span class="sd">            :context: close-figs</span>
+
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&#39;mono.wav&#39;, always_2d=True)</span>
+<span class="sd">            &gt;&gt;&gt; sampling_rate</span>
+<span class="sd">            8000</span>
+<span class="sd">            &gt;&gt;&gt; signal.shape</span>
+<span class="sd">            (1, 12000)</span>
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&#39;mono.wav&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; signal.shape</span>
+<span class="sd">            (12000,)</span>
+<span class="sd">            &gt;&gt;&gt; import audplot</span>
+<span class="sd">            &gt;&gt;&gt; audplot.waveform(signal)</span>
+
+<span class="sd">        .. plot::</span>
+<span class="sd">            :context: close-figs</span>
+
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&#39;mono.wav&#39;, duration=0.5)</span>
+<span class="sd">            &gt;&gt;&gt; # Extend signal to original length</span>
+<span class="sd">            &gt;&gt;&gt; signal = np.pad(signal, (0, 8000))</span>
+<span class="sd">            &gt;&gt;&gt; audplot.waveform(signal)</span>
+
+<span class="sd">        .. plot::</span>
+<span class="sd">            :context: close-figs</span>
+
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&#39;mono.wav&#39;, duration=-0.5)</span>
+<span class="sd">            &gt;&gt;&gt; # Extend signal to original length</span>
+<span class="sd">            &gt;&gt;&gt; signal = np.pad(signal, (8000, 0))</span>
+<span class="sd">            &gt;&gt;&gt; audplot.waveform(signal)</span>
+
+<span class="sd">        .. plot::</span>
+<span class="sd">            :context: close-figs</span>
+
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&#39;mono.wav&#39;, offset=&#39;4000&#39;, duration=&#39;4000&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; # Extend signal to original length</span>
+<span class="sd">            &gt;&gt;&gt; signal = np.pad(signal, (4000, 4000))</span>
+<span class="sd">            &gt;&gt;&gt; audplot.waveform(signal)</span>
+
+<span class="sd">        .. plot::</span>
+<span class="sd">            :context: close-figs</span>
+
+<span class="sd">            &gt;&gt;&gt; # Use audresample for resampling and remixing</span>
+<span class="sd">            &gt;&gt;&gt; import audresample</span>
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&#39;stereo.wav&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; signal.shape</span>
+<span class="sd">            (2, 12000)</span>
+<span class="sd">            &gt;&gt;&gt; target_rate = 16000</span>
+<span class="sd">            &gt;&gt;&gt; signal = audresample.resample(signal, sampling_rate, target_rate)</span>
+<span class="sd">            &gt;&gt;&gt; signal.shape</span>
+<span class="sd">            (2, 24000)</span>
+<span class="sd">            &gt;&gt;&gt; signal = audresample.remix(signal, mixdown=True)</span>
+<span class="sd">            &gt;&gt;&gt; signal.shape</span>
+<span class="sd">            (1, 24000)</span>
+<span class="sd">            &gt;&gt;&gt; audplot.waveform(signal)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
     <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="c1"># Parse offset and duration values</span>
+    <span class="k">if</span> <span class="p">(</span>
+            <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">):</span>
+        <span class="c1"># Import sampling_rate here to avoid circular imports</span>
+        <span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">sampling_rate</span> <span class="k">as</span> <span class="n">get_sampling_rate</span>
+        <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">get_sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">duration_in_seconds</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">duration_in_seconds</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">offset</span><span class="p">):</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Support for negative offset/duration values</span>
+    <span class="c1"># by counting them from end of signal</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="p">(</span>
+            <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="ow">or</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">&lt;</span> <span class="mi">0</span>
+    <span class="p">):</span>
+        <span class="c1"># Import duration here to avoid circular imports</span>
+        <span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">duration</span> <span class="k">as</span> <span class="n">get_duration</span>
+        <span class="n">signal_duration</span> <span class="o">=</span> <span class="n">get_duration</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="c1"># offset | duration</span>
+    <span class="c1"># None   | &lt; 0</span>
+    <span class="k">if</span> <span class="p">(</span>
+            <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">&lt;</span> <span class="mi">0</span>
+    <span class="p">):</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">signal_duration</span> <span class="o">+</span> <span class="n">duration</span><span class="p">])</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># None   | &gt;= 0</span>
+    <span class="k">if</span> <span class="p">(</span>
+            <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># &gt;= 0   | &lt; 0</span>
+    <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">&lt;</span> <span class="mi">0</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">offset</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">offset</span><span class="p">,</span> <span class="n">signal_duration</span><span class="p">])</span>
+                <span class="n">duration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="o">*</span> <span class="n">signal_duration</span>
+            <span class="n">orig_offset</span> <span class="o">=</span> <span class="n">offset</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">duration</span><span class="p">])</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="o">-</span><span class="n">duration</span><span class="p">,</span> <span class="n">orig_offset</span><span class="p">])</span>
+    <span class="c1"># &gt;= 0   | &gt;= 0</span>
+    <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">offset</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="c1"># &lt; 0    | None</span>
+    <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="n">duration</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">signal_duration</span> <span class="o">+</span> <span class="n">offset</span><span class="p">])</span>
+    <span class="c1"># &gt;= 0    | None</span>
+    <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="n">duration</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">offset</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># &lt; 0    | &gt; 0</span>
+    <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">offset</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="n">signal_duration</span> <span class="o">+</span> <span class="n">offset</span>
+            <span class="k">if</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">duration</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span> <span class="o">+</span> <span class="n">offset</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">duration</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="n">duration</span><span class="p">,</span> <span class="n">signal_duration</span> <span class="o">-</span> <span class="n">offset</span><span class="p">])</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="p">])</span>
+    <span class="c1"># &lt; 0    | &lt; 0</span>
+    <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">&lt;</span> <span class="mi">0</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">offset</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="o">-</span><span class="n">signal_duration</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">orig_offset</span> <span class="o">=</span> <span class="n">offset</span>
+            <span class="n">offset</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">signal_duration</span> <span class="o">+</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">duration</span><span class="p">])</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="o">-</span><span class="n">duration</span><span class="p">,</span> <span class="n">signal_duration</span> <span class="o">+</span> <span class="n">orig_offset</span><span class="p">])</span>
+            <span class="n">duration</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># Return immediately if duration == 0</span>
+    <span class="k">if</span> <span class="n">duration</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">channels</span> <span class="k">as</span> <span class="n">get_channels</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="n">get_channels</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">channels</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">always_2d</span><span class="p">:</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">channels</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span>
+
     <span class="n">tmpdir</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
         <span class="c1"># Convert file formats not recognized by soundfile to WAV first.</span>
@@ -267,11 +545,9 @@
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">offset</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">offset</span> <span class="o">*</span> <span class="n">sampling_rate</span><span class="p">)</span>  <span class="c1"># samples</span>
-        <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">duration</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">duration</span> <span class="o">*</span> <span class="n">sampling_rate</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset</span>
             <span class="p">)</span>  <span class="c1"># samples</span>
@@ -296,7 +572,7 @@
         <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Write (normalized) audio files.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write (normalized) audio files.</span>
 
 <span class="sd">    Save audio data provided as an array of shape ``[channels, samples]``</span>
 <span class="sd">    to a WAV, FLAC, or OGG file.</span>
@@ -321,7 +597,14 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        RuntimeError: for non-supported bit depth or number of channels</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; sampling_rate = 8000</span>
+<span class="sd">        &gt;&gt;&gt; signal = np.random.uniform(-1, 1, (1, 1000))</span>
+<span class="sd">        &gt;&gt;&gt; write(&#39;mono.wav&#39;, signal, sampling_rate)</span>
+<span class="sd">        &gt;&gt;&gt; signal = np.random.uniform(-1.2, 1.2, (2, 1000))</span>
+<span class="sd">        &gt;&gt;&gt; write(&#39;stereo.flac&#39;, signal, sampling_rate, normalize=True)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
     <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="n">file_type</span> <span class="o">=</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
@@ -344,7 +627,7 @@
         <span class="k">if</span> <span class="n">bit_depth</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bit_depths</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s1">&#39;&quot;bit_depth&quot; has to be one of &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bit_depths</span><span class="p">])</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">bit_depths</span><span class="p">])</span><span class="si">}</span><span class="s1">.&#39;</span>
             <span class="p">)</span>
         <span class="n">subtype</span> <span class="o">=</span> <span class="n">depth_mapping</span><span class="p">[</span><span class="n">bit_depth</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -381,7 +664,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/12/22 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2023/02/13 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -389,7 +672,7 @@
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2022 audEERING GmbH
+      &copy; 2018-2023 audEERING GmbH
     </p>
   </div> 
 

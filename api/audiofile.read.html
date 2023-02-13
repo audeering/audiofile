@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="../_static/jupyter-sphinx.css" type="text/css" />
   <link rel="stylesheet" href="../_static/thebelab.css" type="text/css" />
   <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="write()" href="audiofile.write.html" />
@@ -67,7 +68,7 @@
             
             
               <div class="version">
-                v1.1.1
+                v1.2.1
               </div>
             
           
@@ -156,17 +157,35 @@
 <h1>read()<a class="headerlink" href="#read" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="audiofile.read">
-<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always_2d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/audiofile/core/io.html#read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.read" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always_2d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'float32'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/audiofile/core/io.html#read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read audio file.</p>
 <p>It uses <a class="reference external" href="https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.read" title="(in PySoundFile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.read()</span></code></a> for WAV, FLAC, and OGG files.
 All other audio files are
 first converted to WAV by sox or ffmpeg.</p>
+<p><code class="docutils literal notranslate"><span class="pre">duration</span></code> and <code class="docutils literal notranslate"><span class="pre">offset</span></code>
+support all formats
+mentioned in <a class="reference external" href="https://audeering.github.io/audmath/api/audmath.duration_in_seconds.html#audmath.duration_in_seconds" title="(in audmath vv1.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">audmath.duration_in_seconds()</span></code></a>,
+like <code class="docutils literal notranslate"><span class="pre">'2</span> <span class="pre">ms'</span></code>, or <code class="docutils literal notranslate"><span class="pre">pd.to_timedelta(2,</span> <span class="pre">'s')</span></code>.
+The exception is
+that float and integer values
+are always interpreted as seconds
+and strings without unit
+always as samples.
+If <code class="docutils literal notranslate"><span class="pre">duration</span></code> and/or <code class="docutils literal notranslate"><span class="pre">offset</span></code> are negative,
+they are interpreted from right to left,
+whereas <code class="docutils literal notranslate"><span class="pre">duration</span></code> starts from the end of the signal
+for <code class="docutils literal notranslate"><span class="pre">offset=None</span></code>.
+If the signal is shorter than the requested <code class="docutils literal notranslate"><span class="pre">duration</span></code> and/or <code class="docutils literal notranslate"><span class="pre">offset</span></code>
+only the part of the signal overlapping with the requested signal
+is returned,
+e.g. for a file containing the signal <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></code>,
+<code class="docutils literal notranslate"><span class="pre">duration=2</span></code>, <code class="docutils literal notranslate"><span class="pre">offset=-4</span></code> will return <code class="docutils literal notranslate"><span class="pre">[0]</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – file name of input audio file</p></li>
-<li><p><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – return only a specified duration in seconds</p></li>
-<li><p><strong>offset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – start reading at offset in seconds</p></li>
+<li><p><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.timedelta64" title="(in NumPy v1.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta64</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – return only the specified duration</p></li>
+<li><p><strong>offset</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.timedelta64" title="(in NumPy v1.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta64</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – start reading at offset</p></li>
 <li><p><strong>always_2d</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> it always returns a two-dimensional signal
 even for mono sound files</p></li>
 <li><p><strong>dtype</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – data type of returned signal,
@@ -198,9 +217,73 @@ a one-dimensional array is returned</p></li>
     but cannot be found</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <code class="docutils literal notranslate"><span class="pre">file</span></code> is missing,
     broken or format is not supported</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if <code class="docutils literal notranslate"><span class="pre">duration</span></code> is a string
+    that does not match a valid ‘&lt;value&gt;&lt;unit&gt;’ pattern
+    or the provided unit is not supported</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s1">&#39;mono.wav&#39;</span><span class="p">,</span> <span class="n">always_2d</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampling_rate</span>
+<span class="go">8000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 12000)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s1">&#39;mono.wav&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12000,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">audplot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">audplot</span><span class="o">.</span><span class="n">waveform</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-default">
+<img alt="../_images/audiofile-read-2.png" class="plot-directive" src="../_images/audiofile-read-2.png" />
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s1">&#39;mono.wav&#39;</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extend signal to original length</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8000</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">audplot</span><span class="o">.</span><span class="n">waveform</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-default">
+<img alt="../_images/audiofile-read-3.png" class="plot-directive" src="../_images/audiofile-read-3.png" />
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s1">&#39;mono.wav&#39;</span><span class="p">,</span> <span class="n">duration</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extend signal to original length</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="p">(</span><span class="mi">8000</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">audplot</span><span class="o">.</span><span class="n">waveform</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-default">
+<img alt="../_images/audiofile-read-4.png" class="plot-directive" src="../_images/audiofile-read-4.png" />
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s1">&#39;mono.wav&#39;</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="s1">&#39;4000&#39;</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="s1">&#39;4000&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extend signal to original length</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="p">(</span><span class="mi">4000</span><span class="p">,</span> <span class="mi">4000</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">audplot</span><span class="o">.</span><span class="n">waveform</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-default">
+<img alt="../_images/audiofile-read-5.png" class="plot-directive" src="../_images/audiofile-read-5.png" />
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Use audresample for resampling and remixing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">audresample</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="s1">&#39;stereo.wav&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(2, 12000)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target_rate</span> <span class="o">=</span> <span class="mi">16000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span> <span class="o">=</span> <span class="n">audresample</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">,</span> <span class="n">target_rate</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(2, 24000)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span> <span class="o">=</span> <span class="n">audresample</span><span class="o">.</span><span class="n">remix</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">mixdown</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">signal</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 24000)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">audplot</span><span class="o">.</span><span class="n">waveform</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure align-default">
+<img alt="../_images/audiofile-read-6.png" class="plot-directive" src="../_images/audiofile-read-6.png" />
+</div>
 </dd></dl>
 
 </div>
@@ -228,7 +311,7 @@ a one-dimensional array is returned</p></li>
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/12/22 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2023/02/13 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -236,7 +319,7 @@ a one-dimensional array is returned</p></li>
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2022 audEERING GmbH
+      &copy; 2018-2023 audEERING GmbH
     </p>
   </div> 
 

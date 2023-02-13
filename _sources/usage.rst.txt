@@ -60,8 +60,10 @@ You can read the signal:
 
 .. jupyter-execute::
 
-    sig, fs = audiofile.read('noise.flac')
-    print(f'sampling rate: {fs}, signal shape: {sig.shape}')
+    signal, sampling_rate = audiofile.read('noise.flac')
+
+    print(f'sampling rate: {sampling_rate}')
+    print(f'signal shape: {signal.shape}')
 
 If you prefer a workflow
 that returns a 2D signal with channel as the first dimension,
@@ -69,15 +71,19 @@ enforce it with:
 
 .. jupyter-execute::
 
-    sig, fs = audiofile.read('noise.flac', always_2d=True)
-    print(f'sampling rate: {fs}, signal shape: {sig.shape}')
+    signal, sampling_rate = audiofile.read('noise.flac', always_2d=True)
+
+    print(f'sampling rate: {sampling_rate}')
+    print(f'signal shape: {signal.shape}')
 
 If you just want to read from 500 ms to 900 ms of the signal:
 
 .. jupyter-execute::
 
-    sig, fs = audiofile.read('noise.flac', offset=0.5, duration=0.4)
-    print(f'sampling rate: {fs}, signal shape: {sig.shape}')
+    signal, sampling_rate = audiofile.read('noise.flac', offset=0.5, duration=0.4)
+
+    print(f'sampling rate: {sampling_rate}')
+    print(f'signal shape: {signal.shape}')
 
 
 Convert a file
@@ -87,10 +93,43 @@ You can convert any file to WAV using:
 
 .. jupyter-execute::
 
+    import audeer
+
     audiofile.convert_to_wav('noise.flac', 'noise.wav')
-    audiofile.samples('noise.wav')
+
+    audeer.list_file_names('.', filetype='wav', basenames=True)
 
 
+Resample/Remix a file
+---------------------
+
+:mod:`audiofile` does not directly support
+resampling or remixing
+of an audio file
+during reading.
+But it can be easily achieved with :mod:`audresample`.
+
+.. jupyter-execute::
+
+    import audresample
+
+    target_rate = 16000
+    signal, sampling_rate = audiofile.read('noise.flac', always_2d=True)
+    signal = audresample.resample(signal, sampling_rate, target_rate)
+    signal = audresample.remix(signal, channels=[0, 0])
+    audiofile.write('noise-remix.flac', signal, target_rate)
+
+    print(f'sampling rate: {audiofile.sampling_rate("noise-remix.flac")}')
+    print(f'signal shape: {signal.shape}')
+
+
+.. _soundfile: https://pysoundfile.readthedocs.io/
+.. _ffmpeg: https://www.ffmpeg.org/
+.. _sox: http://sox.sourceforge.net/
+.. _mediainfo: https://mediaarea.net/en/MediaInfo/
+
+
+.. Clean up
 .. jupyter-execute::
     :hide-code:
     :hide-output:
@@ -98,9 +137,4 @@ You can convert any file to WAV using:
     import os
     os.remove('noise.wav')
     os.remove('noise.flac')
-
-
-.. _soundfile: https://pysoundfile.readthedocs.io/
-.. _ffmpeg: https://www.ffmpeg.org/
-.. _sox: http://sox.sourceforge.net/
-.. _mediainfo: https://mediaarea.net/en/MediaInfo/
+    os.remove('noise-remix.flac')

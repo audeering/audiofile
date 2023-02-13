@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="../../../_static/jupyter-sphinx.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/thebelab.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/plot_directive.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     
@@ -65,7 +66,7 @@
             
             
               <div class="version">
-                v1.1.1
+                v1.2.1
               </div>
             
           
@@ -150,7 +151,7 @@
 
 <span class="kn">import</span> <span class="nn">audeer</span>
 
-<span class="kn">from</span> <span class="nn">audiofile.core.convert</span> <span class="kn">import</span> <span class="n">convert</span>
+<span class="kn">from</span> <span class="nn">audiofile.core.io</span> <span class="kn">import</span> <span class="n">convert_to_wav</span>
 <span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">binary_missing_error</span><span class="p">,</span>
     <span class="n">broken_file_error</span><span class="p">,</span>
@@ -161,7 +162,7 @@
 
 
 <div class="viewcode-block" id="bit_depth"><a class="viewcode-back" href="../../../api/audiofile.bit_depth.html#audiofile.bit_depth">[docs]</a><span class="k">def</span> <span class="nf">bit_depth</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bit depth of audio file.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bit depth of audio file.</span>
 
 <span class="sd">    For lossy audio files,</span>
 <span class="sd">    ``None`` is returned as they have a varying bit depth.</span>
@@ -175,6 +176,10 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        RuntimeError: if ``file`` is missing,</span>
 <span class="sd">            broken or format is not supported</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; bit_depth(&#39;stereo.wav&#39;)</span>
+<span class="sd">        16</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
@@ -210,7 +215,7 @@
 
 
 <div class="viewcode-block" id="channels"><a class="viewcode-back" href="../../../api/audiofile.channels.html#audiofile.channels">[docs]</a><span class="k">def</span> <span class="nf">channels</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Number of channels in audio file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Number of channels in audio file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
@@ -224,18 +229,26 @@
 <span class="sd">        RuntimeError: if ``file`` is missing,</span>
 <span class="sd">            broken or format is not supported</span>
 
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; channels(&#39;stereo.wav&#39;)</span>
+<span class="sd">        2</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">channels</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;soxi -c &quot;</span><span class="si">{file}</span><span class="s1">&quot;&#39;</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;soxi&#39;</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
             <span class="c1"># For MP4 stored and returned number of channels can be different</span>
-            <span class="n">cmd1</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Channel(s)_Original%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
-            <span class="n">cmd2</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Channel(s)%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="n">cmd1</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s1">&#39;mediainfo&#39;</span><span class="p">,</span> <span class="s1">&#39;--Inform=Audio;%Channel(s)_Original%&#39;</span><span class="p">,</span> <span class="n">file</span>
+            <span class="p">]</span>
+            <span class="n">cmd2</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s1">&#39;mediainfo&#39;</span><span class="p">,</span> <span class="s1">&#39;--Inform=Audio;%Channel(s)%&#39;</span><span class="p">,</span> <span class="n">file</span>
+            <span class="p">]</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd1</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
@@ -248,7 +261,7 @@
 
 
 <div class="viewcode-block" id="duration"><a class="viewcode-back" href="../../../api/audiofile.duration.html#audiofile.duration">[docs]</a><span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sloppy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Duration in seconds of audio file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Duration in seconds of audio file.</span>
 
 <span class="sd">    The default behavior (``sloppy=False``)</span>
 <span class="sd">    ensures</span>
@@ -283,6 +296,10 @@
 <span class="sd">        RuntimeError: if ``file`` is missing,</span>
 <span class="sd">            broken or format is not supported</span>
 
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; duration(&#39;stereo.wav&#39;)</span>
+<span class="sd">        1.5</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
@@ -290,11 +307,11 @@
 
     <span class="k">if</span> <span class="n">sloppy</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;soxi -D &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;soxi&#39;</span><span class="p">,</span> <span class="s1">&#39;-D&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
             <span class="n">duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%Duration%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mediainfo&#39;</span><span class="p">,</span> <span class="s1">&#39;--Inform=Audio;%Duration%&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
                 <span class="n">duration</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">duration</span><span class="p">:</span>
                     <span class="c1"># Convert to seconds, as mediainfo returns milliseconds</span>
@@ -315,7 +332,7 @@
 
 
 <div class="viewcode-block" id="samples"><a class="viewcode-back" href="../../../api/audiofile.samples.html#audiofile.samples">[docs]</a><span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Number of samples in audio file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Number of samples in audio file.</span>
 
 <span class="sd">    Audio files that are not WAV, FLAC, or OGG</span>
 <span class="sd">    are first converted to WAV,</span>
@@ -333,6 +350,10 @@
 <span class="sd">        RuntimeError: if ``file`` is missing,</span>
 <span class="sd">            broken or format is not supported</span>
 
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; samples(&#39;stereo.wav&#39;)</span>
+<span class="sd">        12000</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">samples_as_int</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span>
@@ -346,12 +367,12 @@
         <span class="c1"># Always convert to WAV for non SNDFORMATS</span>
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;audiofile&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
             <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;tmp.wav&#39;</span><span class="p">)</span>
-            <span class="n">convert</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">tmpfile</span><span class="p">)</span>
+            <span class="n">convert_to_wav</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">tmpfile</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">samples_as_int</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="sampling_rate"><a class="viewcode-back" href="../../../api/audiofile.sampling_rate.html#audiofile.sampling_rate">[docs]</a><span class="k">def</span> <span class="nf">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Sampling rate of audio file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sampling rate of audio file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
@@ -365,17 +386,21 @@
 <span class="sd">        RuntimeError: if ``file`` is missing,</span>
 <span class="sd">            broken or format is not supported</span>
 
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; sampling_rate(&#39;stereo.wav&#39;)</span>
+<span class="sd">        8000</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">samplerate</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;soxi -r &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;soxi&#39;</span><span class="p">,</span> <span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;mediainfo --Inform=&quot;Audio;%SamplingRate%&quot; &quot;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mediainfo&#39;</span><span class="p">,</span> <span class="s1">&#39;--Inform=Audio;%SamplingRate%&#39;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
                 <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">sampling_rate</span><span class="p">:</span>
                     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sampling_rate</span><span class="p">)</span>
@@ -402,7 +427,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/12/22 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2023/02/13 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -410,7 +435,7 @@
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2022 audEERING GmbH
+      &copy; 2018-2023 audEERING GmbH
     </p>
   </div> 
 

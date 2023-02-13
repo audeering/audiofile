@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="../_static/jupyter-sphinx.css" type="text/css" />
   <link rel="stylesheet" href="../_static/thebelab.css" type="text/css" />
   <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Contributing" href="../contributing.html" />
@@ -67,7 +68,7 @@
             
             
               <div class="version">
-                v1.1.1
+                v1.2.1
               </div>
             
           
@@ -156,21 +157,55 @@
 <h1>convert_to_wav()<a class="headerlink" href="#convert-to-wav" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="audiofile.convert_to_wav">
-<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">convert_to_wav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/audiofile/core/io.html#convert_to_wav"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.convert_to_wav" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">convert_to_wav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bit_depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/audiofile/core/io.html#convert_to_wav"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.convert_to_wav" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert any audio/video file to WAV.</p>
-<p>It uses soundfile for converting WAV, FLAC, OGG files,
-and sox or ffmpeg for converting all other files.
+<p>It uses soundfile for reading WAV, FLAC, OGG files,
+and sox or ffmpeg for reading all other files.
 If <code class="docutils literal notranslate"><span class="pre">duration</span></code> and/or <code class="docutils literal notranslate"><span class="pre">offset</span></code> are specified
 the resulting WAV file
 will be shortened accordingly.</p>
+<p><code class="docutils literal notranslate"><span class="pre">duration</span></code> and <code class="docutils literal notranslate"><span class="pre">offset</span></code>
+support all formats
+mentioned in <a class="reference external" href="https://audeering.github.io/audmath/api/audmath.duration_in_seconds.html#audmath.duration_in_seconds" title="(in audmath vv1.2.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">audmath.duration_in_seconds()</span></code></a>,
+like <code class="docutils literal notranslate"><span class="pre">'2</span> <span class="pre">ms'</span></code>, or <code class="docutils literal notranslate"><span class="pre">pd.to_timedelta(2,</span> <span class="pre">'s')</span></code>.
+The exception is
+that float and integer values
+are always interpreted as seconds
+and strings without unit
+always as samples.
+If <code class="docutils literal notranslate"><span class="pre">duration</span></code> and/or <code class="docutils literal notranslate"><span class="pre">offset</span></code> are negative,
+they are interpreted from right to left,
+whereas <code class="docutils literal notranslate"><span class="pre">duration</span></code> starts from the end of the signal
+for <code class="docutils literal notranslate"><span class="pre">offset=None</span></code>.
+If the signal is shorter than the requested <code class="docutils literal notranslate"><span class="pre">duration</span></code> and/or <code class="docutils literal notranslate"><span class="pre">offset</span></code>
+only the part of the signal overlapping with the requested signal
+is returned,
+e.g. for a file containing the signal <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></code>,
+<code class="docutils literal notranslate"><span class="pre">duration=2</span></code>, <code class="docutils literal notranslate"><span class="pre">offset=-4</span></code> will return <code class="docutils literal notranslate"><span class="pre">[0]</span></code>.</p>
+<p>It then uses <a class="reference external" href="https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write" title="(in PySoundFile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.write()</span></code></a> to write the WAV file,
+which limits the number of supported channels to 65535.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>infile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – audio/video file name</p></li>
-<li><p><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – WAV file name</p></li>
-<li><p><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]) – return only a specified duration in seconds</p></li>
-<li><p><strong>offset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – start reading at offset in seconds</p></li>
+<li><p><strong>outfile</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]) – WAV file name.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code> same path as <code class="docutils literal notranslate"><span class="pre">infile</span></code>
+but file extension is replaced by <code class="docutils literal notranslate"><span class="pre">'wav'</span></code></p></li>
+<li><p><strong>duration</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.timedelta64" title="(in NumPy v1.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta64</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – return only a specified duration</p></li>
+<li><p><strong>offset</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.timedelta64" title="(in NumPy v1.24)"><code class="xref py py-class docutils literal notranslate"><span class="pre">timedelta64</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – start reading at offset</p></li>
+<li><p><strong>bit_depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – bit depth of written file in bit,
+can be 8, 16, 24</p></li>
+<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – normalize audio data before writing</p></li>
+<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – force overwriting
+if <code class="docutils literal notranslate"><span class="pre">outfile</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">outfile</span></code></p></li>
+<li><p><strong>kwargs</strong> – pass on further arguments to <a class="reference external" href="https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write" title="(in PySoundFile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.write()</span></code></a></p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>absolute path to resulting WAV file</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
@@ -178,9 +213,20 @@ will be shortened accordingly.</p>
     but cannot be found</p></li>
 <li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <code class="docutils literal notranslate"><span class="pre">file</span></code> is missing,
     broken or format is not supported</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – if <code class="docutils literal notranslate"><span class="pre">infile</span></code> would need to be overwritten
+    and <code class="docutils literal notranslate"><span class="pre">overwrite</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><strong>ValueError</strong></a> – if <code class="docutils literal notranslate"><span class="pre">duration</span></code> is a string
+    that does not match a valid ‘&lt;value&gt;&lt;unit&gt;’ pattern
+    or the provided unit is not supported</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">convert_to_wav</span><span class="p">(</span><span class="s1">&#39;stereo.flac&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="go">&#39;stereo.wav&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -208,7 +254,7 @@ will be shortened accordingly.</p>
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2022/12/22 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2023/02/13 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -216,7 +262,7 @@ will be shortened accordingly.</p>
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2022 audEERING GmbH
+      &copy; 2018-2023 audEERING GmbH
     </p>
   </div> 
 
