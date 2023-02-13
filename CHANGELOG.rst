@@ -7,6 +7,39 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.2.0 (2023-02-13)
+--------------------------
+
+* Added: ``normalize`` argument to ``audiofile.convert_to_wav()``
+* Added: ``bit_depth`` argument to ``audiofile.convert_to_wav()``
+* Added: ``overwrite`` argument to ``audiofile.convert_to_wav()``
+* Added: examples to the API documentation
+* Added: example how to use ``audresample.resample()``
+  and ``audresample.remix()``
+  in the API documentation of ``audiofile.read()``
+* Added: the arguments ``duration`` and ``offset``
+  of ``audiofile.read()``
+  and ``audiofile.convert_to_wav()``
+  can be specified in different units
+  or samples and most other formats 
+  supported by ``audmath.duration_in_seconds()``
+* Added: the arguments ``duration`` and ``offset``
+  of ``audiofile.read()``
+  and ``audiofile.convert_to_wav()``
+  support negative values
+* Changed: if no output path is provided to
+  ``audiofile.convert_to_wav()``,
+  it is derived from the input path
+  by replacing the file extension with ``'wav'``
+* Fixed: ensure ``audiofile.convert_to_wav()``
+  creates identical result
+  as calling ``audiofile.read()``
+  followed by ``audiofile.write()``
+* Fixed: support for non WAV, FLAC, OGG files
+  like MKA or MP4
+  on Windows network shares
+
+
 Version 1.1.1 (2022-12-22)
 --------------------------
 
