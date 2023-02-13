@@ -17,25 +17,24 @@ Version 1.2.0 (2023-02-13)
 * Added: example how to use ``audresample.resample()``
   and ``audresample.remix()``
   in the API documentation of ``audiofile.read()``
-* Added: support units and samples
-  and most other formats supported by ``audmath.duration_in_seconds()``
-  for the ``duration`` and ``offset`` arguments
+* Added: the arguments ``duration`` and ``offset``
   of ``audiofile.read()``
   and ``audiofile.convert_to_wav()``
-* Added: support for negative values
-  for the ``duration`` and ``offset`` arguments
+  can be specified in different units
+  or samples and most other formats 
+  supported by ``audmath.duration_in_seconds()``
+* Added: the arguments ``duration`` and ``offset``
   of ``audiofile.read()``
   and ``audiofile.convert_to_wav()``
-* Changed: allow ``audiofile.convert_to_wav()``
-  to be provided by only the input file.
-  The resulting WAV file
-  is then stored under the same path
-  but with ``'wav'`` as file extension
+  support negative values
+* Changed: if no output path is provided to
+   ``audiofile.convert_to_wav()``,
+   it is derived from the input path
+   by replacing the file extension with ``'wav'``
 * Fixed: ensure ``audiofile.convert_to_wav()``
   creates identical result
   as calling ``audiofile.read()``
-  and ``audiofile.write()``
-  independently
+  followed by ``audiofile.write()``
 * Fixed: support for non SND-files
   (e.g. MKA, MP4 files)
   on Windows network shares
