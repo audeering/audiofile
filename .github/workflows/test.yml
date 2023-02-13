@@ -20,7 +20,6 @@ jobs:
       matrix:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
         python-version: [ '3.7', '3.8', '3.9', '3.10', '3.11' ]
-        tasks: [ tests ]
         sox: [ sox, no-sox ]  # sox binary present or not
 
     steps:
@@ -71,9 +70,8 @@ jobs:
         pip install -r requirements.txt
 
     # TESTS
-    - name: Install tests requirements
+    - name: Install test requirements
       run: pip install -r tests/requirements.txt
-      if: matrix.tasks == 'tests'
 
     - name: Show sox version
       run: |
@@ -81,24 +79,10 @@ jobs:
 
     - name: Test with pytest
       run: python -m pytest
-      if: matrix.tasks == 'tests'
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
-      if: matrix.tasks == 'tests' && matrix.os == 'ubuntu-latest'
-
-    # DOCS
-    - name: Install docs requirements
-      run: pip install -r docs/requirements.txt
-      if: matrix.tasks == 'docs'
-
-    - name: Test building documentation
-      run: python -m sphinx docs/ docs/_build/ -b html -W
-      if: matrix.tasks == 'docs'
-
-    - name: Check links in documentation
-      run: python -m sphinx docs/ docs/_build/ -b linkcheck -W
-      if: matrix.tasks == 'docs'
+      if: matrix.os == 'ubuntu-latest'

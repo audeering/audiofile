@@ -1,0 +1,43 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        python-version: [ '3.8' ]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Ubuntu - install libsndfile
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsndfile1
+
+    - name: Install package
+      run: |
+        pip install -r requirements.txt
+
+    # DOCS
+    - name: Install doc requirements
+      run: pip install -r docs/requirements.txt
+
+    - name: Test building documentation
+      run: python -m sphinx docs/ docs/_build/ -b html -W
+
+    - name: Check links in documentation
+      run: python -m sphinx docs/ docs/_build/ -b linkcheck -W
