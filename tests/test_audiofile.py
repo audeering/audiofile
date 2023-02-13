@@ -1175,6 +1175,19 @@ def test_read_duration_and_offset_file_formats(tmpdir):
             atol=tolerance('duration', sampling_rate),
         )
 
+        # Duration and offset in negative seconds
+        offset = -0.1
+        duration = -0.5
+        sig, fs = af.read(file, offset=offset, duration=duration)
+        assert _duration(sig, sampling_rate) == -duration
+        sig, fs = af.read(file, offset=af.duration(file) + offset)
+        assert_allclose(
+            _duration(sig, sampling_rate),
+            -offset,
+            rtol=0,
+            atol=tolerance('duration', sampling_rate),
+        )
+
         # Duration and offset in samples
         offset = '100'
         duration = '200'
