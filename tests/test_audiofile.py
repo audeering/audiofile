@@ -1257,8 +1257,7 @@ def test_read_duration_and_offset_rounding(tmpdir, offset, duration, expected):
 
     if len(expected) == 0:
         # duration of 0 is handled inside af.read()
-        # even when duration is only 0
-        # after rounding
+        # even when duration is only 0 after rounding
         # as ffmpeg cannot handle those cases
         return 0
 
