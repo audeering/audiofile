@@ -1264,13 +1264,18 @@ def test_read_duration_and_offset_rounding(tmpdir, offset, duration, expected):
 
     # sox
     convert_file = str(tmpdir.join('signal-sox.wav'))
-    af.core.utils.run_sox(file, convert_file, offset, duration)
-    signal, _ = af.read(convert_file)
-    np.testing.assert_allclose(
-        signal,
-        np.array(expected, dtype=np.float32),
-        rtol=1e-03,
-    )
+    try:
+        af.core.utils.run_sox(file, convert_file, offset, duration)
+        signal, _ = af.read(convert_file)
+        np.testing.assert_allclose(
+            signal,
+            np.array(expected, dtype=np.float32),
+            rtol=1e-03,
+        )
+    except FileNotFoundError:
+        # When testing without an installation of sox
+        pass
+
     # ffmpeg
     convert_file = str(tmpdir.join('signal-ffmpeg.wav'))
     af.core.utils.run_ffmpeg(file, convert_file, offset, duration)
