@@ -151,6 +151,11 @@ def read(
     e.g. for a file containing the signal ``[0, 1, 2]``,
     ``duration=2``, ``offset=-4`` will return ``[0]``.
 
+    When ``duration`` and/or ``offset``
+    are not provided as samples
+    their duration values
+    are evenly rounded to samples.
+
     Args:
         file: file name of input audio file
         duration: return only the specified duration
@@ -365,10 +370,13 @@ def read(
             duration = min([-duration, signal_duration + orig_offset])
             duration = max([0, duration])
 
-    if offset is None:
-        offset = 0
-
-    # Return immediately if duration == 0
+    # Convert to samples
+    #
+    # Handle duration first
+    # and returned immediately
+    # if duration == 0
+    if duration is not None and duration != 0:
+        duration = to_samples(duration, sampling_rate)
     if duration == 0:
         from audiofile.core.info import channels as get_channels
         channels = get_channels(file)
@@ -377,6 +385,10 @@ def read(
         else:
             signal = np.zeros((0,))
         return signal, sampling_rate
+    if offset is not None and offset != 0:
+        offset = to_samples(offset, sampling_rate)
+    else:
+        offset = 0
 
     tmpdir = None
     if file_extension(file) not in SNDFORMATS:
@@ -392,6 +404,11 @@ def read(
         # libsndfile see https://github.com/erikd/libsndfile/issues/258.
         with tempfile.TemporaryDirectory(prefix='audiofile') as tmpdir:
             tmpfile = os.path.join(tmpdir, 'tmp.wav')
+            # offset and duration has to be given in seconds
+            if offset != 0:
+                offset /= sampling_rate
+            if duration is not None and duration != 0:
+                duration /= sampling_rate
             convert(file, tmpfile, offset, duration)
             signal, sampling_rate = soundfile.read(
                 tmpfile,
@@ -400,16 +417,16 @@ def read(
                 **kwargs,
             )
     else:
-        if offset is not None and offset != 0:
-            offset = np.ceil(offset * sampling_rate)  # samples
-        if duration is not None and duration != 0:
-            duration = int(
-                np.ceil(duration * sampling_rate) + offset
-            )  # samples
+        start = offset
+        # duration == 0 is handled further above wit immediate return
+        if duration is not None:
+            stop = duration + start
+        else:
+            stop = None
         signal, sampling_rate = soundfile.read(
             file,
-            start=int(offset),
-            stop=duration,
+            start=start,
+            stop=stop,
             dtype=dtype,
             always_2d=always_2d,
             **kwargs,

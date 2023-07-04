@@ -439,7 +439,7 @@ def test_wav(tmpdir, bit_depth, duration, sampling_rate, channels, always_2d):
             duration=duration,
             always_2d=always_2d,
         )
-        assert _samples(sig) == int(np.ceil(duration * sampling_rate))
+        assert _samples(sig) == int(round(duration * sampling_rate))
 
 
 @pytest.mark.parametrize('magnitude', [0.01, 0.1, 1])
@@ -1208,6 +1208,78 @@ def test_read_duration_and_offset_file_formats(tmpdir):
             rtol=0,
             atol=tolerance('duration', sampling_rate),
         )
+
+        # Duration that results in empty signal
+        duration = 0.000001
+        sig, fs = af.read(file, duration=duration)
+        np.testing.assert_array_equal(
+            sig,
+            np.array([], np.float32),
+        )
+
+
+@pytest.mark.parametrize(
+    # offset and duration need to be given in seconds
+    'offset, duration, expected',
+    [
+        (0.1, 0.1, [.1]),
+        (0.1, 0.03, []),
+        (0.1, 0.15, [.1, .2]),
+        (0.1, 0.19, [.1, .2]),
+        (0.049, 0.19, [.0, .1]),
+        (0.15, 0.15, [.2, .3]),
+    ]
+)
+def test_read_duration_and_offset_rounding(tmpdir, offset, duration, expected):
+
+    # Prepare signals
+    sampling_rate = 10
+    signal = np.array(
+        [[.0, .1, .2, .3, .4, .5, .6, .7, .8, .9]],
+        dtype=np.float32,
+    )
+    file = str(tmpdir.join('signal.wav'))
+    af.write(file, signal, sampling_rate)
+    assert af.duration(file) == 1.0
+
+    # Ensure that the rounding from duration to samples
+    # is done as expected
+    # and in the same way
+    # when reading with sox or ffmpeg
+
+    # soundfile
+    signal, _ = af.read(file, offset=offset, duration=duration)
+    np.testing.assert_allclose(
+        signal,
+        np.array(expected, dtype=np.float32),
+        rtol=1e-03,
+    )
+
+    if len(expected) == 0:
+        # duration of 0 is handled inside af.read()
+        # even when duration is only 0
+        # after rounding
+        # as ffmpeg cannot handle those cases
+        return 0
+
+    # sox
+    convert_file = str(tmpdir.join('signal-sox.wav'))
+    af.core.utils.run_sox(file, convert_file, offset, duration)
+    signal, _ = af.read(convert_file)
+    np.testing.assert_allclose(
+        signal,
+        np.array(expected, dtype=np.float32),
+        rtol=1e-03,
+    )
+    # ffmpeg
+    convert_file = str(tmpdir.join('signal-ffmpeg.wav'))
+    af.core.utils.run_ffmpeg(file, convert_file, offset, duration)
+    signal, _ = af.read(convert_file)
+    np.testing.assert_allclose(
+        signal,
+        np.array(expected, dtype=np.float32),
+        rtol=1e-03,
+    )
 
 
 def test_write_errors():
