@@ -51,10 +51,9 @@ def convert_to_wav(
     e.g. for a file containing the signal ``[0, 1, 2]``,
     ``duration=2``, ``offset=-4`` will return ``[0]``.
 
-    When ``duration`` and/or ``offset``
-    are not provided as samples
-    their duration values
-    are evenly rounded to samples.
+    ``duration`` and ``offset``
+    are evenly rounded
+    after conversion to samples.
 
     It then uses :func:`soundfile.write` to write the WAV file,
     which limits the number of supported channels to 65535.
@@ -156,10 +155,9 @@ def read(
     e.g. for a file containing the signal ``[0, 1, 2]``,
     ``duration=2``, ``offset=-4`` will return ``[0]``.
 
-    When ``duration`` and/or ``offset``
-    are not provided as samples
-    their duration values
-    are evenly rounded to samples.
+    ``duration`` and ``offset``
+    are evenly rounded
+    after conversion to samples.
 
     Args:
         file: file name of input audio file
