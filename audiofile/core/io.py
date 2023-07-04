@@ -407,7 +407,7 @@ def read(
         # libsndfile see https://github.com/erikd/libsndfile/issues/258.
         with tempfile.TemporaryDirectory(prefix='audiofile') as tmpdir:
             tmpfile = os.path.join(tmpdir, 'tmp.wav')
-            # offset and duration has to be given in seconds
+            # offset and duration have to be given in seconds
             if offset != 0:
                 offset /= sampling_rate
             if duration is not None and duration != 0:
