@@ -422,7 +422,7 @@ def read(
             )
     else:
         start = offset
-        # duration == 0 is handled further above wit immediate return
+        # duration == 0 is handled further above with immediate return
         if duration is not None:
             stop = duration + start
         else:
