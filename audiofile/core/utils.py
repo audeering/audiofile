@@ -129,11 +129,3 @@ def run_sox(infile, outfile, offset, duration):
             'trim', str(offset),
         ]
     run(cmd)
-
-
-def to_samples(
-        duration: float,
-        sampling_rate: int,
-) -> int:
-    r"""Convert duration from seconds to samples."""
-    return int(round(duration * sampling_rate))

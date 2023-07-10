@@ -439,7 +439,7 @@ def test_wav(tmpdir, bit_depth, duration, sampling_rate, channels, always_2d):
             duration=duration,
             always_2d=always_2d,
         )
-        assert _samples(sig) == int(round(duration * sampling_rate))
+        assert _samples(sig) == round(duration * sampling_rate)
 
 
 @pytest.mark.parametrize('magnitude', [0.01, 0.1, 1])

@@ -6,6 +6,7 @@ import numpy as np
 import soundfile
 
 import audeer
+import audmath
 
 from audiofile.core.convert import convert
 from audiofile.core.utils import MAX_CHANNELS
@@ -379,7 +380,7 @@ def read(
     # and returned immediately
     # if duration == 0
     if duration is not None and duration != 0:
-        duration = to_samples(duration, sampling_rate)
+        duration = audmath.samples(duration, sampling_rate)
     if duration == 0:
         from audiofile.core.info import channels as get_channels
         channels = get_channels(file)
@@ -389,7 +390,7 @@ def read(
             signal = np.zeros((0,))
         return signal, sampling_rate
     if offset is not None and offset != 0:
-        offset = to_samples(offset, sampling_rate)
+        offset = audmath.samples(offset, sampling_rate)
     else:
         offset = 0
 
