@@ -1,22 +1,24 @@
-import configparser
 from datetime import datetime
 import os
 import shutil
+
+import toml
 
 import audeer
 
 from audiofile.core.conftest import create_audio_files
 
 
-config = configparser.ConfigParser()
-config.read(os.path.join('..', 'setup.cfg'))
+config = toml.load(audeer.path('..', 'pyproject.toml'))
 
 
 # Project -----------------------------------------------------------------
 
-project = config['metadata']['name']
+project = config['project']['name']
 copyright = f'2018-{datetime.now().year} audEERING GmbH'
-author = config['metadata']['author']
+author = ', '.join(
+    author['name'] for author in config['project']['authors']
+)
 version = audeer.git_repo_version()
 title = 'Documentation'
 
