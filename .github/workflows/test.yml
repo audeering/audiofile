@@ -10,7 +10,7 @@ jobs:
   build:
 
     # Make sure .bashrc is read by shell for micromamba,
-    # see https://github.com/mamba-org/provision-with-micromamba#important
+    # see https://github.com/mamba-org/setup-micromamba#about-login-shells
     defaults:
       run:
         shell: bash -l {0}
@@ -26,12 +26,11 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Set up Python ${{ matrix.python-version }} with Micromamba
-      uses: mamba-org/provision-with-micromamba@main
+      uses: mamba-org/setup-micromamba@v1
       with:
-        cache-env: true
-        environment-file: false
+        cache-environment: true
         environment-name: venv
-        extra-specs: |
+        create-args: |
           pip
           python=${{ matrix.python-version }}
         channels: conda-forge
