@@ -1,47 +1,51 @@
 Contributing
 ============
 
-If you would like to add new functionality fell free to create a
-`pull request`_.
-If you find errors, omissions, inconsistencies or other things that need
-improvement, please create an issue_.
-Contributions are always welcome!
+Everyone is invited to contribute to this project.
+Feel free to create a `pull request`_ .
+If you find errors,
+omissions,
+inconsistencies,
+or other things
+that need improvement,
+please create an issue_.
 
-.. _issue: https://github.com/audeering/audiofile/issues/new
-.. _pull request: https://github.com/audeering/audiofile/compare
+.. _issue: https://github.com/audeering/audiofile/issues/new/
+.. _pull request: https://github.com/audeering/audiofile/compare/
 
 
 Development Installation
 ------------------------
 
-Instead of pip-installing the latest release from PyPI_, you should get the
-newest development version from Github_::
+Instead of pip-installing the latest release from PyPI_,
+you should get the newest development version from Github_::
 
    git clone https://github.com/audeering/audiofile/
    cd audiofile
-   # Create virtual environment, e.g.
-   # virtualenv --python=/usr/bin/python3 --no-site-packages _env
-   # source _env/bin/activate
-   python setup.py develop
+   # Create virtual environment for this project
+   # e.g.
+   # virtualenv --python="python3"  $HOME/.envs/audiofile
+   # source $HOME/.envs/audiofile/bin/activate
+   pip install -r requirements.txt
+
+
+This way,
+your installation always stays up-to-date,
+even if you pull new changes from the Github repository.
 
 .. _PyPI: https://pypi.org/project/audiofile/
 .. _Github: https://github.com/audeering/audiofile/
-
-This way, your installation always stays up-to-date, even if you pull new
-changes from the Github_ repository.
-
-If you prefer, you can also replace the last command with::
-
-   pip install -r requirements.txt
 
 
 Coding Convention
 -----------------
 
 We follow the PEP8_ convention for Python code
-and check for correct syntax with flake8_.
-Exceptions are defined under the ``[flake8]`` section
-in :file:`setup.cfg`.
+and check for correct syntax with ruff_.
+In addition,
+we check for common spelling errors with codespell_.
+Both tools and possible exceptions
+are defined in :file:`pyproject.toml`.
 
 The checks are executed in the CI using `pre-commit`_.
 You can enable those checks locally by executing::
@@ -50,44 +54,49 @@ You can enable those checks locally by executing::
     pre-commit install
     pre-commit run --all-files
 
-Afterwards flake8_ is executed
+Afterwards ruff_ and codespell_ are executed
 every time you create a commit.
 
-You can also install flake8_
+You can also install ruff_ and codespell_
 and call it directly::
 
-    pip install flake8  # consider system wide installation
-    flake8
+    pip install ruff codespell  # consider system wide installation
+    ruff check .
+    codespell
 
 It can be restricted to specific folders::
 
-    flake8 audfoo/ tests/
+    ruff check audfoo/ tests/
+    codespell audfoo/ tests/
 
+
+.. _codespell: https://github.com/codespell-project/codespell/
 .. _PEP8: http://www.python.org/dev/peps/pep-0008/
-.. _flake8: https://flake8.pycqa.org/en/latest/index.html
 .. _pre-commit: https://pre-commit.com
+.. _ruff: https://beta.ruff.rs
 
 
 Building the Documentation
 --------------------------
 
-If you make changes to the documentation, you can re-create the HTML pages
-using Sphinx_.
+If you make changes to the documentation,
+you can re-create the HTML pages using Sphinx_.
 You can install it and a few other necessary packages with::
 
    pip install -r docs/requirements.txt
 
 To create the HTML pages, use::
 
-   python setup.py build_sphinx
+   python -m sphinx docs/ build/sphinx/html -b html
 
-The generated files will be available in the directory ``build/sphinx/html/``.
+The generated files will be available
+in the directory :file:`build/sphinx/html/`.
 
 It is also possible to automatically check if all links are still valid::
 
-   python setup.py build_sphinx -b linkcheck
+   python -m sphinx docs/ build/sphinx/html -b linkcheck
 
-.. _Sphinx: http://sphinx-doc.org/
+.. _Sphinx: http://sphinx-doc.org
 
 
 Running the Tests
@@ -102,7 +111,7 @@ To execute the tests, simply run::
 
    python -m pytest
 
-.. _pytest: https://pytest.org/
+.. _pytest: https://pytest.org
 
 
 Creating a New Release
