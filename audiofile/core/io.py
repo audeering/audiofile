@@ -8,12 +8,10 @@ import soundfile
 import audeer
 
 from audiofile.core.convert import convert
-from audiofile.core.utils import (
-    duration_in_seconds,
-    file_extension,
-    MAX_CHANNELS,
-    SNDFORMATS,
-)
+from audiofile.core.utils import MAX_CHANNELS
+from audiofile.core.utils import SNDFORMATS
+from audiofile.core.utils import duration_in_seconds
+from audiofile.core.utils import file_extension
 
 
 def convert_to_wav(
@@ -385,7 +383,7 @@ def read(
         # Convert file formats not recognized by soundfile to WAV first.
         #
         # NOTE: this is faster than loading them with librosa directly.
-        # In addition, librosa seems to have an issue with the precission of
+        # In addition, librosa seems to have an issue with the precision of
         # the returned magnitude
         # (https://github.com/librosa/librosa/issues/811).
         #

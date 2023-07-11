@@ -1,11 +1,9 @@
 import subprocess
 
-from audiofile.core.utils import (
-    binary_missing_error,
-    broken_file_error,
-    run_ffmpeg,
-    run_sox,
-)
+from audiofile.core.utils import binary_missing_error
+from audiofile.core.utils import broken_file_error
+from audiofile.core.utils import run_ffmpeg
+from audiofile.core.utils import run_sox
 
 
 def convert(
