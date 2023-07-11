@@ -385,7 +385,7 @@ def read(
         # Convert file formats not recognized by soundfile to WAV first.
         #
         # NOTE: this is faster than loading them with librosa directly.
-        # In addition, librosa seems to have an issue with the precission of
+        # In addition, librosa seems to have an issue with the precision of
         # the returned magnitude
         # (https://github.com/librosa/librosa/issues/811).
         #

@@ -45,7 +45,7 @@ to ensure that duration and number of samples match.
 .. |tests| image:: https://github.com/audeering/audiofile/workflows/Test/badge.svg
     :target: https://github.com/audeering/audiofile/actions?query=workflow%3ATest
     :alt: Test status
-.. |coverage| image:: https://codecov.io/gh/audeering/audiofile/branch/master/graph/badge.svg?token=LVF0621BKR
+.. |coverage| image:: https://codecov.io/gh/audeering/audiofile/branch/main/graph/badge.svg?token=LVF0621BKR
     :target: https://codecov.io/gh/audeering/audiofile/
     :alt: code coverage
 .. |docs| image:: https://img.shields.io/pypi/v/audiofile?label=docs
@@ -55,5 +55,5 @@ to ensure that duration and number of samples match.
     :target: https://pypi.org/project/audiofile/
     :alt: audiofile's supported Python versions
 .. |license| image:: https://img.shields.io/badge/license-MIT-green.svg
-    :target: https://github.com/audeering/audiofile/blob/master/LICENSE
+    :target: https://github.com/audeering/audiofile/blob/main/LICENSE
     :alt: audiofile's MIT license
