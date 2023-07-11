@@ -97,6 +97,10 @@ extend-ignore = [
     'D107',  # Missing docstring in `__init__`
 ]
 
+exclude = [
+    'docs/benchmark',
+]
+
 line-length = 79
 
 cache-dir = '.cache/ruff'
