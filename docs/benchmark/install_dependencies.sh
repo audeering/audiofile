@@ -16,7 +16,7 @@ virtualenv --python=python3.8 ${ENV_DIR}
 source ${ENV_DIR}/bin/activate
 pip install --upgrade pip
 
-# Enforce rebuolding of wheels
+# Enforce rebuilding of wheels
 pip cache purge
 
 # Fix numpy header include for aubio
