@@ -8,12 +8,10 @@ import soundfile
 import audeer
 
 from audiofile.core.convert import convert
-from audiofile.core.utils import (
-    duration_in_seconds,
-    file_extension,
-    MAX_CHANNELS,
-    SNDFORMATS,
-)
+from audiofile.core.utils import MAX_CHANNELS
+from audiofile.core.utils import SNDFORMATS
+from audiofile.core.utils import duration_in_seconds
+from audiofile.core.utils import file_extension
 
 
 def convert_to_wav(

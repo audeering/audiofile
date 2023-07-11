@@ -1,9 +1,10 @@
 import configparser
 from datetime import datetime
-import shutil
 import os
+import shutil
 
 import audeer
+
 from audiofile.core.conftest import create_audio_files
 
 

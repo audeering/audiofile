@@ -9,13 +9,11 @@ import soundfile
 import audeer
 
 from audiofile.core.io import convert_to_wav
-from audiofile.core.utils import (
-    binary_missing_error,
-    broken_file_error,
-    file_extension,
-    run,
-    SNDFORMATS,
-)
+from audiofile.core.utils import SNDFORMATS
+from audiofile.core.utils import binary_missing_error
+from audiofile.core.utils import broken_file_error
+from audiofile.core.utils import file_extension
+from audiofile.core.utils import run
 
 
 def bit_depth(file: str) -> typing.Optional[int]:

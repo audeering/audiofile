@@ -1,15 +1,15 @@
-from __future__ import division
 import os
 import re
 import subprocess
 
-import pytest
 import numpy as np
 from numpy.testing import assert_allclose
 import pandas as pd
+import pytest
 import soundfile
 
 import audeer
+
 import audiofile as af
 
 
