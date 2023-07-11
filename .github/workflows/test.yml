@@ -33,7 +33,6 @@ jobs:
         create-args: |
           pip
           python=${{ matrix.python-version }}
-        channels: conda-forge
 
     - name: Activate Python virtual environment
       run: micromamba activate venv
