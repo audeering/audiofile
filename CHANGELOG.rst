@@ -12,6 +12,7 @@ Version 1.3.0 (2023-07-12)
 
 * Changed: evenly round ``offset``
   and ``duration``
+  after converting to samples
   in ``audiofile.read()``
   and ``audiofile.convert_to_wav()``
   for SND files
