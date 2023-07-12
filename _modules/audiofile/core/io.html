@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                v1.2.1
+                v1.3.0
               </div>
             
           
@@ -149,14 +149,13 @@
 <span class="kn">import</span> <span class="nn">soundfile</span>
 
 <span class="kn">import</span> <span class="nn">audeer</span>
+<span class="kn">import</span> <span class="nn">audmath</span>
 
 <span class="kn">from</span> <span class="nn">audiofile.core.convert</span> <span class="kn">import</span> <span class="n">convert</span>
-<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">duration_in_seconds</span><span class="p">,</span>
-    <span class="n">file_extension</span><span class="p">,</span>
-    <span class="n">MAX_CHANNELS</span><span class="p">,</span>
-    <span class="n">SNDFORMATS</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">MAX_CHANNELS</span>
+<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">SNDFORMATS</span>
+<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">duration_in_seconds</span>
+<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">file_extension</span>
 
 
 <div class="viewcode-block" id="convert_to_wav"><a class="viewcode-back" href="../../../api/audiofile.convert_to_wav.html#audiofile.convert_to_wav">[docs]</a><span class="k">def</span> <span class="nf">convert_to_wav</span><span class="p">(</span>
@@ -195,6 +194,10 @@
 <span class="sd">    is returned,</span>
 <span class="sd">    e.g. for a file containing the signal ``[0, 1, 2]``,</span>
 <span class="sd">    ``duration=2``, ``offset=-4`` will return ``[0]``.</span>
+
+<span class="sd">    ``duration`` and ``offset``</span>
+<span class="sd">    are evenly rounded</span>
+<span class="sd">    after conversion to samples.</span>
 
 <span class="sd">    It then uses :func:`soundfile.write` to write the WAV file,</span>
 <span class="sd">    which limits the number of supported channels to 65535.</span>
@@ -295,6 +298,10 @@
 <span class="sd">    is returned,</span>
 <span class="sd">    e.g. for a file containing the signal ``[0, 1, 2]``,</span>
 <span class="sd">    ``duration=2``, ``offset=-4`` will return ``[0]``.</span>
+
+<span class="sd">    ``duration`` and ``offset``</span>
+<span class="sd">    are evenly rounded</span>
+<span class="sd">    after conversion to samples.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
@@ -510,10 +517,13 @@
             <span class="n">duration</span> <span class="o">=</span> <span class="nb">min</span><span class="p">([</span><span class="o">-</span><span class="n">duration</span><span class="p">,</span> <span class="n">signal_duration</span> <span class="o">+</span> <span class="n">orig_offset</span><span class="p">])</span>
             <span class="n">duration</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span><span class="p">])</span>
 
-    <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="c1"># Return immediately if duration == 0</span>
+    <span class="c1"># Convert to samples</span>
+    <span class="c1">#</span>
+    <span class="c1"># Handle duration first</span>
+    <span class="c1"># and returned immediately</span>
+    <span class="c1"># if duration == 0</span>
+    <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">audmath</span><span class="o">.</span><span class="n">samples</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">duration</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">channels</span> <span class="k">as</span> <span class="n">get_channels</span>
         <span class="n">channels</span> <span class="o">=</span> <span class="n">get_channels</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
@@ -522,13 +532,17 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
         <span class="k">return</span> <span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span>
+    <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">audmath</span><span class="o">.</span><span class="n">samples</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="n">tmpdir</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
         <span class="c1"># Convert file formats not recognized by soundfile to WAV first.</span>
         <span class="c1">#</span>
         <span class="c1"># NOTE: this is faster than loading them with librosa directly.</span>
-        <span class="c1"># In addition, librosa seems to have an issue with the precission of</span>
+        <span class="c1"># In addition, librosa seems to have an issue with the precision of</span>
         <span class="c1"># the returned magnitude</span>
         <span class="c1"># (https://github.com/librosa/librosa/issues/811).</span>
         <span class="c1">#</span>
@@ -537,6 +551,11 @@
         <span class="c1"># libsndfile see https://github.com/erikd/libsndfile/issues/258.</span>
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;audiofile&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
             <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s1">&#39;tmp.wav&#39;</span><span class="p">)</span>
+            <span class="c1"># offset and duration have to be given in seconds</span>
+            <span class="k">if</span> <span class="n">offset</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">offset</span> <span class="o">/=</span> <span class="n">sampling_rate</span>
+            <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">duration</span> <span class="o">/=</span> <span class="n">sampling_rate</span>
             <span class="n">convert</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">tmpfile</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
             <span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
                 <span class="n">tmpfile</span><span class="p">,</span>
@@ -545,16 +564,16 @@
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">offset</span> <span class="o">*</span> <span class="n">sampling_rate</span><span class="p">)</span>  <span class="c1"># samples</span>
-        <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">duration</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">duration</span> <span class="o">*</span> <span class="n">sampling_rate</span><span class="p">)</span> <span class="o">+</span> <span class="n">offset</span>
-            <span class="p">)</span>  <span class="c1"># samples</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">offset</span>
+        <span class="c1"># duration == 0 is handled further above with immediate return</span>
+        <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stop</span> <span class="o">=</span> <span class="n">duration</span> <span class="o">+</span> <span class="n">start</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stop</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
             <span class="n">file</span><span class="p">,</span>
-            <span class="n">start</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">offset</span><span class="p">),</span>
-            <span class="n">stop</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span>
+            <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
+            <span class="n">stop</span><span class="o">=</span><span class="n">stop</span><span class="p">,</span>
             <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
             <span class="n">always_2d</span><span class="o">=</span><span class="n">always_2d</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -664,7 +683,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2023/02/13 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2023/07/12 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
