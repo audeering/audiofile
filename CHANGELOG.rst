@@ -7,6 +7,20 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.3.0 (2023-07-12)
+--------------------------
+
+* Changed: evenly round ``offset``
+  and ``duration``
+  in ``audiofile.read()``
+  and ``audiofile.convert_to_wav()``
+  for SND files
+* Fix: ``offset``
+  and ``duration``
+  now behave the same
+  independent of the incoming file format
+
+
 Version 1.2.1 (2023-02-13)
 --------------------------
 
