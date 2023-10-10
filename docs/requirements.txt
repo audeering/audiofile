@@ -1,5 +1,6 @@
 audplot
 audresample
+ipykernel
 jupyter-sphinx
 pytest
 sphinx
