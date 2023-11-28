@@ -104,10 +104,9 @@ for package in ['read', 'info']:
             data=y,
             height=height,
             aspect=aspect,
-            legend=False
+            legend=True,
         )
         g.despine(left=True)
-        plt.legend(loc='upper right')
         plt.xlabel('time / s per file')
         plt.ylabel('file format')
         if package == 'info':
