@@ -3,6 +3,7 @@ audiofile
 audioread
 librosa
 pandas
+pedalboard ==0.5.3
 pygobject
 pymad
 scipy

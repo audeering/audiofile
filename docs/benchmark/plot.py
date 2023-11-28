@@ -12,6 +12,7 @@ MAPPINGS = {  # library name mappings
     'ar_ffmpeg': 'audioread (ffmpeg)',
     'ar_mad': 'audioread (mad)',
     'librosa': 'librosa',
+    'pedalboard': 'pedalboard',
     'scipy': 'scipy',
     'soundfile': 'soundfile',
     'sox': 'sox',
@@ -44,6 +45,7 @@ for package in ['read', 'info']:
                 MAPPINGS['aubio'],
                 MAPPINGS['librosa'],
                 MAPPINGS['ar_ffmpeg'],
+                MAPPINGS['pedalboard'],
                 MAPPINGS['scipy'],
             ]
             height = 5.6
@@ -53,16 +55,18 @@ for package in ['read', 'info']:
                 MAPPINGS['audiofile'],
                 MAPPINGS['soundfile'],
                 MAPPINGS['aubio'],
+                MAPPINGS['pedalboard'],
             ]
             height = 3.36
             aspect = 2.0
         elif 'mp3' in exts and package == 'read':
             lib_order = [
                 MAPPINGS['audiofile'],
-                MAPPINGS['librosa'],
                 MAPPINGS['aubio'],
+                MAPPINGS['librosa'],
                 MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['ar_mad'],
+                MAPPINGS['pedalboard'],
             ]
             height = 3.36
             aspect = 2.0
@@ -73,6 +77,7 @@ for package in ['read', 'info']:
                 MAPPINGS['aubio'],
                 MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['ar_mad'],
+                MAPPINGS['pedalboard'],
                 MAPPINGS['sox'],
             ]
             height = 3.7
@@ -91,6 +96,7 @@ for package in ['read', 'info']:
             MAPPINGS['ar_mad']: '#94785e',
             MAPPINGS['ar_ffmpeg']: '#94785e',
             MAPPINGS['sox']: '#db8cc5',
+            MAPPINGS['pedalboard']: '#cdbb75',
         }
 
         g = sns.catplot(

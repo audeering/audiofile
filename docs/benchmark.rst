@@ -34,6 +34,7 @@ The following Python packages are benchmarked against each other:
 * audioread_ 2.1.9
 * :mod:`audiofile` 1.1.0
 * librosa_ 0.9.1
+* pedalboard_ 0.5.3
 * scipy_ 1.8.0
 * soundfile_ 0.10.3.post1
 * sox_ 1.4.1
@@ -126,7 +127,7 @@ Reading files
 
 soundfile_ does not support
 reading MP3 and MP4 files,
-audioread_ (mad) only MP3 files.
+audioread_ (mad) and pedalboard_ only MP3 files.
 
 .. image:: ./benchmark/results/benchmark_mp3-mp4_read.png
 
@@ -135,7 +136,7 @@ Accessing metadata
 
 soundfile_ does not support
 accessing MP3 and MP4 metadata.
-sox_ and audioread_ (mad) only for MP3 files.
+sox_, audioread_ (mad) and pedalboard_ only for MP3 files.
 
 .. image:: ./benchmark/results/benchmark_mp3-mp4_info.png
 
@@ -158,6 +159,7 @@ in the figure.
 .. _gstreamer: https://gstreamer.freedesktop.org/
 .. _librosa: https://github.com/librosa/librosa/
 .. _mad: https://sourceforge.net/projects/mad/
+.. _pedalboard: https://github.com/spotify/pedalboard
 .. _scipy: https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html
 .. _soundfile: https://github.com/bastibe/SoundFile/
 .. _sox: https://github.com/rabitt/pysox/
