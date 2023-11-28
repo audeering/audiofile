@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 NBFILES = 10  # must be identical to generate_audio.sh
 
 MAPPINGS = {  # library name mappings
-    'aubio': 'aubio',
     'audiofile': 'audiofile',
     'audiofile_sloppy': 'audiofile (sloppy)',
     'ar_ffmpeg': 'audioread (ffmpeg)',
@@ -42,7 +41,6 @@ for package in ['read', 'info']:
             lib_order = [
                 MAPPINGS['audiofile'],
                 MAPPINGS['soundfile'],
-                MAPPINGS['aubio'],
                 MAPPINGS['librosa'],
                 MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['pedalboard'],
@@ -54,7 +52,6 @@ for package in ['read', 'info']:
             lib_order = [
                 MAPPINGS['audiofile'],
                 MAPPINGS['soundfile'],
-                MAPPINGS['aubio'],
                 MAPPINGS['pedalboard'],
             ]
             height = 3.36
@@ -62,7 +59,6 @@ for package in ['read', 'info']:
         elif 'mp3' in exts and package == 'read':
             lib_order = [
                 MAPPINGS['audiofile'],
-                MAPPINGS['aubio'],
                 MAPPINGS['librosa'],
                 MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['ar_mad'],
@@ -74,7 +70,6 @@ for package in ['read', 'info']:
             lib_order = [
                 MAPPINGS['audiofile'],
                 MAPPINGS['audiofile_sloppy'],
-                MAPPINGS['aubio'],
                 MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['ar_mad'],
                 MAPPINGS['pedalboard'],
@@ -90,7 +85,6 @@ for package in ['read', 'info']:
             MAPPINGS['audiofile']: '#4a74b5',
             MAPPINGS['audiofile_sloppy']: '#6b93d7',
             MAPPINGS['soundfile']: '#db8548',
-            MAPPINGS['aubio']: '#5dab64',
             MAPPINGS['librosa']: '#c34c4d',
             MAPPINGS['scipy']: '#8174b8',
             MAPPINGS['ar_mad']: '#94785e',
