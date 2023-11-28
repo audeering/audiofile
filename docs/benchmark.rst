@@ -30,13 +30,12 @@ Python packages
 
 The following Python packages are benchmarked against each other:
 
-* aubio_ 0.4.5
-* audioread_ 2.1.9
-* :mod:`audiofile` 1.1.0
-* librosa_ 0.9.1
-* pedalboard_ 0.5.3
-* scipy_ 1.8.0
-* soundfile_ 0.10.3.post1
+* audioread_ 3.0.1
+* :mod:`audiofile` 1.3.0
+* librosa_ 0.10.1
+* pedalboard_ 0.8.6
+* scipy_ 1.11.4
+* soundfile_ 0.21.1
 * sox_ 1.4.1
 
 scipy_ and librosa_ are only tested for reading files,
@@ -75,7 +74,7 @@ The benchmark was executed on the following machine:
 * RAM: 15.37 GB
 * Hard drive: Samsung SSD 860
 * Linux: Ubuntu 18.04.6
-* Python: 3.8.13
+* Python: 3.10.11
 
 To rerun the benchmark yourself,
 clone the repository
@@ -88,7 +87,7 @@ and execute:
     $ bash generate_audio.sh
     $ bash run.sh
 
-This requires that Python 3.8 is installed
+This requires that Python 3.10 is installed
 and will ask for a sudo password
 to install missing apt packages.
 
@@ -153,7 +152,6 @@ and is shown as audiofile (sloppy)
 in the figure.
 
 
-.. _aubio: https://github.com/aubio/aubio/
 .. _audioread: https://github.com/beetbox/audioread/
 .. _ffmpeg: https://ffmpeg.org/
 .. _gstreamer: https://gstreamer.freedesktop.org/
