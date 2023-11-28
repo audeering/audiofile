@@ -90,7 +90,7 @@ for package in ['read', 'info']:
             MAPPINGS['ar_mad']: '#94785e',
             MAPPINGS['ar_ffmpeg']: '#94785e',
             MAPPINGS['sox']: '#db8cc5',
-            MAPPINGS['pedalboard']: '#cdbb75',
+            MAPPINGS['pedalboard']: '#5dab64',
         }
 
         g = sns.catplot(
