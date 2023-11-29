@@ -7,6 +7,22 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.3.1 (2023-11-29)
+--------------------------
+
+* Added: ``pedalboard`` to the benchmark section
+  of the documentation
+* Changed: use Python 3.10
+  when benchmarking different libraries
+* Fixed: avoid deprecation warning
+  by replacing
+  ``pkg_resources``
+  internally with
+  ``importlib.metadata``
+* Removed: ``aubio`` from the benchmark section
+  of the documentation
+
+
 Version 1.3.0 (2023-07-12)
 --------------------------
 
