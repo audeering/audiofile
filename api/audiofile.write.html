@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                v1.3.0
+                v1.3.1
               </div>
             
           
@@ -169,19 +169,19 @@ For monaural audio the array can be one-dimensional.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – file name of output audio file.
+<li><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – file name of output audio file.
 The format (WAV, FLAC, OGG) will be inferred from the file name</p></li>
 <li><p><strong>signal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – audio data to write</p></li>
-<li><p><strong>sampling_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – sample rate of the audio data</p></li>
-<li><p><strong>bit_depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – bit depth of written file in bit,
+<li><p><strong>sampling_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – sample rate of the audio data</p></li>
+<li><p><strong>bit_depth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – bit depth of written file in bit,
 can be 8, 16, 24 for WAV and FLAC files,
 and in addition 32 for WAV files</p></li>
-<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – normalize audio data before writing</p></li>
+<li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – normalize audio data before writing</p></li>
 <li><p><strong>kwargs</strong> – pass on further arguments to <a class="reference external" href="https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write" title="(in PySoundFile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.write()</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.11)"><strong>RuntimeError</strong></a> – for non-supported bit depth or number of channels</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.12)"><strong>RuntimeError</strong></a> – for non-supported bit depth or number of channels</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -219,7 +219,7 @@ and in addition 32 for WAV files</p></li>
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2023/07/12 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2023/11/29 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
