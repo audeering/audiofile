@@ -63,7 +63,6 @@ if __name__ == "__main__":
     libs = [
         'ar_ffmpeg',
         'ar_mad',
-        'aubio',
         'audiofile',
         'librosa',
         'pedalboard',

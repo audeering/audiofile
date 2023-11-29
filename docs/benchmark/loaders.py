@@ -1,4 +1,3 @@
-import aubio
 import audiofile as af
 import audioread.rawread
 import audioread.gstdec
@@ -15,20 +14,6 @@ import sox
 Some of the code taken from:
 https://github.com/aubio/aubio/blob/master/python/demos/demo_reading_speed.py
 """
-
-
-def load_aubio(fp):
-    f = aubio.source(fp, hop_size=1024)
-    sig = np.zeros(f.duration, dtype=aubio.float_type)
-    total_frames = 0
-    while True:
-        samples, read = f()
-        if total_frames + read <= f.duration:
-            sig[total_frames:total_frames + read] = samples[:read]
-        total_frames += read
-        if read < f.hop_size:
-            break
-    return sig
 
 
 def load_soundfile(fp):
@@ -152,19 +137,6 @@ def info_ar_ffmpeg(fp):
     with audioread.ffdec.FFmpegAudioFile(fp) as f:
         info['channels'] = f.channels
     with audioread.ffdec.FFmpegAudioFile(fp) as f:
-        info['sampling_rate'] = f.samplerate
-    return info
-
-
-def info_aubio(fp):
-    info = {}
-    with aubio.source(fp) as f:
-        info['duration'] = f.duration / f.samplerate
-    with aubio.source(fp) as f:
-        info['samples'] = f.duration
-    with aubio.source(fp) as f:
-        info['channels'] = f.channels
-    with aubio.source(fp) as f:
         info['sampling_rate'] = f.samplerate
     return info
 

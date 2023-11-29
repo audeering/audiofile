@@ -1,10 +1,9 @@
-aubio ==0.4.5
 audiofile
 audioread
 librosa
 pandas
-pedalboard ==0.5.3
-pygobject
+pedalboard
+pygobject==3.42.1
 pymad
 scipy
 seaborn
