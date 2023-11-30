@@ -56,7 +56,13 @@ jobs:
         # Get bullet points from last CHANGELOG entry
         CHANGELOG=$(git diff -U0 HEAD^ HEAD | grep '^[+][\* ]' | sed 's/\+//')
         echo "Got changelog: $CHANGELOG"
-        echo "body=$CHANGELOG" >> $GITHUB_OUTPUT
+        # Support for multiline, see
+        # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+        {
+          echo 'body<<EOF'
+          echo "$CHANGELOG"
+          echo EOF
+        } >> "$GITHUB_OUTPUT"
     - name: Create release on Github
       id: create_release
       uses: softprops/action-gh-release@v1
