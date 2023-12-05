@@ -14,7 +14,12 @@ MAX_CHANNELS = {
 }
 r"""Maximum number of channels per format."""
 
-SNDFORMATS = ['wav', 'flac', 'ogg']
+SNDFORMATS = [
+    'wav',
+    'flac',
+    'mp3',  # requires libsndfile >=1.1.0
+    'ogg',
+]
 r"""File formats handled by soundfile"""
 
 
