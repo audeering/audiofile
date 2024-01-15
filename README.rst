@@ -40,7 +40,7 @@ to ensure that duration and number of samples match.
 .. _reading speed: https://audeering.github.io/audiofile/benchmark.html
 .. _sox: http://sox.sourceforge.net/
 .. _virtualenv: https://virtualenv.pypa.io/
-.. _soundfile: https://pysoundfile.readthedocs.io/
+.. _soundfile: https://python-soundfile.readthedocs.io/
 
 .. |tests| image:: https://github.com/audeering/audiofile/workflows/Test/badge.svg
     :target: https://github.com/audeering/audiofile/actions?query=workflow%3ATest
