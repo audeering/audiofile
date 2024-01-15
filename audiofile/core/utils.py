@@ -1,9 +1,9 @@
+import os
 import subprocess
 import typing
 
 import numpy as np
 
-import audeer
 import audmath
 
 
@@ -76,7 +76,9 @@ def duration_in_seconds(
 
 def file_extension(path):
     """Lower case file extension."""
-    return audeer.file_extension(path).lower()
+    # We are not using `audeer.file_extension()` here,
+    # to save another call to `audeer.safe_path()`
+    return os.path.splitext(path)[-1][1:].lower()
 
 
 def run(shell_command):
