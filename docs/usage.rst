@@ -123,7 +123,7 @@ But it can be easily achieved with :mod:`audresample`.
     print(f'signal shape: {signal.shape}')
 
 
-.. _soundfile: https://pysoundfile.readthedocs.io/
+.. _soundfile: https://python-soundfile.readthedocs.io/
 .. _ffmpeg: https://www.ffmpeg.org/
 .. _sox: http://sox.sourceforge.net/
 .. _mediainfo: https://mediaarea.net/en/MediaInfo/
