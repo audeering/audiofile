@@ -31,7 +31,7 @@ Python packages
 The following Python packages are benchmarked against each other:
 
 * audioread_ 3.0.1
-* :mod:`audiofile` 1.3.2
+* :mod:`audiofile` 1.4.0
 * librosa_ 0.10.1
 * pedalboard_ 0.8.7
 * scipy_ 1.11.4
