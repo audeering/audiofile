@@ -31,11 +31,11 @@ Python packages
 The following Python packages are benchmarked against each other:
 
 * audioread_ 3.0.1
-* :mod:`audiofile` 1.3.0
+* :mod:`audiofile` 1.3.2
 * librosa_ 0.10.1
-* pedalboard_ 0.8.6
+* pedalboard_ 0.8.7
 * scipy_ 1.11.4
-* soundfile_ 0.21.1
+* soundfile_ 0.12.1
 * sox_ 1.4.1
 
 scipy_ and librosa_ are only tested for reading files,
@@ -70,11 +70,11 @@ Running the benchmark
 
 The benchmark was executed on the following machine:
 
-* CPU: Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz x 12
-* RAM: 15.37 GB
-* Hard drive: Samsung SSD 860
-* Linux: Ubuntu 18.04.6
-* Python: 3.10.11
+* CPU: 13th Gen Intel Core i7-1355U, 10-core (2-mt/8-st)
+* RAM: 15.29 GiB
+* Hard drive: KIOXIA KXG8AZNV1T02
+* Linux: Ubuntu 22.04.3
+* Python: 3.10.12
 
 To rerun the benchmark yourself,
 clone the repository
@@ -156,6 +156,7 @@ in the figure.
 .. _ffmpeg: https://ffmpeg.org/
 .. _gstreamer: https://gstreamer.freedesktop.org/
 .. _librosa: https://github.com/librosa/librosa/
+.. _libsndfile: http://www.mega-nerd.com/libsndfile/
 .. _mad: https://sourceforge.net/projects/mad/
 .. _pedalboard: https://github.com/spotify/pedalboard
 .. _scipy: https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html
