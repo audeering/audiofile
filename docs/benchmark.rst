@@ -31,11 +31,11 @@ Python packages
 The following Python packages are benchmarked against each other:
 
 * audioread_ 3.0.1
-* :mod:`audiofile` 1.3.0
+* :mod:`audiofile` 1.3.2
 * librosa_ 0.10.1
-* pedalboard_ 0.8.6
+* pedalboard_ 0.8.7
 * scipy_ 1.11.4
-* soundfile_ 0.21.1
+* soundfile_ 0.12.1
 * sox_ 1.4.1
 
 scipy_ and librosa_ are only tested for reading files,
@@ -46,6 +46,8 @@ mad_ works only for MP3 files,
 and is only benchmarked for those.
 As gstreamer_ is slow and complicated to install
 it is not included in the benchmarks.
+linsndfile_ 1.0.31 was used
+as underlying library of soundfile_.
 
 Reading files
 ^^^^^^^^^^^^^
@@ -70,11 +72,11 @@ Running the benchmark
 
 The benchmark was executed on the following machine:
 
-* CPU: Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz x 12
-* RAM: 15.37 GB
-* Hard drive: Samsung SSD 860
-* Linux: Ubuntu 18.04.6
-* Python: 3.10.11
+* CPU: 13th Gen Intel Core i7-1355U, 10-core (2-mt/8-st)
+* RAM: 15.29 GiB
+* Hard drive: KIOXIA
+* Linux: Ubuntu 22.04.3
+* Python: 3.10.12
 
 To rerun the benchmark yourself,
 clone the repository
