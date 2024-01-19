@@ -34,7 +34,7 @@ dependencies = [
     'audeer',
     'audmath >=1.2.1',
     'numpy',
-    'soundfile',
+    'soundfile >=0.11.0',  # MP3 support
 ]
 # Get version dynamically from git
 # (needs setuptools_scm tools config below)
