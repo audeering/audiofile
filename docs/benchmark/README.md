@@ -1,19 +1,14 @@
 # audiofile benchmarks
 
+
 ## Installation
 
-Make sure build dependencies are installed,
-e.g. under Ubuntu:
+Install all system dependencies on Ubuntu,
+create virtual environment
+and install Python packages:
 
 ```bash
-$ sudo apt install libcairo2-dev libmad0-dev libgirepository1.0-dev sox libsox-fmt-mp3 ffmpeg mediainfo
-```
-
-Then create a virtual environment
-and install the Python packages:
-
-```bash
-$ pip install -r requirements.txt.lock
+$ bash install_dependencies.sh
 ```
 
 ## Usage
