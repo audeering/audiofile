@@ -74,7 +74,7 @@ The benchmark was executed on the following machine:
 
 * CPU: 13th Gen Intel Core i7-1355U, 10-core (2-mt/8-st)
 * RAM: 15.29 GiB
-* Hard drive: KIOXIA
+* Hard drive: KIOXIA KXG8AZNV1T02
 * Linux: Ubuntu 22.04.3
 * Python: 3.10.12
 
