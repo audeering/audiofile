@@ -64,9 +64,16 @@ if __name__ == "__main__":
         'sox',
     ]
 
+    audio_walk = sorted(os.walk('AUDIO'))
+    if len(audio_walk) == 0:
+        raise RuntimeError(
+            'No audio files were found.\n'
+            "Make sure you executed 'bash generate_audio.sh'"
+        )
+
     for lib in libs:
         print(f"Benchmark metadata {args.ext} with {lib}")
-        for root, dirs, fnames in sorted(os.walk('AUDIO')):
+        for root, dirs, fnames in audio_walk:
             for audio_dir in dirs:
 
                 # MP4 and MP3 is not supported by all libraries

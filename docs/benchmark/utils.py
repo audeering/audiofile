@@ -16,10 +16,11 @@ class DF_writer(object):
 
     def append(self, **row_data):
         if set(self.columns) == set(row_data):
-            self.df = pd.concat(
-                [self.df, pd.DataFrame.from_records([row_data])],
-                ignore_index=True,
-            )
+            new_df = pd.DataFrame.from_records([row_data])
+            if len(self.df) == 0:
+                self.df = new_df
+            else:
+                self.df = pd.concat([self.df, new_df], ignore_index=True)
 
 
 def plot_results(df, target_lib="", audio_format="", ext="png"):
