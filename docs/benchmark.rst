@@ -92,54 +92,32 @@ and will ask for a sudo password
 to install missing apt packages.
 
 
-WAV, FLAC, OGG
---------------
-
 Reading files
-^^^^^^^^^^^^^
+-------------
 
-audioread_ has been removed from the results
-as it was the slowest library.
-scipy_ is only meant for reading WAV files,
-and only included in this figure.
+audioread_ uses mad_ when reading MP3 files
+and ffmpeg_ in all other cases.
+scipy_ is only meant for reading WAV files.
 
-.. image:: ./benchmark/results/benchmark_wav-flac-ogg_read.png
+.. image:: ./benchmark/results/benchmark_wav-flac-ogg-mp3-mp4_read.png
 
-Results for :mod:`audiofile`, soundfile_ and librosa_ are similar here
-as all of them use soundfile_ under the hood to read the data.
+Results for :mod:`audiofile`, soundfile_ and librosa_ are similar
+for WAV, FLAC, MP3, OGG
+as all of them use soundfile_ under the hood
+to read the data.
 
 Accessing metadata
-^^^^^^^^^^^^^^^^^^
+------------------
 
 audioread_ (ffmpeg) and sox_ have been removed from the results
-as they take around 0.17s and 0.035s per file
-for WAV, FLAC, and OGG.
-
-.. image:: ./benchmark/results/benchmark_wav-flac-ogg_info.png
+as they take around 0.003s and 0.012s per file.
+For MP3 files audioread_ uses the mad_ library.
 
 
-MP3, MP4
---------
+.. image:: ./benchmark/results/benchmark_wav-flac-ogg-mp3_info.png
 
-Reading files
-^^^^^^^^^^^^^
 
-soundfile_ does not support
-reading MP3 and MP4 files,
-audioread_ (mad) and pedalboard_ only MP3 files.
-
-.. image:: ./benchmark/results/benchmark_mp3-mp4_read.png
-
-Accessing metadata
-^^^^^^^^^^^^^^^^^^
-
-soundfile_ does not support
-accessing MP3 and MP4 metadata.
-sox_, audioread_ (mad) and pedalboard_ only for MP3 files.
-
-.. image:: ./benchmark/results/benchmark_mp3-mp4_info.png
-
-For MP3 and MP4 files,
+For MP4 files,
 :mod:`audiofile` is not very fast in accessing the metadata.
 The main focus was not speed,
 but consistent results for number of samples and duration.
@@ -150,6 +128,11 @@ as argument to :func:`audiofile.duration`.
 This tries to read the duration from the header of the file
 and is shown as audiofile (sloppy)
 in the figure.
+soundfile_ and sox_ do not support
+accessing MP4 metadata.
+pedalboard_ only on MacOS.
+
+.. image:: ./benchmark/results/benchmark_mp4_info.png
 
 
 .. _audioread: https://github.com/beetbox/audioread/

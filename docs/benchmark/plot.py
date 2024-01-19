@@ -8,8 +8,7 @@ NBFILES = 10  # must be identical to generate_audio.sh
 MAPPINGS = {  # library name mappings
     'audiofile': 'audiofile',
     'audiofile_sloppy': 'audiofile (sloppy)',
-    'ar_ffmpeg': 'audioread (ffmpeg)',
-    'ar_mad': 'audioread (mad)',
+    'audioread': 'audioread',
     'librosa': 'librosa',
     'pedalboard': 'pedalboard',
     'scipy': 'scipy',
@@ -32,51 +31,46 @@ for package in ['read', 'info']:
 
     df['lib'] = df['lib'].map(MAPPINGS)
 
-    for exts in [['wav', 'flac', 'ogg'], ['mp3', 'mp4']]:
+    if package == 'read':
+        extensions = [['wav', 'flac', 'ogg', 'mp3', 'mp4']]  # single graph
+    else:
+        extensions = [['wav', 'flac', 'ogg', 'mp3'], ['mp4']]
+
+    for exts in extensions:
 
         y = df[df['ext'].isin(exts)]
 
         # Define what to show in each figure
-        if 'wav' in exts and package == 'read':
+        if package == 'read':
             lib_order = [
                 MAPPINGS['audiofile'],
                 MAPPINGS['soundfile'],
                 MAPPINGS['librosa'],
-                MAPPINGS['ar_ffmpeg'],
                 MAPPINGS['pedalboard'],
+                MAPPINGS['audioread'],
                 MAPPINGS['scipy'],
             ]
-            height = 5.6
-            aspect = 1.2
-        elif 'wav' in exts and package == 'info':
+            height = 5.8
+            aspect = 1.0
+        elif package == 'info' and 'wav' in exts:
             lib_order = [
                 MAPPINGS['audiofile'],
                 MAPPINGS['soundfile'],
                 MAPPINGS['pedalboard'],
+                MAPPINGS['audioread'],
             ]
-            height = 3.36
-            aspect = 2.0
-        elif 'mp3' in exts and package == 'read':
-            lib_order = [
-                MAPPINGS['audiofile'],
-                MAPPINGS['librosa'],
-                MAPPINGS['ar_ffmpeg'],
-                MAPPINGS['ar_mad'],
-                MAPPINGS['pedalboard'],
-            ]
-            height = 3.36
-            aspect = 2.0
-        elif 'mp3' in exts and package == 'info':
+            # Remove audioread for WAV, FLAC, OGG
+            y = y[~((y['ext'] != 'mp3') & (y['lib'] == 'audioread'))]
+            height = 4.0
+            aspect = 1.6
+        elif package == 'info' and 'mp4' in exts:
             lib_order = [
                 MAPPINGS['audiofile'],
                 MAPPINGS['audiofile_sloppy'],
-                MAPPINGS['ar_ffmpeg'],
-                MAPPINGS['ar_mad'],
-                MAPPINGS['pedalboard'],
-                MAPPINGS['sox'],
+                MAPPINGS['audioread'],
             ]
-            height = 3.7
-            aspect = 1.82
+            height = 1.4
+            aspect = 4.8
 
         fig = plt.figure()
 
@@ -87,8 +81,7 @@ for package in ['read', 'info']:
             MAPPINGS['soundfile']: '#db8548',
             MAPPINGS['librosa']: '#c34c4d',
             MAPPINGS['scipy']: '#8174b8',
-            MAPPINGS['ar_mad']: '#94785e',
-            MAPPINGS['ar_ffmpeg']: '#94785e',
+            MAPPINGS['audioread']: '#94785e',
             MAPPINGS['sox']: '#db8cc5',
             MAPPINGS['pedalboard']: '#5dab64',
         }
