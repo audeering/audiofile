@@ -46,7 +46,7 @@ mad_ works only for MP3 files,
 and is only benchmarked for those.
 As gstreamer_ is slow and complicated to install
 it is not included in the benchmarks.
-linsndfile_ 1.0.31 was used
+libsndfile_ 1.0.31 was used
 as underlying library of soundfile_.
 
 Reading files
@@ -158,6 +158,7 @@ in the figure.
 .. _ffmpeg: https://ffmpeg.org/
 .. _gstreamer: https://gstreamer.freedesktop.org/
 .. _librosa: https://github.com/librosa/librosa/
+.. _libsndfile: http://www.mega-nerd.com/libsndfile/
 .. _mad: https://sourceforge.net/projects/mad/
 .. _pedalboard: https://github.com/spotify/pedalboard
 .. _scipy: https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html
