@@ -5,7 +5,7 @@ Installation
 In order to handle other audio formats,
 please make sure ffmpeg_,
 mediainfo_,
-and sox_
+and optionally sox_
 are installed on your system.
 e.g.
 
