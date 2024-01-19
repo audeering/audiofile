@@ -46,8 +46,6 @@ mad_ works only for MP3 files,
 and is only benchmarked for those.
 As gstreamer_ is slow and complicated to install
 it is not included in the benchmarks.
-libsndfile_ 1.0.31 was used
-as underlying library of soundfile_.
 
 Reading files
 ^^^^^^^^^^^^^
