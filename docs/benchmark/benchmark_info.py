@@ -72,20 +72,21 @@ if __name__ == "__main__":
         )
 
     for lib in libs:
+
+        # MP4 and MP3 is not supported by all libraries
+        if (
+                lib in ['soundfile', 'sox', 'pedalboard']
+                and args.ext == 'mp4'
+        ):
+            continue
+        if lib == 'ar_ffmpeg' and args.ext == 'mp3':  # too slow
+            continue
+        if lib == 'ar_mad' and args.ext != 'mp3':
+            continue
+
         print(f"Benchmark metadata {args.ext} with {lib}")
         for root, dirs, fnames in audio_walk:
             for audio_dir in dirs:
-
-                # MP4 and MP3 is not supported by all libraries
-                if (
-                        lib in ['soundfile', 'sox', 'pedalboard']
-                        and args.ext == 'mp4'
-                ):
-                    continue
-                if lib in ['soundfile'] and args.ext == 'mp3':
-                    continue
-                if lib == 'ar_mad' and args.ext != 'mp3':
-                    continue
 
                 duration = int(audio_dir)
                 dataset = AudioFolder(
@@ -102,9 +103,16 @@ if __name__ == "__main__":
                     info['duration']
 
                 end = time.time()
+
+                # Store ar_ffmpeg and ar_mad as audioread
+                if lib in ['ar_ffmpeg', 'ar_mad']:
+                    lib_name = 'audioread'
+                else:
+                    lib_name = lib
+
                 store.append(
                     ext=args.ext,
-                    lib=lib,
+                    lib=lib_name,
                     duration=duration,
                     time=float(end - start) / len(dataset),
                 )

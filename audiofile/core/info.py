@@ -123,7 +123,7 @@ def duration(file: str, sloppy=False) -> float:
     the duration in seconds
     matches the one in samples.
     To achieve this it first decodes files to WAV
-    if needed, e.g. MP3 files.
+    if needed, e.g. MP4 files.
     If you have different decoders
     on different machines,
     results might differ.
@@ -189,7 +189,7 @@ def duration(file: str, sloppy=False) -> float:
 def samples(file: str) -> int:
     """Number of samples in audio file.
 
-    Audio files that are not WAV, FLAC, or OGG
+    Audio files that are not WAV, FLAC, MP3, or OGG
     are first converted to WAV,
     before counting the samples.
 

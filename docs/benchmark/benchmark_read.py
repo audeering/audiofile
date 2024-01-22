@@ -78,19 +78,22 @@ if __name__ == "__main__":
         )
 
     for lib in libs:
+
+        # Not all libraries support all file formats
+        if lib == 'scipy' and args.ext != 'wav':
+            continue
+        if lib == 'ar_ffmpeg' and args.ext == 'mp3':  # too slow
+            continue
+        if lib == 'ar_mad' and args.ext != 'mp3':
+            continue
+        if lib == 'soundfile' and args.ext == 'mp4':
+            continue
+        if lib == 'pedalboard' and args.ext == 'mp4':
+            continue
+
         print(f"Benchmark read {args.ext} with {lib}")
         for root, dirs, fnames in audio_walk:
             for audio_dir in dirs:
-
-                # Not all libraries support all file formats
-                if lib == 'scipy' and args.ext != 'wav':
-                    continue
-                if lib == 'ar_mad' and args.ext != 'mp3':
-                    continue
-                if lib == 'soundfile' and args.ext in ['mp3', 'mp4']:
-                    continue
-                if lib == 'pedalboard' and args.ext == 'mp4':
-                    continue
 
                 duration = int(audio_dir)
                 dataset = AudioFolder(
@@ -106,9 +109,16 @@ if __name__ == "__main__":
                     np.max(audio)
 
                 end = time.time()
+
+                # Store ar_ffmpeg and ar_mad as audioread
+                if lib in ['ar_ffmpeg', 'ar_mad']:
+                    lib_name = 'audioread'
+                else:
+                    lib_name = lib
+
                 store.append(
                     ext=args.ext,
-                    lib=lib,
+                    lib=lib_name,
                     duration=duration,
                     time=float(end - start) / len(dataset),
                 )

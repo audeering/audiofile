@@ -27,7 +27,7 @@ def convert_to_wav(
 ) -> str:
     """Convert any audio/video file to WAV.
 
-    It uses soundfile for reading WAV, FLAC, OGG files,
+    It uses soundfile for reading WAV, FLAC, MP3, OGG files,
     and sox or ffmpeg for reading all other files.
     If ``duration`` and/or ``offset`` are specified
     the resulting WAV file
@@ -133,7 +133,7 @@ def read(
 ) -> typing.Tuple[np.array, int]:
     """Read audio file.
 
-    It uses :func:`soundfile.read` for WAV, FLAC, and OGG files.
+    It uses :func:`soundfile.read` for WAV, FLAC, MP3, and OGG files.
     All other audio files are
     first converted to WAV by sox or ffmpeg.
 

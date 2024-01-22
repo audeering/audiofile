@@ -190,7 +190,7 @@ def test_read(tmpdir, duration, offset):
 )
 @pytest.mark.parametrize(
     'empty_file',
-    ('bin', 'mp3', 'wav'),
+    ('bin', 'mp4', 'wav'),
     indirect=True,
 )
 def test_empty_file(tmpdir, convert, empty_file):
@@ -216,7 +216,7 @@ def test_empty_file(tmpdir, convert, empty_file):
 
 @pytest.mark.parametrize(
     'empty_file',
-    ('bin', 'mp3'),
+    ('bin', 'mp4'),
     indirect=True,
 )
 def test_missing_binaries(tmpdir, hide_system_path, empty_file):
@@ -244,7 +244,7 @@ def test_missing_binaries(tmpdir, hide_system_path, empty_file):
 
 @pytest.mark.parametrize(
     'ext',
-    ('bin', 'mp3', 'wav'),
+    ('bin', 'mp4', 'wav'),
 )
 def test_missing_file(tmpdir, ext):
     missing_file = f'missing_file.{ext}'
@@ -269,7 +269,7 @@ def test_missing_file(tmpdir, ext):
 
 @pytest.mark.parametrize(
     'non_audio_file',
-    ('bin', 'mp3', 'wav'),
+    ('bin', 'mp4', 'wav'),
     indirect=True,
 )
 def test_broken_file(tmpdir, non_audio_file):

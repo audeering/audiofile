@@ -1,18 +1,17 @@
 Installation
 ============
 
-:mod:`audiofile` supports WAV, FLAC, OGG out of the box.
+:mod:`audiofile` supports WAV, FLAC, MP3, OGG out of the box.
 In order to handle other audio formats,
-please make sure ffmpeg_
-and mediainfo_
+please make sure ffmpeg_,
+mediainfo_,
+and optionally sox_
 are installed on your system.
-For faster access of MP3 files,
-please install sox_ with MP3 bindings as well,
 e.g.
 
 .. code-block:: bash
 
-    $ sudo apt-get install ffmpeg mediainfo sox libsox-fmt-mp3
+    $ sudo apt-get install ffmpeg mediainfo sox
 
 To install :mod:`audiofile` run:
 
