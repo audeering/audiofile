@@ -450,8 +450,9 @@ def write(
 ):
     """Write (normalized) audio files.
 
-    Save audio data provided as an array of shape ``[channels, samples]``
-    to a WAV, FLAC, MP3, or OGG file.
+    Save audio data provided as an array of shape ``(channels, samples)``
+    or ``(samples,)``
+    to a WAV, FLAC, NP3, or OGG file.
     ``channels`` can be up to 65535 for WAV,
     255 for OGG,
     2 for MP3,
