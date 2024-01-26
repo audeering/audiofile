@@ -84,21 +84,6 @@ def non_audio_file(tmpdir, request):
         os.remove(broken_file)
 
 
-def convert_to_mp3(infile, outfile, sampling_rate, channels):
-    """Convert file to MP3 using ffmpeg."""
-    subprocess.call(
-        [
-            'ffmpeg',
-            '-i', infile,
-            '-vn',
-            '-ar', str(sampling_rate),
-            '-ac', str(channels),
-            '-b:a', '192k',
-            outfile,
-        ]
-    )
-
-
 def tolerance(condition, sampling_rate=0):
     """Absolute tolerance for different condition."""
     tol = 0
@@ -320,9 +305,7 @@ def test_convert_to_wav(tmpdir, normalize, bit_depth, file_extension):
     )
     infile = str(tmpdir.join(f'signal.{file_extension}'))
     if file_extension == 'mp3':
-        tmpfile = str(tmpdir.join('signal-tmp.wav'))
-        af.write(tmpfile, signal, sampling_rate, bit_depth=bit_depth)
-        convert_to_mp3(tmpfile, infile, sampling_rate, channels)
+        af.write(infile, signal, sampling_rate)
     else:
         af.write(infile, signal, sampling_rate, bit_depth=bit_depth)
     if file_extension == 'wav':
@@ -473,31 +456,38 @@ def test_magnitude(tmpdir, magnitude, normalize, bit_depth, sampling_rate):
     assert type(_magnitude(sig)) is np.float32
 
 
-@pytest.mark.parametrize('file_type', ['wav', 'flac', 'ogg'])
+@pytest.mark.parametrize('file_type', ['wav', 'flac', 'mp3', 'ogg'])
 @pytest.mark.parametrize('sampling_rate', [8000, 48000])
 @pytest.mark.parametrize("channels", [1, 2, 8, 255])
 @pytest.mark.parametrize('magnitude', [0.01])
 def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
+
+    # Skip unallowed combination
+    if file_type == 'flac' and channels > 8:
+        return None
+    if file_type == 'mp3' and channels > 2:
+        return None
+
     file = str(tmpdir.join('signal.' + file_type))
     signal = sine(
         magnitude=magnitude,
         sampling_rate=sampling_rate,
         channels=channels,
     )
-    # Skip unallowed combination
-    if file_type == 'flac' and channels > 8:
-        return 0
-    # Allowed combinations
     bit_depth = 16
     sig, fs = write_and_read(file, signal, sampling_rate, bit_depth=bit_depth)
     # Test file type
     assert audeer.file_extension(file) == file_type
     # Test magnitude
+    if file_type == 'mp3':
+        atol = tolerance(8)
+    else:
+        atol = tolerance(16)
     assert_allclose(
         _magnitude(sig),
         magnitude,
         rtol=0,
-        atol=tolerance(16),
+        atol=atol,
     )
     # Test metadata
     info = soundfile.info(file)
@@ -507,7 +497,7 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     assert info.channels == channels
     assert _samples(sig) == _samples(signal)
     assert info.frames == _samples(signal)
-    if file_type == 'ogg':
+    if file_type in ['mp3', 'ogg']:
         bit_depth = None
     assert af.bit_depth(file) == bit_depth
 
@@ -524,8 +514,7 @@ def test_mp3(tmpdir, magnitude, sampling_rate, channels):
     wav_file = str(tmpdir.join('signal.wav'))
     mp3_file = str(tmpdir.join('signal.mp3'))
     af.write(wav_file, signal, sampling_rate)
-    convert_to_mp3(wav_file, mp3_file, sampling_rate, channels)
-    assert audeer.file_extension(mp3_file) == 'mp3'
+    af.write(mp3_file, signal, sampling_rate)
     sig, fs = af.read(mp3_file)
     assert fs == sampling_rate
     assert _channels(sig) == channels
@@ -1183,7 +1172,7 @@ def test_read_duration_and_offset_file_formats(tmpdir):
     mp3_file = str(tmpdir.join('signal.mp3'))
     m4a_file = audeer.path(ASSETS_DIR, 'gs-16b-1c-44100hz.m4a')
     af.write(wav_file, signal, sampling_rate)
-    convert_to_mp3(wav_file, mp3_file, sampling_rate, channels)
+    af.write(mp3_file, signal, sampling_rate)
 
     for file in [wav_file, mp3_file, m4a_file]:
         # Duration and offset in seconds
@@ -1294,7 +1283,7 @@ def test_read_duration_and_offset_rounding(
         # duration of 0 is handled inside af.read()
         # even when duration is only 0 after rounding
         # as ffmpeg cannot handle those cases
-        return 0
+        return None
 
     # sox
     convert_file = str(tmpdir.join('signal-sox.wav'))

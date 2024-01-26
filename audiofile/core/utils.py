@@ -10,6 +10,7 @@ import audmath
 MAX_CHANNELS = {
     'wav': 65535,
     'ogg': 255,
+    'mp3': 2,
     'flac': 8,
 }
 r"""Maximum number of channels per format."""
