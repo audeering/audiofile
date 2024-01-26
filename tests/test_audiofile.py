@@ -458,7 +458,7 @@ def test_magnitude(tmpdir, magnitude, normalize, bit_depth, sampling_rate):
 @pytest.mark.parametrize('magnitude', [0.01])
 def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
 
-    # Skip unallowed combination
+    # Skip unallowed combinations
     if file_type == 'flac' and channels > 8:
         return None
     if file_type == 'mp3' and channels > 2:
