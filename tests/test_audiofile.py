@@ -322,12 +322,6 @@ def test_convert_to_wav(tmpdir, normalize, bit_depth, file_extension):
             normalize=normalize,
             overwrite=True,
         )
-    elif file_extension == 'mp3':
-        outfile = af.convert_to_wav(
-            infile,
-            bit_depth=bit_depth,
-            normalize=normalize,
-        )
     else:
         outfile = str(tmpdir.join('signal_converted.wav'))
         af.convert_to_wav(
@@ -491,6 +485,10 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     assert info.samplerate == sampling_rate
     assert _channels(sig) == channels
     assert info.channels == channels
+    if channels == 1:
+        assert sig.ndim == 1
+    else:
+        assert sig.ndim == 2
     assert _samples(sig) == _samples(signal)
     assert info.frames == _samples(signal)
     if file_type in ['mp3', 'ogg']:
@@ -498,40 +496,7 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     assert af.bit_depth(file) == bit_depth
 
 
-@pytest.mark.parametrize('sampling_rate', [8000, 48000])
-@pytest.mark.parametrize("channels", [1, 2])
-@pytest.mark.parametrize('magnitude', [0.01])
-def test_mp3(tmpdir, magnitude, sampling_rate, channels):
-
-    signal = sine(magnitude=magnitude,
-                  sampling_rate=sampling_rate,
-                  channels=channels)
-    # Create wav file and use ffmpeg to convert to mp3
-    wav_file = str(tmpdir.join('signal.wav'))
-    mp3_file = str(tmpdir.join('signal.mp3'))
-    af.write(wav_file, signal, sampling_rate)
-    af.write(mp3_file, signal, sampling_rate)
-    sig, fs = af.read(mp3_file)
-    assert fs == sampling_rate
-    assert _channels(sig) == channels
-    if channels == 1:
-        assert sig.ndim == 1
-    else:
-        assert sig.ndim == 2
-    assert af.channels(mp3_file) == _channels(sig)
-    assert af.sampling_rate(mp3_file) == sampling_rate
-    assert af.samples(mp3_file) == _samples(sig)
-    assert af.duration(mp3_file) == _duration(sig, sampling_rate)
-    assert_allclose(
-        af.duration(mp3_file, sloppy=True),
-        _duration(sig, sampling_rate),
-        rtol=0,
-        atol=0.2,
-    )
-    assert af.bit_depth(mp3_file) is None
-
-
-def test_formats():
+def test_other_formats():
     files = [
         'gs-16b-1c-44100hz.opus',
         'gs-16b-1c-8000hz.amr',
@@ -1322,6 +1287,12 @@ def test_write_errors():
     )
     with pytest.raises(RuntimeError, match=expected_error):
         write_and_read('test.flac', np.zeros((9, 100)), sampling_rate)
+    expected_error = (
+        "The maximum number of allowed channels "
+        "for 'mp3' is 2. Consider using 'wav' instead."
+    )
+    with pytest.raises(RuntimeError, match=expected_error):
+        write_and_read('test.mp3', np.zeros((3, 100)), sampling_rate)
     expected_error = (
         "The maximum number of allowed channels "
         "for 'ogg' is 255. Consider using 'wav' instead."
