@@ -303,10 +303,7 @@ def test_convert_to_wav(tmpdir, normalize, bit_depth, file_extension):
         channels=channels,
     )
     infile = str(tmpdir.join(f'signal.{file_extension}'))
-    if file_extension == 'mp3':
-        af.write(infile, signal, sampling_rate)
-    else:
-        af.write(infile, signal, sampling_rate, bit_depth=bit_depth)
+    af.write(infile, signal, sampling_rate, bit_depth=bit_depth)
     if file_extension == 'wav':
         error_msg = (
             f"'{infile}' would be overwritten. "
