@@ -14,7 +14,7 @@ ffmpeg_,
 sox_,
 and mediainfo_.
 In addition,
-it can write WAV, FLAC, and OGG files.
+it can write WAV, FLAC, MP3, and OGG files.
 
 Have a look at the installation_ and usage_ instructions as a starting point.
 

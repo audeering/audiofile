@@ -7,7 +7,7 @@ ffmpeg_,
 sox_,
 and mediainfo_,
 if those are available on your system.
-In addition, it can create WAV, FLAC, or OGG files.
+In addition, it can create WAV, FLAC, MP3, or OGG files.
 
 
 Write a file
