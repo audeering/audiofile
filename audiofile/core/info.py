@@ -33,35 +33,35 @@ def bit_depth(file: str) -> typing.Optional[int]:
             broken or format is not supported
 
     Examples:
-        >>> bit_depth('stereo.wav')
+        >>> bit_depth("stereo.wav")
         16
 
     """
     file = audeer.safe_path(file)
     file_type = file_extension(file)
-    if file_type == 'wav':
+    if file_type == "wav":
         precision_mapping = {
-            'PCM_16': 16,
-            'PCM_24': 24,
-            'PCM_32': 32,
-            'PCM_U8': 8,
-            'FLOAT': 32,
-            'DOUBLE': 64,
-            'ULAW': 8,
-            'ALAW': 8,
-            'IMA_ADPCM': 4,
-            'MS_ADPCM': 4,
-            'GSM610': 16,  # not sure if this could be variable?
-            'G721_32': 4,  # not sure if correct
+            "PCM_16": 16,
+            "PCM_24": 24,
+            "PCM_32": 32,
+            "PCM_U8": 8,
+            "FLOAT": 32,
+            "DOUBLE": 64,
+            "ULAW": 8,
+            "ALAW": 8,
+            "IMA_ADPCM": 4,
+            "MS_ADPCM": 4,
+            "GSM610": 16,  # not sure if this could be variable?
+            "G721_32": 4,  # not sure if correct
         }
-    elif file_type == 'flac':
+    elif file_type == "flac":
         precision_mapping = {
-            'PCM_16': 16,
-            'PCM_24': 24,
-            'PCM_32': 32,
-            'PCM_S8': 8,
+            "PCM_16": 16,
+            "PCM_24": 24,
+            "PCM_32": 32,
+            "PCM_S8": 8,
         }
-    if file_extension(file) in ['wav', 'flac']:
+    if file_extension(file) in ["wav", "flac"]:
         depth = precision_mapping[soundfile.info(file).subtype]
     else:
         depth = None
@@ -85,7 +85,7 @@ def channels(file: str) -> int:
             broken or format is not supported
 
     Examples:
-        >>> channels('stereo.wav')
+        >>> channels("stereo.wav")
         2
 
     """
@@ -94,20 +94,16 @@ def channels(file: str) -> int:
         return soundfile.info(file).channels
     else:
         try:
-            cmd = ['soxi', '-c', file]
+            cmd = ["soxi", "-c", file]
             return int(run(cmd))
         except (FileNotFoundError, subprocess.CalledProcessError):
             # For MP4 stored and returned number of channels can be different
-            cmd1 = [
-                'mediainfo', '--Inform=Audio;%Channel(s)_Original%', file
-            ]
-            cmd2 = [
-                'mediainfo', '--Inform=Audio;%Channel(s)%', file
-            ]
+            cmd1 = ["mediainfo", "--Inform=Audio;%Channel(s)_Original%", file]
+            cmd2 = ["mediainfo", "--Inform=Audio;%Channel(s)%", file]
             try:
                 return int(run(cmd1))
             except FileNotFoundError:
-                raise binary_missing_error('mediainfo')
+                raise binary_missing_error("mediainfo")
             except (ValueError, subprocess.CalledProcessError):
                 try:
                     return int(run(cmd2))
@@ -152,7 +148,7 @@ def duration(file: str, sloppy=False) -> float:
             broken or format is not supported
 
     Examples:
-        >>> duration('stereo.wav')
+        >>> duration("stereo.wav")
         1.5
 
     """
@@ -162,17 +158,17 @@ def duration(file: str, sloppy=False) -> float:
 
     if sloppy:
         try:
-            cmd = ['soxi', '-D', file]
+            cmd = ["soxi", "-D", file]
             duration = float(run(cmd))
         except (FileNotFoundError, subprocess.CalledProcessError):
             try:
-                cmd = ['mediainfo', '--Inform=Audio;%Duration%', file]
+                cmd = ["mediainfo", "--Inform=Audio;%Duration%", file]
                 duration = run(cmd)
                 if duration:
                     # Convert to seconds, as mediainfo returns milliseconds
                     duration = float(duration) / 1000
             except FileNotFoundError:
-                raise binary_missing_error('mediainfo')
+                raise binary_missing_error("mediainfo")
             # Behavior for broken files is different on Windows
             # where no error is raised,
             # but an empty duration is returned.
@@ -206,22 +202,21 @@ def samples(file: str) -> int:
             broken or format is not supported
 
     Examples:
-        >>> samples('stereo.wav')
+        >>> samples("stereo.wav")
         12000
 
     """
+
     def samples_as_int(file):
-        return int(
-            soundfile.info(file).duration * soundfile.info(file).samplerate
-        )
+        return int(soundfile.info(file).duration * soundfile.info(file).samplerate)
 
     file = audeer.safe_path(file)
     if file_extension(file) in SNDFORMATS:
         return samples_as_int(file)
     else:
         # Always convert to WAV for non SNDFORMATS
-        with tempfile.TemporaryDirectory(prefix='audiofile') as tmpdir:
-            tmpfile = os.path.join(tmpdir, 'tmp.wav')
+        with tempfile.TemporaryDirectory(prefix="audiofile") as tmpdir:
+            tmpfile = os.path.join(tmpdir, "tmp.wav")
             convert_to_wav(file, tmpfile)
             return samples_as_int(tmpfile)
 
@@ -242,7 +237,7 @@ def sampling_rate(file: str) -> int:
             broken or format is not supported
 
     Examples:
-        >>> sampling_rate('stereo.wav')
+        >>> sampling_rate("stereo.wav")
         8000
 
     """
@@ -251,11 +246,11 @@ def sampling_rate(file: str) -> int:
         return soundfile.info(file).samplerate
     else:
         try:
-            cmd = ['soxi', '-r', file]
+            cmd = ["soxi", "-r", file]
             return int(run(cmd))
         except (FileNotFoundError, subprocess.CalledProcessError):
             try:
-                cmd = ['mediainfo', '--Inform=Audio;%SamplingRate%', file]
+                cmd = ["mediainfo", "--Inform=Audio;%SamplingRate%", file]
                 sampling_rate = run(cmd)
                 if sampling_rate:
                     return int(sampling_rate)
@@ -264,6 +259,6 @@ def sampling_rate(file: str) -> int:
                     # to align coverage under Windows and Linux
                     raise subprocess.CalledProcessError(-2, cmd)
             except FileNotFoundError:
-                raise binary_missing_error('mediainfo')
+                raise binary_missing_error("mediainfo")
             except subprocess.CalledProcessError:
                 raise broken_file_error(file)

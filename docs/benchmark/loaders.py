@@ -1,14 +1,16 @@
-import audiofile as af
-import audioread.rawread
+import audioread.ffdec
 import audioread.gstdec
 import audioread.maddec
-import audioread.ffdec
-import pedalboard
-import soundfile as sf
-import numpy as np
+import audioread.rawread
 import librosa
+import numpy as np
+import pedalboard
 from scipy.io import wavfile
+import soundfile as sf
 import sox
+
+import audiofile as af
+
 
 """
 Some of the code taken from:
@@ -23,13 +25,13 @@ def load_soundfile(fp):
 
 def load_scipy(fp):
     rate, sig = wavfile.read(fp)
-    sig = sig.astype('float32') / 32767
+    sig = sig.astype("float32") / 32767
     return sig
 
 
 def load_scipy_mmap(fp):
     rate, sig = wavfile.read(fp, mmap=True)
-    sig = sig.astype('float32') / 32767
+    sig = sig.astype("float32") / 32767
     return sig
 
 
@@ -64,8 +66,6 @@ def load_ar_ffmpeg(fp):
 
 
 def load_librosa(fp):
-    """Librosa audio loading is using
-    """
     # loading with `sr=None` is disabling the internal resampling
     sig, rate = librosa.load(fp, sr=None)
     return sig
@@ -85,9 +85,9 @@ def load_pedalboard(fp):
 def _convert_buffer_to_float(buf, n_bytes=2, dtype=np.float32):
     # taken from librosa.util.utils
     # Invert the scale of the data
-    scale = 1. / float(1 << ((8 * n_bytes) - 1))
+    scale = 1.0 / float(1 << ((8 * n_bytes) - 1))
     # Construct the format string
-    fmt = f'<i{n_bytes:d}'
+    fmt = f"<i{n_bytes:d}"
     # Rescale and format the data buffer
     out = scale * np.frombuffer(buf, fmt).astype(dtype)
     return out
@@ -95,76 +95,76 @@ def _convert_buffer_to_float(buf, n_bytes=2, dtype=np.float32):
 
 def info_soundfile(fp):
     info = {}
-    info['duration'] = sf.info(fp).duration
-    info['samples'] = int(sf.info(fp).duration * sf.info(fp).samplerate)
-    info['channels'] = sf.info(fp).channels
-    info['sampling_rate'] = sf.info(fp).samplerate
+    info["duration"] = sf.info(fp).duration
+    info["samples"] = int(sf.info(fp).duration * sf.info(fp).samplerate)
+    info["channels"] = sf.info(fp).channels
+    info["sampling_rate"] = sf.info(fp).samplerate
     return info
 
 
 def info_audioread(fp):
     info = {}
     with audioread.audio_open(fp) as f:
-        info['duration'] = f.duration
+        info["duration"] = f.duration
     with audioread.audio_open(fp) as f:
-        info['samples'] = int(f.duration * f.samplerate)
+        info["samples"] = int(f.duration * f.samplerate)
     with audioread.audio_open(fp) as f:
-        info['channels'] = f.channels
+        info["channels"] = f.channels
     with audioread.audio_open(fp) as f:
-        info['sampling_rate'] = f.samplerate
+        info["sampling_rate"] = f.samplerate
     return info
 
 
 def info_ar_mad(fp):
     info = {}
     with audioread.maddec.MadAudioFile(fp) as f:
-        info['duration'] = f.duration
+        info["duration"] = f.duration
     with audioread.maddec.MadAudioFile(fp) as f:
-        info['samples'] = int(f.duration * f.samplerate)
+        info["samples"] = int(f.duration * f.samplerate)
     with audioread.maddec.MadAudioFile(fp) as f:
-        info['channels'] = f.channels
+        info["channels"] = f.channels
     with audioread.maddec.MadAudioFile(fp) as f:
-        info['sampling_rate'] = f.samplerate
+        info["sampling_rate"] = f.samplerate
     return info
 
 
 def info_ar_ffmpeg(fp):
     info = {}
     with audioread.ffdec.FFmpegAudioFile(fp) as f:
-        info['duration'] = f.duration
+        info["duration"] = f.duration
     with audioread.ffdec.FFmpegAudioFile(fp) as f:
-        info['samples'] = int(f.duration * f.samplerate)
+        info["samples"] = int(f.duration * f.samplerate)
     with audioread.ffdec.FFmpegAudioFile(fp) as f:
-        info['channels'] = f.channels
+        info["channels"] = f.channels
     with audioread.ffdec.FFmpegAudioFile(fp) as f:
-        info['sampling_rate'] = f.samplerate
+        info["sampling_rate"] = f.samplerate
     return info
 
 
 def info_sox(fp):
     info = {}
-    info['duration'] = sox.file_info.duration(fp)
-    info['samples'] = sox.file_info.num_samples(fp)
-    info['channels'] = sox.file_info.channels(fp)
-    info['sampling_rate'] = int(sox.file_info.sample_rate(fp))
+    info["duration"] = sox.file_info.duration(fp)
+    info["samples"] = sox.file_info.num_samples(fp)
+    info["channels"] = sox.file_info.channels(fp)
+    info["sampling_rate"] = int(sox.file_info.sample_rate(fp))
     return info
 
 
 def info_audiofile(fp):
     info = {}
-    info['duration'] = af.duration(fp)
-    info['samples'] = af.samples(fp)
-    info['channels'] = af.channels
-    info['sampling_rate'] = af.sampling_rate
+    info["duration"] = af.duration(fp)
+    info["samples"] = af.samples(fp)
+    info["channels"] = af.channels
+    info["sampling_rate"] = af.sampling_rate
     return info
 
 
 def info_audiofile_sloppy(fp):
     info = {}
-    info['duration'] = af.duration(fp, sloppy=True)
-    info['samples'] = af.samples(fp)
-    info['channels'] = af.channels
-    info['sampling_rate'] = af.sampling_rate
+    info["duration"] = af.duration(fp, sloppy=True)
+    info["samples"] = af.samples(fp)
+    info["channels"] = af.channels
+    info["sampling_rate"] = af.sampling_rate
     return info
 
 

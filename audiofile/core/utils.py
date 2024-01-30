@@ -8,14 +8,14 @@ import audmath
 
 
 MAX_CHANNELS = {
-    'wav': 65535,
-    'ogg': 255,
-    'mp3': 2,
-    'flac': 8,
+    "wav": 65535,
+    "ogg": 255,
+    "mp3": 2,
+    "flac": 8,
 }
 r"""Maximum number of channels per format."""
 
-SNDFORMATS = ['wav', 'flac', 'mp3', 'ogg']
+SNDFORMATS = ["wav", "flac", "mp3", "ogg"]
 r"""File formats handled by soundfile"""
 
 
@@ -30,10 +30,10 @@ def binary_missing_error(binary: str) -> Exception:
 
     """
     return FileNotFoundError(
-        f'{binary} cannot be found.\n'
-        'Please make sure it is installed.\n'
-        'For further instructions visit: '
-        'https://audeering.github.io/audiofile/installation.html'
+        f"{binary} cannot be found.\n"
+        "Please make sure it is installed.\n"
+        "For further instructions visit: "
+        "https://audeering.github.io/audiofile/installation.html"
     )
 
 
@@ -52,14 +52,13 @@ def broken_file_error(file: str) -> Exception:
 
     """
     return RuntimeError(
-        f'Error opening {file}: '
-        'File contains data in an unknown format.'
+        f"Error opening {file}: File contains data in an unknown format."
     )
 
 
 def duration_in_seconds(
-        duration: typing.Union[float, int, str, np.timedelta64],
-        sampling_rate: typing.Union[float, int],
+    duration: typing.Union[float, int, str, np.timedelta64],
+    sampling_rate: typing.Union[float, int],
 ) -> np.floating:
     r"""Duration in seconds.
 
@@ -84,51 +83,26 @@ def file_extension(path):
 
 def run(shell_command):
     """Return the output of a shell command provided as string."""
-    out = subprocess.check_output(
-        shell_command,
-        stderr=subprocess.STDOUT
-    )
+    out = subprocess.check_output(shell_command, stderr=subprocess.STDOUT)
     try:
         return out.split()[0]
     except IndexError:
-        return ''
+        return ""
 
 
 def run_ffmpeg(infile, outfile, offset, duration):
     """Convert audio file to WAV file."""
     if duration:
-        cmd = [
-            'ffmpeg',
-            '-ss', str(offset),
-            '-i', infile,
-            '-t', str(duration),
-            outfile
-        ]
+        cmd = ["ffmpeg", "-ss", str(offset), "-i", infile, "-t", str(duration), outfile]
     else:
-        cmd = [
-            'ffmpeg',
-            '-ss', str(offset),
-            '-i', infile,
-            outfile,
-        ]
+        cmd = ["ffmpeg", "-ss", str(offset), "-i", infile, outfile]
     run(cmd)
 
 
 def run_sox(infile, outfile, offset, duration):
     """Convert audio file to WAV file."""
     if duration:
-        cmd = [
-            'sox',
-            infile,
-            outfile,
-            'trim', str(offset),
-            str(duration),
-        ]
+        cmd = ["sox", infile, outfile, "trim", str(offset), str(duration)]
     else:
-        cmd = [
-            'sox',
-            infile,
-            outfile,
-            'trim', str(offset),
-        ]
+        cmd = ["sox", infile, outfile, "trim", str(offset)]
     run(cmd)

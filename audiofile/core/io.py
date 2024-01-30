@@ -16,14 +16,14 @@ from audiofile.core.utils import file_extension
 
 
 def convert_to_wav(
-        infile: str,
-        outfile: str = None,
-        offset: typing.Union[float, int, str, np.timedelta64] = None,
-        duration: typing.Union[float, int, str, np.timedelta64] = None,
-        bit_depth: int = 16,
-        normalize: bool = False,
-        overwrite: bool = False,
-        **kwargs,
+    infile: str,
+    outfile: str = None,
+    offset: typing.Union[float, int, str, np.timedelta64] = None,
+    duration: typing.Union[float, int, str, np.timedelta64] = None,
+    bit_depth: int = 16,
+    normalize: bool = False,
+    overwrite: bool = False,
+    **kwargs,
 ) -> str:
     """Convert any audio/video file to WAV.
 
@@ -88,20 +88,17 @@ def convert_to_wav(
             or the provided unit is not supported
 
     Examples:
-        >>> path = convert_to_wav('stereo.flac')
+        >>> path = convert_to_wav("stereo.flac")
         >>> os.path.basename(path)
         'stereo.wav'
 
     """
     infile = audeer.safe_path(infile)
     if outfile is None:
-        outfile = audeer.replace_file_extension(infile, 'wav')
+        outfile = audeer.replace_file_extension(infile, "wav")
     else:
         outfile = audeer.safe_path(outfile)
-    if (
-            infile == outfile
-            and not overwrite
-    ):
+    if infile == outfile and not overwrite:
         raise RuntimeError(
             f"'{infile}' would be overwritten. "
             "Select 'overwrite=True', "
@@ -124,12 +121,12 @@ def convert_to_wav(
 
 
 def read(
-        file: str,
-        duration: typing.Union[float, int, str, np.timedelta64] = None,
-        offset: typing.Union[float, int, str, np.timedelta64] = None,
-        always_2d: bool = False,
-        dtype: str = 'float32',
-        **kwargs,
+    file: str,
+    duration: typing.Union[float, int, str, np.timedelta64] = None,
+    offset: typing.Union[float, int, str, np.timedelta64] = None,
+    always_2d: bool = False,
+    dtype: str = "float32",
+    **kwargs,
 ) -> typing.Tuple[np.array, int]:
     """Read audio file.
 
@@ -202,12 +199,12 @@ def read(
         .. plot::
             :context: close-figs
 
-            >>> signal, sampling_rate = read('mono.wav', always_2d=True)
+            >>> signal, sampling_rate = read("mono.wav", always_2d=True)
             >>> sampling_rate
             8000
             >>> signal.shape
             (1, 12000)
-            >>> signal, sampling_rate = read('mono.wav')
+            >>> signal, sampling_rate = read("mono.wav")
             >>> signal.shape
             (12000,)
             >>> import audplot
@@ -216,7 +213,7 @@ def read(
         .. plot::
             :context: close-figs
 
-            >>> signal, sampling_rate = read('mono.wav', duration=0.5)
+            >>> signal, sampling_rate = read("mono.wav", duration=0.5)
             >>> # Extend signal to original length
             >>> signal = np.pad(signal, (0, 8000))
             >>> audplot.waveform(signal)
@@ -224,7 +221,7 @@ def read(
         .. plot::
             :context: close-figs
 
-            >>> signal, sampling_rate = read('mono.wav', duration=-0.5)
+            >>> signal, sampling_rate = read("mono.wav", duration=-0.5)
             >>> # Extend signal to original length
             >>> signal = np.pad(signal, (8000, 0))
             >>> audplot.waveform(signal)
@@ -232,7 +229,7 @@ def read(
         .. plot::
             :context: close-figs
 
-            >>> signal, sampling_rate = read('mono.wav', offset='4000', duration='4000')
+            >>> signal, sampling_rate = read("mono.wav", offset="4000", duration="4000")
             >>> # Extend signal to original length
             >>> signal = np.pad(signal, (4000, 4000))
             >>> audplot.waveform(signal)
@@ -242,7 +239,7 @@ def read(
 
             >>> # Use audresample for resampling and remixing
             >>> import audresample
-            >>> signal, sampling_rate = read('stereo.wav')
+            >>> signal, sampling_rate = read("stereo.wav")
             >>> signal.shape
             (2, 12000)
             >>> target_rate = 16000
@@ -259,13 +256,14 @@ def read(
 
     # Parse offset and duration values
     if (
-            duration is not None
-            or isinstance(duration, str)
-            or (offset is not None and isinstance(offset, str))
-            or (offset is not None and offset != 0)
+        duration is not None
+        or isinstance(duration, str)
+        or (offset is not None and isinstance(offset, str))
+        or (offset is not None and offset != 0)
     ):
         # Import sampling_rate here to avoid circular imports
         from audiofile.core.info import sampling_rate as get_sampling_rate
+
         sampling_rate = get_sampling_rate(file)
     if duration is not None:
         duration = duration_in_seconds(duration, sampling_rate)
@@ -279,33 +277,22 @@ def read(
     # Support for negative offset/duration values
     # by counting them from end of signal
     #
-    if (
-            offset is not None and offset < 0
-            or duration is not None and duration < 0
-    ):
+    if offset is not None and offset < 0 or duration is not None and duration < 0:
         # Import duration here to avoid circular imports
         from audiofile.core.info import duration as get_duration
+
         signal_duration = get_duration(file)
     # offset | duration
     # None   | < 0
-    if (
-            offset is None
-            and duration is not None and duration < 0
-    ):
+    if offset is None and duration is not None and duration < 0:
         offset = max([0, signal_duration + duration])
         duration = None
     # None   | >= 0
-    if (
-            offset is None
-            and duration is not None and duration >= 0
-    ):
+    if offset is None and duration is not None and duration >= 0:
         if np.isinf(duration):
             duration = None
     # >= 0   | < 0
-    elif (
-            offset is not None and offset >= 0
-            and duration is not None and duration < 0
-    ):
+    elif offset is not None and offset >= 0 and duration is not None and duration < 0:
         if np.isinf(offset) and np.isinf(duration):
             offset = 0
             duration = None
@@ -319,32 +306,20 @@ def read(
             offset = max([0, offset + duration])
             duration = min([-duration, orig_offset])
     # >= 0   | >= 0
-    elif (
-            offset is not None and offset >= 0
-            and duration is not None and duration >= 0
-    ):
+    elif offset is not None and offset >= 0 and duration is not None and duration >= 0:
         if np.isinf(offset):
             duration = 0
         elif np.isinf(duration):
             duration = None
     # < 0    | None
-    elif (
-            offset is not None and offset < 0
-            and duration is None
-    ):
+    elif offset is not None and offset < 0 and duration is None:
         offset = max([0, signal_duration + offset])
     # >= 0    | None
-    elif (
-            offset is not None and offset >= 0
-            and duration is None
-    ):
+    elif offset is not None and offset >= 0 and duration is None:
         if np.isinf(offset):
             duration = 0
     # < 0    | > 0
-    elif (
-            offset is not None and offset < 0
-            and duration is not None and duration > 0
-    ):
+    elif offset is not None and offset < 0 and duration is not None and duration > 0:
         if np.isinf(offset) and np.isinf(duration):
             offset = 0
             duration = None
@@ -360,10 +335,7 @@ def read(
                 duration = min([duration, signal_duration - offset])
             offset = max([0, offset])
     # < 0    | < 0
-    elif (
-            offset is not None and offset < 0
-            and duration is not None and duration < 0
-    ):
+    elif offset is not None and offset < 0 and duration is not None and duration < 0:
         if np.isinf(offset):
             duration = 0
         elif np.isinf(duration):
@@ -383,6 +355,7 @@ def read(
         duration = audmath.samples(duration, sampling_rate)
     if duration == 0:
         from audiofile.core.info import channels as get_channels
+
         channels = get_channels(file)
         if channels > 1 or always_2d:
             signal = np.zeros((channels, 0))
@@ -406,8 +379,8 @@ def read(
         # It might be the case that MP3 files will be supported by soundfile in
         # the future as well. For a discussion on MP3 support in the underlying
         # libsndfile see https://github.com/erikd/libsndfile/issues/258.
-        with tempfile.TemporaryDirectory(prefix='audiofile') as tmpdir:
-            tmpfile = os.path.join(tmpdir, 'tmp.wav')
+        with tempfile.TemporaryDirectory(prefix="audiofile") as tmpdir:
+            tmpfile = os.path.join(tmpdir, "tmp.wav")
             # offset and duration have to be given in seconds
             if offset != 0:
                 offset /= sampling_rate
@@ -441,12 +414,12 @@ def read(
 
 
 def write(
-        file: str,
-        signal: np.array,
-        sampling_rate: int,
-        bit_depth: int = 16,
-        normalize: bool = False,
-        **kwargs,
+    file: str,
+    signal: np.array,
+    sampling_rate: int,
+    bit_depth: int = 16,
+    normalize: bool = False,
+    **kwargs,
 ):
     """Write (normalized) audio files.
 
@@ -478,29 +451,29 @@ def write(
     Examples:
         >>> sampling_rate = 8000
         >>> signal = np.random.uniform(-1, 1, (1, 1000))
-        >>> write('mono.wav', signal, sampling_rate)
+        >>> write("mono.wav", signal, sampling_rate)
         >>> signal = np.random.uniform(-1.2, 1.2, (2, 1000))
-        >>> write('stereo.flac', signal, sampling_rate, normalize=True)
+        >>> write("stereo.flac", signal, sampling_rate, normalize=True)
 
     """  # noqa: E501
     file = audeer.safe_path(file)
     file_type = file_extension(file)
 
     # Check for allowed precisions
-    if file_type == 'wav':
+    if file_type == "wav":
         depth_mapping = {
-            8: 'PCM_U8',
-            16: 'PCM_16',
-            24: 'PCM_24',
-            32: 'PCM_32',
+            8: "PCM_U8",
+            16: "PCM_16",
+            24: "PCM_24",
+            32: "PCM_32",
         }
-    elif file_type == 'flac':
+    elif file_type == "flac":
         depth_mapping = {
-            8: 'PCM_S8',
-            16: 'PCM_16',
-            24: 'PCM_24',
+            8: "PCM_S8",
+            16: "PCM_16",
+            24: "PCM_24",
         }
-    if file_type in ['wav', 'flac']:
+    if file_type in ["wav", "flac"]:
         bit_depths = sorted(list(depth_mapping.keys()))
         if bit_depth not in bit_depths:
             raise RuntimeError(
@@ -516,10 +489,10 @@ def write(
     else:
         channels = 1
     if channels > MAX_CHANNELS[file_type]:
-        if file_type != 'wav':
+        if file_type != "wav":
             hint = " Consider using 'wav' instead."
         else:
-            hint = ''
+            hint = ""
         raise RuntimeError(
             "The maximum number of allowed channels "
             f"for '{file_type}' is {MAX_CHANNELS[file_type]}.{hint}"

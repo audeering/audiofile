@@ -24,7 +24,7 @@ Code example for reading a file:
 
     import audiofile
 
-    signal, sampling_rate = audiofile.read('signal.wav')
+    signal, sampling_rate = audiofile.read("signal.wav")
 
 Under the hood it uses soundfile_ to read the audio files,
 converting non-supported formats first to WAV files.

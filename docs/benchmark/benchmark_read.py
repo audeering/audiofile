@@ -2,14 +2,13 @@ import argparse
 import os
 import time
 
+import loaders
 import matplotlib
 import numpy as np
-
 import utils
-import loaders
 
 
-matplotlib.use('Agg')
+matplotlib.use("Agg")
 
 
 def get_files(dir, extension):
@@ -29,7 +28,7 @@ class AudioFolder(object):
         self,
         root,
         download=True,
-        extension='wav',
+        extension="wav",
         lib="librosa",
     ):
         self.root = os.path.expanduser(root)
@@ -45,60 +44,57 @@ class AudioFolder(object):
 
 
 if __name__ == "__main__":
-
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--ext', type=str, default="wav")
+    parser = argparse.ArgumentParser(description="Process some integers.")
+    parser.add_argument("--ext", type=str, default="wav")
     args = parser.parse_args()
 
     columns = [
-        'ext',
-        'lib',
-        'duration',
-        'time',
+        "ext",
+        "lib",
+        "duration",
+        "time",
     ]
 
-    store = utils.DF_writer(columns)
+    store = utils.DFWriter(columns)
 
     # libraries to be benchmarked
     libs = [
-        'ar_ffmpeg',
-        'ar_mad',
-        'audiofile',
-        'librosa',
-        'pedalboard',
-        'scipy',
-        'soundfile',
+        "ar_ffmpeg",
+        "ar_mad",
+        "audiofile",
+        "librosa",
+        "pedalboard",
+        "scipy",
+        "soundfile",
     ]
 
-    audio_walk = sorted(os.walk('AUDIO'))
+    audio_walk = sorted(os.walk("AUDIO"))
     if len(audio_walk) == 0:
         raise RuntimeError(
-            'No audio files were found.\n'
+            "No audio files were found.\n"
             "Make sure you executed 'bash generate_audio.sh'"
         )
 
     for lib in libs:
-
         # Not all libraries support all file formats
-        if lib == 'scipy' and args.ext != 'wav':
+        if lib == "scipy" and args.ext != "wav":
             continue
-        if lib == 'ar_ffmpeg' and args.ext == 'mp3':  # too slow
+        if lib == "ar_ffmpeg" and args.ext == "mp3":  # too slow
             continue
-        if lib == 'ar_mad' and args.ext != 'mp3':
+        if lib == "ar_mad" and args.ext != "mp3":
             continue
-        if lib == 'soundfile' and args.ext == 'mp4':
+        if lib == "soundfile" and args.ext == "mp4":
             continue
-        if lib == 'pedalboard' and args.ext == 'mp4':
+        if lib == "pedalboard" and args.ext == "mp4":
             continue
 
         print(f"Benchmark read {args.ext} with {lib}")
         for root, dirs, fnames in audio_walk:
             for audio_dir in dirs:
-
                 duration = int(audio_dir)
                 dataset = AudioFolder(
                     os.path.join(root, audio_dir),
-                    lib='load_' + lib,
+                    lib="load_" + lib,
                     extension=args.ext,
                 )
 
@@ -111,8 +107,8 @@ if __name__ == "__main__":
                 end = time.time()
 
                 # Store ar_ffmpeg and ar_mad as audioread
-                if lib in ['ar_ffmpeg', 'ar_mad']:
-                    lib_name = 'audioread'
+                if lib in ["ar_ffmpeg", "ar_mad"]:
+                    lib_name = "audioread"
                 else:
                     lib_name = lib
 
@@ -123,4 +119,4 @@ if __name__ == "__main__":
                     time=float(end - start) / len(dataset),
                 )
 
-    store.df.to_pickle(f'results/benchmark_read_{args.ext}.pickle')
+    store.df.to_pickle(f"results/benchmark_read_{args.ext}.pickle")
