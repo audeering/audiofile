@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                v1.3.2
+                v1.4.0
               </div>
             
           
@@ -159,7 +159,7 @@
 <dt class="sig sig-object py" id="audiofile.convert_to_wav">
 <span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">convert_to_wav</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bit_depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/audiofile/core/io.html#convert_to_wav"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.convert_to_wav" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert any audio/video file to WAV.</p>
-<p>It uses soundfile for reading WAV, FLAC, OGG files,
+<p>It uses soundfile for reading WAV, FLAC, MP3, OGG files,
 and sox or ffmpeg for reading all other files.
 If <code class="docutils literal notranslate"><span class="pre">duration</span></code> and/or <code class="docutils literal notranslate"><span class="pre">offset</span></code> are specified
 the resulting WAV file
@@ -185,7 +185,7 @@ e.g. for a file containing the signal <code class="docutils literal notranslate"
 <p><code class="docutils literal notranslate"><span class="pre">duration</span></code> and <code class="docutils literal notranslate"><span class="pre">offset</span></code>
 are evenly rounded
 after conversion to samples.</p>
-<p>It then uses <a class="reference external" href="https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write" title="(in PySoundFile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.write()</span></code></a> to write the WAV file,
+<p>It then uses <a class="reference external" href="https://python-soundfile.readthedocs.io/en/latest/index.html#soundfile.write" title="(in python-soundfile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.write()</span></code></a> to write the WAV file,
 which limits the number of supported channels to 65535.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -201,7 +201,7 @@ can be 8, 16, 24</p></li>
 <li><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – normalize audio data before writing</p></li>
 <li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – force overwriting
 if <code class="docutils literal notranslate"><span class="pre">outfile</span></code> is identical to <code class="docutils literal notranslate"><span class="pre">outfile</span></code></p></li>
-<li><p><strong>kwargs</strong> – pass on further arguments to <a class="reference external" href="https://pysoundfile.readthedocs.io/en/latest/index.html#soundfile.write" title="(in PySoundFile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.write()</span></code></a></p></li>
+<li><p><strong>kwargs</strong> – pass on further arguments to <a class="reference external" href="https://python-soundfile.readthedocs.io/en/latest/index.html#soundfile.write" title="(in python-soundfile)"><code class="xref py py-func docutils literal notranslate"><span class="pre">soundfile.write()</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -225,7 +225,7 @@ if <code class="docutils literal notranslate"><span class="pre">outfile</span></
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">convert_to_wav</span><span class="p">(</span><span class="s1">&#39;stereo.flac&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">convert_to_wav</span><span class="p">(</span><span class="s2">&quot;stereo.flac&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 <span class="go">&#39;stereo.wav&#39;</span>
 </pre></div>
@@ -257,7 +257,7 @@ if <code class="docutils literal notranslate"><span class="pre">outfile</span></
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2023/12/05 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2024/01/30 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -265,7 +265,7 @@ if <code class="docutils literal notranslate"><span class="pre">outfile</span></
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2023 audEERING GmbH
+      &copy; 2018-2024 audEERING GmbH
     </p>
   </div> 
 

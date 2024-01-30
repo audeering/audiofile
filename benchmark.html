@@ -68,7 +68,7 @@
             
             
               <div class="version">
-                v1.3.2
+                v1.4.0
               </div>
             
           
@@ -105,16 +105,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#running-the-benchmark">Running the benchmark</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#wav-flac-ogg">WAV, FLAC, OGG</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">Reading files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">Accessing metadata</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#mp3-mp4">MP3, MP4</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id3">Reading files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id4">Accessing metadata</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Reading files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Accessing metadata</a></li>
 </ul>
 </li>
 </ul>
@@ -188,11 +180,11 @@ FLAC, OGG, MP3, and MP4 files were generated using <a class="reference external"
 <p>The following Python packages are benchmarked against each other:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/beetbox/audioread/">audioread</a> 3.0.1</p></li>
-<li><p><a class="reference internal" href="api/audiofile.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a> 1.3.0</p></li>
+<li><p><a class="reference internal" href="api/audiofile.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a> 1.4.0</p></li>
 <li><p><a class="reference external" href="https://github.com/librosa/librosa/">librosa</a> 0.10.1</p></li>
-<li><p><a class="reference external" href="https://github.com/spotify/pedalboard">pedalboard</a> 0.8.6</p></li>
+<li><p><a class="reference external" href="https://github.com/spotify/pedalboard">pedalboard</a> 0.8.7</p></li>
 <li><p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html">scipy</a> 1.11.4</p></li>
-<li><p><a class="reference external" href="https://github.com/bastibe/SoundFile/">soundfile</a> 0.21.1</p></li>
+<li><p><a class="reference external" href="https://github.com/bastibe/SoundFile/">soundfile</a> 0.12.1</p></li>
 <li><p><a class="reference external" href="https://github.com/rabitt/pysox/">sox</a> 1.4.1</p></li>
 </ul>
 <p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html">scipy</a> and <a class="reference external" href="https://github.com/librosa/librosa/">librosa</a> are only tested for reading files,
@@ -225,11 +217,11 @@ the following was requested for every file:</p>
 <h3>Running the benchmark<a class="headerlink" href="#running-the-benchmark" title="Permalink to this heading">¶</a></h3>
 <p>The benchmark was executed on the following machine:</p>
 <ul class="simple">
-<li><p>CPU: Intel(R) Core(TM) i7-8750H CPU &#64; 2.20GHz x 12</p></li>
-<li><p>RAM: 15.37 GB</p></li>
-<li><p>Hard drive: Samsung SSD 860</p></li>
-<li><p>Linux: Ubuntu 18.04.6</p></li>
-<li><p>Python: 3.10.11</p></li>
+<li><p>CPU: 13th Gen Intel Core i7-1355U, 10-core (2-mt/8-st)</p></li>
+<li><p>RAM: 15.29 GiB</p></li>
+<li><p>Hard drive: KIOXIA KXG8AZNV1T02</p></li>
+<li><p>Linux: Ubuntu 22.04.3</p></li>
+<li><p>Python: 3.10.12</p></li>
 </ul>
 <p>To rerun the benchmark yourself,
 clone the repository
@@ -245,42 +237,24 @@ and will ask for a sudo password
 to install missing apt packages.</p>
 </div>
 </div>
-<div class="section" id="wav-flac-ogg">
-<h2>WAV, FLAC, OGG<a class="headerlink" href="#wav-flac-ogg" title="Permalink to this heading">¶</a></h2>
 <div class="section" id="id1">
-<h3>Reading files<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
-<p><a class="reference external" href="https://github.com/beetbox/audioread/">audioread</a> has been removed from the results
-as it was the slowest library.
-<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html">scipy</a> is only meant for reading WAV files,
-and only included in this figure.</p>
-<img alt="_images/benchmark_wav-flac-ogg_read.png" src="_images/benchmark_wav-flac-ogg_read.png" />
-<p>Results for <a class="reference internal" href="api/audiofile.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a>, <a class="reference external" href="https://github.com/bastibe/SoundFile/">soundfile</a> and <a class="reference external" href="https://github.com/librosa/librosa/">librosa</a> are similar here
-as all of them use <a class="reference external" href="https://github.com/bastibe/SoundFile/">soundfile</a> under the hood to read the data.</p>
+<h2>Reading files<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<p><a class="reference external" href="https://github.com/beetbox/audioread/">audioread</a> uses <a class="reference external" href="https://sourceforge.net/projects/mad/">mad</a> when reading MP3 files
+and <a class="reference external" href="https://ffmpeg.org/">ffmpeg</a> in all other cases.
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html">scipy</a> is only meant for reading WAV files.</p>
+<img alt="_images/benchmark_wav-flac-ogg-mp3-mp4_read.png" src="_images/benchmark_wav-flac-ogg-mp3-mp4_read.png" />
+<p>Results for <a class="reference internal" href="api/audiofile.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a>, <a class="reference external" href="https://github.com/bastibe/SoundFile/">soundfile</a> and <a class="reference external" href="https://github.com/librosa/librosa/">librosa</a> are similar
+for WAV, FLAC, MP3, OGG
+as all of them use <a class="reference external" href="https://github.com/bastibe/SoundFile/">soundfile</a> under the hood
+to read the data.</p>
 </div>
 <div class="section" id="id2">
-<h3>Accessing metadata<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h2>Accessing metadata<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
 <p><a class="reference external" href="https://github.com/beetbox/audioread/">audioread</a> (ffmpeg) and <a class="reference external" href="https://github.com/rabitt/pysox/">sox</a> have been removed from the results
-as they take around 0.17s and 0.035s per file
-for WAV, FLAC, and OGG.</p>
-<img alt="_images/benchmark_wav-flac-ogg_info.png" src="_images/benchmark_wav-flac-ogg_info.png" />
-</div>
-</div>
-<div class="section" id="mp3-mp4">
-<h2>MP3, MP4<a class="headerlink" href="#mp3-mp4" title="Permalink to this heading">¶</a></h2>
-<div class="section" id="id3">
-<h3>Reading files<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
-<p><a class="reference external" href="https://github.com/bastibe/SoundFile/">soundfile</a> does not support
-reading MP3 and MP4 files,
-<a class="reference external" href="https://github.com/beetbox/audioread/">audioread</a> (mad) and <a class="reference external" href="https://github.com/spotify/pedalboard">pedalboard</a> only MP3 files.</p>
-<img alt="_images/benchmark_mp3-mp4_read.png" src="_images/benchmark_mp3-mp4_read.png" />
-</div>
-<div class="section" id="id4">
-<h3>Accessing metadata<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
-<p><a class="reference external" href="https://github.com/bastibe/SoundFile/">soundfile</a> does not support
-accessing MP3 and MP4 metadata.
-<a class="reference external" href="https://github.com/rabitt/pysox/">sox</a>, <a class="reference external" href="https://github.com/beetbox/audioread/">audioread</a> (mad) and <a class="reference external" href="https://github.com/spotify/pedalboard">pedalboard</a> only for MP3 files.</p>
-<img alt="_images/benchmark_mp3-mp4_info.png" src="_images/benchmark_mp3-mp4_info.png" />
-<p>For MP3 and MP4 files,
+as they take around 0.003s and 0.012s per file.
+For MP3 files <a class="reference external" href="https://github.com/beetbox/audioread/">audioread</a> uses the <a class="reference external" href="https://sourceforge.net/projects/mad/">mad</a> library.</p>
+<img alt="_images/benchmark_wav-flac-ogg-mp3_info.png" src="_images/benchmark_wav-flac-ogg-mp3_info.png" />
+<p>For MP4 files,
 <a class="reference internal" href="api/audiofile.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a> is not very fast in accessing the metadata.
 The main focus was not speed,
 but consistent results for number of samples and duration.
@@ -290,8 +264,11 @@ You can speed up the processing by setting <code class="docutils literal notrans
 as argument to <a class="reference internal" href="api/audiofile.duration.html#audiofile.duration" title="audiofile.duration"><code class="xref py py-func docutils literal notranslate"><span class="pre">audiofile.duration()</span></code></a>.
 This tries to read the duration from the header of the file
 and is shown as audiofile (sloppy)
-in the figure.</p>
-</div>
+in the figure.
+<a class="reference external" href="https://github.com/bastibe/SoundFile/">soundfile</a> and <a class="reference external" href="https://github.com/rabitt/pysox/">sox</a> do not support
+accessing MP4 metadata.
+<a class="reference external" href="https://github.com/spotify/pedalboard">pedalboard</a> only on MacOS.</p>
+<img alt="_images/benchmark_mp4_info.png" src="_images/benchmark_mp4_info.png" />
 </div>
 </div>
 
@@ -318,7 +295,7 @@ in the figure.</p>
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2023/12/05 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2024/01/30 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -326,7 +303,7 @@ in the figure.</p>
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2023 audEERING GmbH
+      &copy; 2018-2024 audEERING GmbH
     </p>
   </div> 
 

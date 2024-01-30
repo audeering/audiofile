@@ -31,11 +31,11 @@ Python packages
 The following Python packages are benchmarked against each other:
 
 * audioread_ 3.0.1
-* :mod:`audiofile` 1.3.0
+* :mod:`audiofile` 1.4.0
 * librosa_ 0.10.1
-* pedalboard_ 0.8.6
+* pedalboard_ 0.8.7
 * scipy_ 1.11.4
-* soundfile_ 0.21.1
+* soundfile_ 0.12.1
 * sox_ 1.4.1
 
 scipy_ and librosa_ are only tested for reading files,
@@ -70,11 +70,11 @@ Running the benchmark
 
 The benchmark was executed on the following machine:
 
-* CPU: Intel(R) Core(TM) i7-8750H CPU @ 2.20GHz x 12
-* RAM: 15.37 GB
-* Hard drive: Samsung SSD 860
-* Linux: Ubuntu 18.04.6
-* Python: 3.10.11
+* CPU: 13th Gen Intel Core i7-1355U, 10-core (2-mt/8-st)
+* RAM: 15.29 GiB
+* Hard drive: KIOXIA KXG8AZNV1T02
+* Linux: Ubuntu 22.04.3
+* Python: 3.10.12
 
 To rerun the benchmark yourself,
 clone the repository
@@ -92,54 +92,32 @@ and will ask for a sudo password
 to install missing apt packages.
 
 
-WAV, FLAC, OGG
---------------
-
 Reading files
-^^^^^^^^^^^^^
+-------------
 
-audioread_ has been removed from the results
-as it was the slowest library.
-scipy_ is only meant for reading WAV files,
-and only included in this figure.
+audioread_ uses mad_ when reading MP3 files
+and ffmpeg_ in all other cases.
+scipy_ is only meant for reading WAV files.
 
-.. image:: ./benchmark/results/benchmark_wav-flac-ogg_read.png
+.. image:: ./benchmark/results/benchmark_wav-flac-ogg-mp3-mp4_read.png
 
-Results for :mod:`audiofile`, soundfile_ and librosa_ are similar here
-as all of them use soundfile_ under the hood to read the data.
+Results for :mod:`audiofile`, soundfile_ and librosa_ are similar
+for WAV, FLAC, MP3, OGG
+as all of them use soundfile_ under the hood
+to read the data.
 
 Accessing metadata
-^^^^^^^^^^^^^^^^^^
+------------------
 
 audioread_ (ffmpeg) and sox_ have been removed from the results
-as they take around 0.17s and 0.035s per file
-for WAV, FLAC, and OGG.
-
-.. image:: ./benchmark/results/benchmark_wav-flac-ogg_info.png
+as they take around 0.003s and 0.012s per file.
+For MP3 files audioread_ uses the mad_ library.
 
 
-MP3, MP4
---------
+.. image:: ./benchmark/results/benchmark_wav-flac-ogg-mp3_info.png
 
-Reading files
-^^^^^^^^^^^^^
 
-soundfile_ does not support
-reading MP3 and MP4 files,
-audioread_ (mad) and pedalboard_ only MP3 files.
-
-.. image:: ./benchmark/results/benchmark_mp3-mp4_read.png
-
-Accessing metadata
-^^^^^^^^^^^^^^^^^^
-
-soundfile_ does not support
-accessing MP3 and MP4 metadata.
-sox_, audioread_ (mad) and pedalboard_ only for MP3 files.
-
-.. image:: ./benchmark/results/benchmark_mp3-mp4_info.png
-
-For MP3 and MP4 files,
+For MP4 files,
 :mod:`audiofile` is not very fast in accessing the metadata.
 The main focus was not speed,
 but consistent results for number of samples and duration.
@@ -150,12 +128,18 @@ as argument to :func:`audiofile.duration`.
 This tries to read the duration from the header of the file
 and is shown as audiofile (sloppy)
 in the figure.
+soundfile_ and sox_ do not support
+accessing MP4 metadata.
+pedalboard_ only on MacOS.
+
+.. image:: ./benchmark/results/benchmark_mp4_info.png
 
 
 .. _audioread: https://github.com/beetbox/audioread/
 .. _ffmpeg: https://ffmpeg.org/
 .. _gstreamer: https://gstreamer.freedesktop.org/
 .. _librosa: https://github.com/librosa/librosa/
+.. _libsndfile: http://www.mega-nerd.com/libsndfile/
 .. _mad: https://sourceforge.net/projects/mad/
 .. _pedalboard: https://github.com/spotify/pedalboard
 .. _scipy: https://docs.scipy.org/doc/scipy/reference/generated/scipy.io.wavfile.read.html
