@@ -11,29 +11,28 @@ import audiofile
 np.random.seed(1)
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def audio_file():
-    create_audio_files('.')
+    create_audio_files(".")
 
     yield
 
     # Clean up
-    for file in audeer.list_file_names('.', filetype='wav'):
+    for file in audeer.list_file_names(".", filetype="wav"):
         if os.path.exists(file):
             os.remove(file)
-    for file in audeer.list_file_names('.', filetype='flac'):
+    for file in audeer.list_file_names(".", filetype="flac"):
         if os.path.exists(file):
             os.remove(file)
 
 
 def create_audio_files(
-        basedir,
-
+    basedir,
 ):
     sampling_rate = 8000
-    mono_wav_file = audeer.path(basedir, 'mono.wav')
-    stereo_wav_file = audeer.path(basedir, 'stereo.wav')
-    stereo_flac_file = audeer.path(basedir, 'stereo.flac')
+    mono_wav_file = audeer.path(basedir, "mono.wav")
+    stereo_wav_file = audeer.path(basedir, "stereo.wav")
+    stereo_flac_file = audeer.path(basedir, "stereo.flac")
     signal = am_fm_synth(1.5, 1, sampling_rate)
     audiofile.write(mono_wav_file, signal, sampling_rate)
     signal = am_fm_synth(1.5, 2, sampling_rate)
@@ -42,11 +41,11 @@ def create_audio_files(
 
 
 def am_fm_synth(
-        duration: float,
-        num_channels: int = 1,
-        sampling_rate: int = 16000,
-        *,
-        dtype: type = np.float32,
+    duration: float,
+    num_channels: int = 1,
+    sampling_rate: int = 16000,
+    *,
+    dtype: type = np.float32,
 ) -> np.ndarray:
     r"""Synthesise an AM/FM signal of given duration (sampled at given rate).
 
@@ -78,7 +77,7 @@ def am_fm_synth(
         # No reinitialisation (to get true stereo)
         for t in range(n_samples):
             sig[ch_indx, t] = g * np.cos(ph_fm)
-            sig[ch_indx, t] *= ((1 - g_am) + g_am * np.square(np.cos(ph_am)))
+            sig[ch_indx, t] *= (1 - g_am) + g_am * np.square(np.cos(ph_am))
             ph_am += omega_am / 2
             ph_fm += omega0_car + omega_dev * np.cos(omega_mod * t)
     return sig

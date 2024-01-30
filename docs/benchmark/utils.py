@@ -1,15 +1,16 @@
 import os
-import pandas as pd
-import seaborn as sns
+
 import matplotlib
 import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 
 
-matplotlib.use('Agg')
-DEVNULL = open(os.devnull, 'w')
+matplotlib.use("Agg")
+DEVNULL = open(os.devnull, "w")
 
 
-class DF_writer(object):
+class DFWriter(object):
     def __init__(self, columns):
         self.df = pd.DataFrame(columns=columns)
         self.columns = columns
@@ -26,18 +27,16 @@ class DF_writer(object):
 def plot_results(df, target_lib="", audio_format="", ext="png"):
     sns.set_style("whitegrid")
 
-    ordered_libs = df.time.groupby(
-        df.lib
-    ).mean().sort_values().index.tolist()
+    ordered_libs = df.time.groupby(df.lib).mean().sort_values().index.tolist()
 
     fig = plt.figure()
 
     g = sns.catplot(
         x="duration",
         y="time",
-        kind='point',
+        kind="point",
         hue_order=ordered_libs,
-        hue='lib',
+        hue="lib",
         data=df,
         height=6.6,
         aspect=1,
@@ -46,8 +45,8 @@ def plot_results(df, target_lib="", audio_format="", ext="png"):
     g.savefig("benchmark_%s_%s_dur.%s" % (target_lib, audio_format, ext))
 
     fig = plt.figure()
-    sns.barplot(x="time", y="lib", data=df, order=ordered_libs, orient='h')
+    sns.barplot(x="time", y="lib", data=df, order=ordered_libs, orient="h")
     fig.savefig(
         f"benchmark_{target_lib}_{audio_format}_bar.{ext}",
-        bbox_inches='tight',
+        bbox_inches="tight",
     )
