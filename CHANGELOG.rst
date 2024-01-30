@@ -7,6 +7,21 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.4.0 (2024-01-30)
+--------------------------
+
+* Added: ``audiofile.write()`` can now create MP3 files
+* Changed: ``audiofile`` does now use ``soundfile``
+  to read MP3 files
+  (2x speed increase),
+  and to access metadata of MP3 files
+  (up to 1000x speed increase)
+* Changed: depend on ``soundfile>=0.12.1``
+* Changed: updated benchmark pages in documentation
+  to latest versions of tested libraries
+* Fixed: depend on ``audmath>=1.3.0``
+
+
 Version 1.3.2 (2023-12-05)
 --------------------------
 
