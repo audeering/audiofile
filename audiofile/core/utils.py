@@ -52,7 +52,7 @@ def broken_file_error(file: str) -> Exception:
 
     """
     return RuntimeError(
-        f"Error opening {file}: " "File contains data in an unknown format."
+        f"Error opening {file}: File contains data in an unknown format."
     )
 
 
@@ -95,34 +95,14 @@ def run_ffmpeg(infile, outfile, offset, duration):
     if duration:
         cmd = ["ffmpeg", "-ss", str(offset), "-i", infile, "-t", str(duration), outfile]
     else:
-        cmd = [
-            "ffmpeg",
-            "-ss",
-            str(offset),
-            "-i",
-            infile,
-            outfile,
-        ]
+        cmd = ["ffmpeg", "-ss", str(offset), "-i", infile, outfile]
     run(cmd)
 
 
 def run_sox(infile, outfile, offset, duration):
     """Convert audio file to WAV file."""
     if duration:
-        cmd = [
-            "sox",
-            infile,
-            outfile,
-            "trim",
-            str(offset),
-            str(duration),
-        ]
+        cmd = ["sox", infile, outfile, "trim", str(offset), str(duration)]
     else:
-        cmd = [
-            "sox",
-            infile,
-            outfile,
-            "trim",
-            str(offset),
-        ]
+        cmd = ["sox", infile, outfile, "trim", str(offset)]
     run(cmd)
