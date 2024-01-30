@@ -111,6 +111,11 @@ exclude = [
 '__init__.py' = [
     'F401',  # * imported but unused
 ]
+'docs/benchmark/*' = [
+    'D101',  # Missing docstring in public class
+    'D102',  # Missing docstring in public method
+    'D105',  # Missing docstring in magic method
+]
 
 
 # ----- I: isort -----
