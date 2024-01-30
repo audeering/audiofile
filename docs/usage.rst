@@ -24,7 +24,7 @@ let's create a dummy signal containing noise:
     sampling_rate = 8000  # in Hz
     noise = np.random.normal(0, 1, sampling_rate)
     noise /= np.amax(np.abs(noise))
-    audiofile.write('noise.flac', noise, sampling_rate)
+    audiofile.write("noise.flac", noise, sampling_rate)
 
 
 File information
@@ -34,23 +34,23 @@ Now you can get metadata information on that signal:
 
 .. jupyter-execute::
 
-    audiofile.channels('noise.flac')
+    audiofile.channels("noise.flac")
 
 .. jupyter-execute::
 
-    audiofile.duration('noise.flac')
+    audiofile.duration("noise.flac")
 
 .. jupyter-execute::
 
-    audiofile.samples('noise.flac')
+    audiofile.samples("noise.flac")
 
 .. jupyter-execute::
 
-    audiofile.sampling_rate('noise.flac')
+    audiofile.sampling_rate("noise.flac")
 
 .. jupyter-execute::
 
-    audiofile.bit_depth('noise.flac')
+    audiofile.bit_depth("noise.flac")
 
 
 Read a file
@@ -60,10 +60,10 @@ You can read the signal:
 
 .. jupyter-execute::
 
-    signal, sampling_rate = audiofile.read('noise.flac')
+    signal, sampling_rate = audiofile.read("noise.flac")
 
-    print(f'sampling rate: {sampling_rate}')
-    print(f'signal shape: {signal.shape}')
+    print(f"sampling rate: {sampling_rate}")
+    print(f"signal shape: {signal.shape}")
 
 If you prefer a workflow
 that returns a 2D signal with channel as the first dimension,
@@ -71,19 +71,19 @@ enforce it with:
 
 .. jupyter-execute::
 
-    signal, sampling_rate = audiofile.read('noise.flac', always_2d=True)
+    signal, sampling_rate = audiofile.read("noise.flac", always_2d=True)
 
-    print(f'sampling rate: {sampling_rate}')
-    print(f'signal shape: {signal.shape}')
+    print(f"sampling rate: {sampling_rate}")
+    print(f"signal shape: {signal.shape}")
 
 If you just want to read from 500 ms to 900 ms of the signal:
 
 .. jupyter-execute::
 
-    signal, sampling_rate = audiofile.read('noise.flac', offset=0.5, duration=0.4)
+    signal, sampling_rate = audiofile.read("noise.flac", offset=0.5, duration=0.4)
 
-    print(f'sampling rate: {sampling_rate}')
-    print(f'signal shape: {signal.shape}')
+    print(f"sampling rate: {sampling_rate}")
+    print(f"signal shape: {signal.shape}")
 
 
 Convert a file
@@ -95,9 +95,9 @@ You can convert any file to WAV using:
 
     import audeer
 
-    audiofile.convert_to_wav('noise.flac', 'noise.wav')
+    audiofile.convert_to_wav("noise.flac", "noise.wav")
 
-    audeer.list_file_names('.', filetype='wav', basenames=True)
+    audeer.list_file_names(".", filetype="wav", basenames=True)
 
 
 Resample/Remix a file
@@ -114,13 +114,13 @@ But it can be easily achieved with :mod:`audresample`.
     import audresample
 
     target_rate = 16000
-    signal, sampling_rate = audiofile.read('noise.flac', always_2d=True)
+    signal, sampling_rate = audiofile.read("noise.flac", always_2d=True)
     signal = audresample.resample(signal, sampling_rate, target_rate)
     signal = audresample.remix(signal, channels=[0, 0])
-    audiofile.write('noise-remix.flac', signal, target_rate)
+    audiofile.write("noise-remix.flac", signal, target_rate)
 
-    print(f'sampling rate: {audiofile.sampling_rate("noise-remix.flac")}')
-    print(f'signal shape: {signal.shape}')
+    print(f"sampling rate: {audiofile.sampling_rate('noise-remix.flac')}")
+    print(f"signal shape: {signal.shape}")
 
 
 .. _soundfile: https://python-soundfile.readthedocs.io/
@@ -135,6 +135,6 @@ But it can be easily achieved with :mod:`audresample`.
     :hide-output:
 
     import os
-    os.remove('noise.wav')
-    os.remove('noise.flac')
-    os.remove('noise-remix.flac')
+    os.remove("noise.wav")
+    os.remove("noise.flac")
+    os.remove("noise-remix.flac")
