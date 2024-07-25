@@ -211,6 +211,8 @@ def test_missing_binaries(tmpdir, hide_system_path, empty_file):
         af.duration(empty_file)
     with pytest.raises(expected_error, match="mediainfo"):
         af.duration(empty_file, sloppy=True)
+    with pytest.raises(expected_error, match="mediainfo"):
+        af.has_video(empty_file)
     with pytest.raises(expected_error, match="ffmpeg"):
         af.samples(empty_file)
     with pytest.raises(expected_error, match="mediainfo"):

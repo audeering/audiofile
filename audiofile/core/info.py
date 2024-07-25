@@ -198,8 +198,7 @@ def has_video(file: str) -> int:
     Raises:
         FileNotFoundError: if mediainfo binary is needed,
             but cannot be found
-        RuntimeError: if ``file`` is missing,
-            broken or format is not supported
+        RuntimeError: if ``file`` is missing
 
     Examples:
         >>> has_video("stereo.wav")
@@ -218,8 +217,6 @@ def has_video(file: str) -> int:
                 return False
         except FileNotFoundError:
             raise binary_missing_error("mediainfo")
-        except subprocess.CalledProcessError:
-            raise broken_file_error(file)
 
 
 def samples(file: str) -> int:
