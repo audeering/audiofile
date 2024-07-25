@@ -182,7 +182,7 @@ def duration(file: str, sloppy=False) -> float:
     return samples(file) / sampling_rate(file)
 
 
-def has_video(file: str) -> int:
+def has_video(file: str) -> bool:
     """If file contains video.
 
     For WAV, FLAC, MP3, or OGG files
