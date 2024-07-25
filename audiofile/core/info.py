@@ -182,6 +182,46 @@ def duration(file: str, sloppy=False) -> float:
     return samples(file) / sampling_rate(file)
 
 
+def has_video(file: str) -> int:
+    """If file contains video.
+
+    For WAV, FLAC, MP3, or OGG files
+    ``False`` is returned.
+    All other files are probed by mediainfo.
+
+    Args:
+        file: file name of input file
+
+    Returns:
+        ``True`` if file contains video data
+
+    Raises:
+        FileNotFoundError: if mediainfo binary is needed,
+            but cannot be found
+        RuntimeError: if ``file`` is missing,
+            broken or format is not supported
+
+    Examples:
+        >>> has_video("stereo.wav")
+        False
+
+    """
+    if file_extension(file) in SNDFORMATS:
+        return False
+    else:
+        try:
+            cmd = ["mediainfo", "--Inform=Video;%Format%", file]
+            video_format = run(cmd)
+            if len(video_format) > 0:
+                return True
+            else:
+                return False
+        except FileNotFoundError:
+            raise binary_missing_error("mediainfo")
+        except subprocess.CalledProcessError:
+            raise broken_file_error(file)
+
+
 def samples(file: str) -> int:
     """Number of samples in audio file.
 
