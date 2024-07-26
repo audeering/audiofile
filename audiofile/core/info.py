@@ -205,6 +205,10 @@ def has_video(file: str) -> bool:
         False
 
     """
+    file = audeer.path(file)
+    if not os.path.exists(file):
+        raise RuntimeError(f"{file} does not exist.")
+
     if file_extension(file) in SNDFORMATS:
         return False
     else:

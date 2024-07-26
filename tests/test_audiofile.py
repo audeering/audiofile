@@ -243,6 +243,8 @@ def test_missing_file(tmpdir, ext):
         af.duration(missing_file)
     with pytest.raises(expected_error):
         af.duration(missing_file, sloppy=True)
+    with pytest.raises(expected_error):
+        af.has_video(missing_file)
     # Convert
     with pytest.raises(expected_error):
         converted_file = str(tmpdir.join("signal-converted.wav"))
