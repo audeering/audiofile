@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>duration() &mdash; Documentation</title>
+  <title>has_video() &mdash; Documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="has_video()" href="audiofile.has_video.html" />
-    <link rel="prev" title="channels()" href="audiofile.channels.html" />
+    <link rel="next" title="samples()" href="audiofile.samples.html" />
+    <link rel="prev" title="duration()" href="audiofile.duration.html" />
     
   
 
@@ -105,8 +105,8 @@
 <li class="toctree-l2"><a class="reference internal" href="audiofile.write.html">write()</a></li>
 <li class="toctree-l2"><a class="reference internal" href="audiofile.bit_depth.html">bit_depth()</a></li>
 <li class="toctree-l2"><a class="reference internal" href="audiofile.channels.html">channels()</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">duration()</a></li>
-<li class="toctree-l2"><a class="reference internal" href="audiofile.has_video.html">has_video()</a></li>
+<li class="toctree-l2"><a class="reference internal" href="audiofile.duration.html">duration()</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">has_video()</a></li>
 <li class="toctree-l2"><a class="reference internal" href="audiofile.samples.html">samples()</a></li>
 <li class="toctree-l2"><a class="reference internal" href="audiofile.sampling_rate.html">sampling_rate()</a></li>
 <li class="toctree-l2"><a class="reference internal" href="audiofile.convert_to_wav.html">convert_to_wav()</a></li>
@@ -144,7 +144,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="audiofile.html">audiofile</a> &raquo;</li>
-      <li>duration()</li>
+      <li>has_video()</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/audeering/audiofile/" class="fa fa-github"> GitHub</a>
       </li>
@@ -154,55 +154,37 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="duration">
-<h1>duration()<a class="headerlink" href="#duration" title="Permalink to this heading">¶</a></h1>
+  <div class="section" id="has-video">
+<h1>has_video()<a class="headerlink" href="#has-video" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="audiofile.duration">
-<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sloppy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/audiofile/core/info.html#duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.duration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Duration in seconds of audio file.</p>
-<p>The default behavior (<code class="docutils literal notranslate"><span class="pre">sloppy=False</span></code>)
-ensures
-the duration in seconds
-matches the one in samples.
-To achieve this it first decodes files to WAV
-if needed, e.g. MP4 files.
-If you have different decoders
-on different machines,
-results might differ.</p>
-<p>The case <code class="docutils literal notranslate"><span class="pre">sloppy=True</span></code> returns the duration
-as reported in the header of the audio file.
-This is faster,
-but might still return different results
-on different machines
-as it depends on the installed software.
-If no duration information is provided in the header
-it will fall back to <code class="docutils literal notranslate"><span class="pre">sloppy=False</span></code>.</p>
+<dt class="sig sig-object py" id="audiofile.has_video">
+<span class="sig-prename descclassname"><span class="pre">audiofile.</span></span><span class="sig-name descname"><span class="pre">has_video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/audiofile/core/info.html#has_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#audiofile.has_video" title="Permalink to this definition">¶</a></dt>
+<dd><p>If file contains video.</p>
+<p>For WAV, FLAC, MP3, or OGG files
+<code class="docutils literal notranslate"><span class="pre">False</span></code> is returned.
+All other files are probed by mediainfo.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – file name of input audio file</p></li>
-<li><p><strong>sloppy</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code> report duration
-as stored in the header</p></li>
-</ul>
+<dd class="field-odd"><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – file name of input file</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>duration in seconds of audio file</p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if file contains video data</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.12)"><strong>FileNotFoundError</strong></a> – if ffmpeg or mediainfo binary is needed,
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.12)"><strong>FileNotFoundError</strong></a> – if mediainfo binary is needed,
     but cannot be found</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.12)"><strong>RuntimeError</strong></a> – if <code class="docutils literal notranslate"><span class="pre">file</span></code> is missing,
-    broken or format is not supported</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.12)"><strong>RuntimeError</strong></a> – if <code class="docutils literal notranslate"><span class="pre">file</span></code> is missing
+    and does not end with <code class="docutils literal notranslate"><span class="pre">&quot;wav&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;flac&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;mp3&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ogg&quot;</span></code></p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">duration</span><span class="p">(</span><span class="s2">&quot;stereo.wav&quot;</span><span class="p">)</span>
-<span class="go">1.5</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">has_video</span><span class="p">(</span><span class="s2">&quot;stereo.wav&quot;</span><span class="p">)</span>
+<span class="go">False</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -217,10 +199,10 @@ as stored in the header</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="audiofile.has_video.html" class="btn btn-neutral float-right" title="has_video()" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="audiofile.samples.html" class="btn btn-neutral float-right" title="samples()" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="audiofile.channels.html" class="btn btn-neutral float-left" title="channels()" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="audiofile.duration.html" class="btn btn-neutral float-left" title="duration()" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

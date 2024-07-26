@@ -1,0 +1,6 @@
+﻿has\_video\(\)
+==============
+
+.. currentmodule:: audiofile
+
+.. autofunction:: audiofile.has_video

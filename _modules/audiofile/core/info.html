@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                v1.4.0
+                v1.5.0
               </div>
             
           
@@ -325,6 +325,47 @@
     <span class="k">return</span> <span class="n">samples</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">/</span> <span class="n">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="has_video"><a class="viewcode-back" href="../../../api/audiofile.has_video.html#audiofile.has_video">[docs]</a><span class="k">def</span> <span class="nf">has_video</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;If file contains video.</span>
+
+<span class="sd">    For WAV, FLAC, MP3, or OGG files</span>
+<span class="sd">    ``False`` is returned.</span>
+<span class="sd">    All other files are probed by mediainfo.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file: file name of input file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``True`` if file contains video data</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: if mediainfo binary is needed,</span>
+<span class="sd">            but cannot be found</span>
+<span class="sd">        RuntimeError: if ``file`` is missing</span>
+<span class="sd">            and does not end with ``&quot;wav&quot;``, ``&quot;flac&quot;``, ``&quot;mp3&quot;``, ``&quot;ogg&quot;``</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; has_video(&quot;stereo.wav&quot;)</span>
+<span class="sd">        False</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&#39; does not exist.&quot;</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">,</span> <span class="s2">&quot;--Inform=Video;</span><span class="si">%F</span><span class="s2">ormat%&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">]</span>
+            <span class="n">video_format</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">video_format</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">binary_missing_error</span><span class="p">(</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="samples"><a class="viewcode-back" href="../../../api/audiofile.samples.html#audiofile.samples">[docs]</a><span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Number of samples in audio file.</span>
 
@@ -420,7 +461,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org/en/master/">Sphinx</a> on 2024/01/30 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2024/07/26 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
