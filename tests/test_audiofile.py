@@ -211,6 +211,8 @@ def test_missing_binaries(tmpdir, hide_system_path, empty_file):
         af.duration(empty_file)
     with pytest.raises(expected_error, match="mediainfo"):
         af.duration(empty_file, sloppy=True)
+    with pytest.raises(expected_error, match="mediainfo"):
+        af.has_video(empty_file)
     with pytest.raises(expected_error, match="ffmpeg"):
         af.samples(empty_file)
     with pytest.raises(expected_error, match="mediainfo"):
@@ -245,6 +247,22 @@ def test_missing_file(tmpdir, ext):
     with pytest.raises(expected_error):
         converted_file = str(tmpdir.join("signal-converted.wav"))
         af.convert_to_wav(missing_file, converted_file)
+
+
+@pytest.mark.parametrize(
+    "file, expected_error, expected_error_message",
+    [
+        ("missing_file.bin", RuntimeError, "'missing_file.bin' does not exist"),
+        ("missing_file.mp4", RuntimeError, "'missing_file.mp4' does not exist"),
+        ("missing_file.wav", None, None),
+    ],
+)
+def test_missing_file_has_video(file, expected_error, expected_error_message):
+    if expected_error is not None:
+        with pytest.raises(expected_error, match=expected_error_message):
+            af.has_video(file)
+    else:
+        assert af.has_video(file) is False
 
 
 @pytest.mark.parametrize(
@@ -488,40 +506,40 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     if file_type in ["mp3", "ogg"]:
         bit_depth = None
     assert af.bit_depth(file) == bit_depth
+    assert af.has_video(file) is False
 
 
-def test_other_formats():
-    files = [
-        "gs-16b-1c-44100hz.opus",
-        "gs-16b-1c-8000hz.amr",
-        "gs-16b-1c-44100hz.m4a",
-        "gs-16b-1c-44100hz.aac",
-    ]
-    header_durations = [  # as given by mediainfo
-        15.839,
-        15.840000,
-        15.833,
-        None,
-    ]
-    files = [os.path.join(ASSETS_DIR, f) for f in files]
-    for file, header_duration in zip(files, header_durations):
-        signal, sampling_rate = af.read(file)
-        assert af.channels(file) == _channels(signal)
-        assert af.sampling_rate(file) == sampling_rate
-        assert af.samples(file) == _samples(signal)
+@pytest.mark.parametrize(
+    "file, header_duration, audio, video",  # header duration as given by mediainfo
+    [
+        ("gs-16b-1c-44100hz.opus", 15.839, True, False),
+        ("gs-16b-1c-8000hz.amr", 15.840000, True, False),
+        ("gs-16b-1c-44100hz.m4a", 15.833, True, False),
+        ("gs-16b-1c-44100hz.aac", None, True, False),
+        ("video.mp4", None, False, True),
+    ],
+)
+def test_other_formats(file, header_duration, audio, video):
+    path = os.path.join(ASSETS_DIR, file)
+    if audio:
+        signal, sampling_rate = af.read(path)
+        assert af.channels(path) == _channels(signal)
+        assert af.sampling_rate(path) == sampling_rate
+        assert af.samples(path) == _samples(signal)
         duration = _duration(signal, sampling_rate)
-        assert af.duration(file) == duration
+        assert af.duration(path) == duration
         if header_duration is None:
             # Here we expect samplewise precision
-            assert af.duration(file, sloppy=True) == duration
+            assert af.duration(path, sloppy=True) == duration
         else:
             # Here we expect limited precision
             # as the results differ between soxi and mediainfo
             precision = 1
-            sloppy_duration = round(af.duration(file, sloppy=True), precision)
+            sloppy_duration = round(af.duration(path, sloppy=True), precision)
             header_duration = round(header_duration, precision)
             assert sloppy_duration == header_duration
-        assert af.bit_depth(file) is None
+        assert af.bit_depth(path) is None
+    assert af.has_video(path) is video
 
 
 @pytest.mark.parametrize(

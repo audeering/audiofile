@@ -1,4 +1,6 @@
-# Non SND format audio test files
+# Test files
+
+## Non SND format audio test files
 
 This folder contains files to test file formats
 that cannot be stored with `audiofile.write()`
@@ -10,5 +12,13 @@ They are excerpts
 from "Furious Freak"
 and "Galway",
 Kevin MacLeod (incompetech.com),
-Licensed under Creative Commons:
+licensed under Creative Commons:
+[CC-BY-3.0](http://creativecommons.org/licenses/by/3.0/).
+
+## Video test files
+
+The folder contains the video file `video.mp4`,
+which is a short excerpt from "Big Bunny"
+from Blender Foundation | www.blender.org,
+licensed under Creative Commons:
 [CC-BY-3.0](http://creativecommons.org/licenses/by/3.0/).

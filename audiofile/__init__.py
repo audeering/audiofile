@@ -2,6 +2,7 @@
 from audiofile.core.info import bit_depth
 from audiofile.core.info import channels
 from audiofile.core.info import duration
+from audiofile.core.info import has_video
 from audiofile.core.info import samples
 from audiofile.core.info import sampling_rate
 from audiofile.core.io import convert_to_wav
