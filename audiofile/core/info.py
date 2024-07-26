@@ -199,21 +199,21 @@ def has_video(file: str) -> bool:
         FileNotFoundError: if mediainfo binary is needed,
             but cannot be found
         RuntimeError: if ``file`` is missing
+            and does not end with ``"wav"``, ``"flac"``, ``"mp3"``, ``"ogg"``
 
     Examples:
         >>> has_video("stereo.wav")
         False
 
     """
-    file = audeer.path(file)
-    if not os.path.exists(file):
-        raise RuntimeError(f"{file} does not exist.")
-
     if file_extension(file) in SNDFORMATS:
         return False
     else:
         try:
-            cmd = ["mediainfo", "--Inform=Video;%Format%", file]
+            path = audeer.path(file)
+            if not os.path.exists(path):
+                raise RuntimeError(f"'{file}' does not exist.")
+            cmd = ["mediainfo", "--Inform=Video;%Format%", path]
             video_format = run(cmd)
             if len(video_format) > 0:
                 return True

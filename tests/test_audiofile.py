@@ -243,12 +243,26 @@ def test_missing_file(tmpdir, ext):
         af.duration(missing_file)
     with pytest.raises(expected_error):
         af.duration(missing_file, sloppy=True)
-    with pytest.raises(expected_error):
-        af.has_video(missing_file)
     # Convert
     with pytest.raises(expected_error):
         converted_file = str(tmpdir.join("signal-converted.wav"))
         af.convert_to_wav(missing_file, converted_file)
+
+
+@pytest.mark.parametrize(
+    "file, expected_error, expected_error_message",
+    [
+        ("missing_file.bin", RuntimeError, "'missing_file.bin' does not exist"),
+        ("missing_file.mp4", RuntimeError, "'missing_file.mp4' does not exist"),
+        ("missing_file.wav", None, None),
+    ],
+)
+def test_missing_file_has_video(file, expected_error, expected_error_message):
+    if expected_error is not None:
+        with pytest.raises(expected_error, match=expected_error_message):
+            af.has_video(file)
+    else:
+        assert af.has_video(file) is False
 
 
 @pytest.mark.parametrize(
