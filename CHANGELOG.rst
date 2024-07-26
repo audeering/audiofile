@@ -14,7 +14,7 @@ Version 1.5.0 (2024-07-26)
   which probes with ``mediainfo``
   if a file contains video.
   Returns ``False`` without probing
-  for WAV, FLAC, MP£, and OGG files
+  for WAV, FLAC, MP3, and OGG files
 
 
 Version 1.4.0 (2024-01-30)
