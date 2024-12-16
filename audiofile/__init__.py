@@ -1,4 +1,5 @@
 """Read, write, and get information about audio files."""
+
 from audiofile.core.info import bit_depth
 from audiofile.core.info import channels
 from audiofile.core.info import duration
