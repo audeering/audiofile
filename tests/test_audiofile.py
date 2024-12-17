@@ -512,7 +512,7 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
 @pytest.mark.parametrize(
     "file, header_duration, audio, video",  # header duration as given by mediainfo
     [
-        ("gs-16b-1c-44100hz.opus", 15.839, True, False),
+        ("gs-16b-1c-16000hz.opus", 15.839, True, False),
         ("gs-16b-1c-8000hz.amr", 15.840000, True, False),
         ("gs-16b-1c-44100hz.m4a", 15.833, True, False),
         ("gs-16b-1c-44100hz.aac", None, True, False),
