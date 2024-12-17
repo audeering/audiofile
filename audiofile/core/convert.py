@@ -30,7 +30,7 @@ def convert(
         try:
             # Convert to WAV file with ffmpeg
             run_ffmpeg(infile, outfile, offset, duration, sampling_rate)
-        except FileNotFoundError:  # pragma: no cover
-            raise binary_missing_error("ffmpeg")
-        except subprocess.CalledProcessError:  # pragma: no cover
-            raise broken_file_error(infile)
+        except FileNotFoundError as e:  # pragma: no cover
+            raise binary_missing_error("ffmpeg") from e
+        except subprocess.CalledProcessError as e:  # pragma: no cover
+            raise broken_file_error(infile) from e
