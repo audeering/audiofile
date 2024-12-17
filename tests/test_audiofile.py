@@ -202,24 +202,24 @@ def test_empty_file(tmpdir, convert, empty_file):
 def test_missing_binaries(tmpdir, hide_system_path, empty_file):
     expected_error = FileNotFoundError
     # Reading file
-    with pytest.raises(expected_error, match="ffmpeg"):
+    with pytest.raises(expected_error, match="mediainfo"):
         signal, sampling_rate = af.read(empty_file)
     # Metadata
     with pytest.raises(expected_error, match="mediainfo"):
         af.channels(empty_file)
-    with pytest.raises(expected_error, match="ffmpeg"):
+    with pytest.raises(expected_error, match="mediainfo"):
         af.duration(empty_file)
     with pytest.raises(expected_error, match="mediainfo"):
         af.duration(empty_file, sloppy=True)
     with pytest.raises(expected_error, match="mediainfo"):
         af.has_video(empty_file)
-    with pytest.raises(expected_error, match="ffmpeg"):
+    with pytest.raises(expected_error, match="mediainfo"):
         af.samples(empty_file)
     with pytest.raises(expected_error, match="mediainfo"):
         af.sampling_rate(empty_file)
 
     # Convert
-    with pytest.raises(expected_error, match="ffmpeg"):
+    with pytest.raises(expected_error, match="mediainfo"):
         converted_file = str(tmpdir.join("signal-converted.wav"))
         af.convert_to_wav(empty_file, converted_file)
 
@@ -1243,7 +1243,7 @@ def test_read_duration_and_offset_rounding(
     # when reading with sox or ffmpeg
 
     # soundfile
-    signal, _ = af.read(audio_file, offset=offset, duration=duration)
+    signal, sampling_rate = af.read(audio_file, offset=offset, duration=duration)
     np.testing.assert_allclose(
         signal,
         np.array(expected, dtype=np.float32),
@@ -1259,7 +1259,7 @@ def test_read_duration_and_offset_rounding(
     # sox
     convert_file = str(tmpdir.join("signal-sox.wav"))
     try:
-        af.core.utils.run_sox(audio_file, convert_file, offset, duration)
+        af.core.utils.run_sox(audio_file, convert_file, offset, duration, sampling_rate)
         signal, _ = af.read(convert_file)
         np.testing.assert_allclose(
             signal,
@@ -1272,7 +1272,7 @@ def test_read_duration_and_offset_rounding(
 
     # ffmpeg
     convert_file = str(tmpdir.join("signal-ffmpeg.wav"))
-    af.core.utils.run_ffmpeg(audio_file, convert_file, offset, duration)
+    af.core.utils.run_ffmpeg(audio_file, convert_file, offset, duration, sampling_rate)
     signal, _ = af.read(convert_file)
     np.testing.assert_allclose(
         signal,
