@@ -386,6 +386,11 @@ def read(
             if duration is not None and duration != 0:
                 duration /= sampling_rate
             if sampling_rate is None:
+                # Infer sampling rate using mediainfo before conversion,
+                # as ffmpeg does ignore the original sampling rate for opus files,
+                # see:
+                # * https://trac.ffmpeg.org/ticket/5240
+                # * https://github.com/audeering/audiofile/issues/157
                 from audiofile.core.info import sampling_rate as get_sampling_rate
 
                 sampling_rate = get_sampling_rate(file)
