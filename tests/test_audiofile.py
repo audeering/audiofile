@@ -508,6 +508,15 @@ def test_file_type(tmpdir, file_type, magnitude, sampling_rate, channels):
     assert af.bit_depth(file) == bit_depth
     assert af.has_video(file) is False
 
+    # Test out-of-bounds offset argument,
+    # see https://github.com/audeering/audiofile/issues/88
+    offset = 2.0
+    sig, fs = af.read(mp3_file, offset=offset, always_2d=True)
+    np.testing.assert_array_equal(
+        sig,
+        np.zeros((channels, 0), dtype='float32'),
+    )
+
 
 @pytest.mark.parametrize(
     "file, header_duration, audio, video",  # header duration as given by mediainfo
