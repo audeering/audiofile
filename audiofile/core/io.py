@@ -254,6 +254,7 @@ def read(
 
     """  # noqa: E501
     file = audeer.safe_path(file)
+    sampling_rate = None
 
     # Parse offset and duration values
     if (
@@ -384,7 +385,16 @@ def read(
                 offset /= sampling_rate
             if duration is not None and duration != 0:
                 duration /= sampling_rate
-            convert(file, tmpfile, offset, duration)
+            if sampling_rate is None:
+                # Infer sampling rate using mediainfo before conversion,
+                # as ffmpeg does ignore the original sampling rate for opus files,
+                # see:
+                # * https://trac.ffmpeg.org/ticket/5240
+                # * https://github.com/audeering/audiofile/issues/157
+                from audiofile.core.info import sampling_rate as get_sampling_rate
+
+                sampling_rate = get_sampling_rate(file)
+            convert(file, tmpfile, offset, duration, sampling_rate)
             signal, sampling_rate = soundfile.read(
                 tmpfile,
                 dtype=dtype,

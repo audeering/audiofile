@@ -15,6 +15,13 @@ Kevin MacLeod (incompetech.com),
 licensed under Creative Commons:
 [CC-BY-3.0](http://creativecommons.org/licenses/by/3.0/).
 
+We converted the file `gs-16b-1c-44100hz.opus`
+(which was stored wrongly with 48000 Hz)
+to `gs-16b-1c-16000hz.opus` using
+```bash
+ffmpeg -y -i gs-16b-1c-44100hz.opus -ac 1 -ar 16000 gs-16b-1c-16000hz-fixed.opus
+```
+
 ## Video test files
 
 The folder contains the video file `video.mp4`,
