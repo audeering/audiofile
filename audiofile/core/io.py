@@ -377,9 +377,6 @@ def read(
         # the returned magnitude
         # (https://github.com/librosa/librosa/issues/811).
         #
-        # It might be the case that MP3 files will be supported by soundfile in
-        # the future as well. For a discussion on MP3 support in the underlying
-        # libsndfile see https://github.com/erikd/libsndfile/issues/258.
         with tempfile.TemporaryDirectory(prefix="audiofile") as tmpdir:
             tmpfile = os.path.join(tmpdir, "tmp.wav")
             # offset and duration have to be given in seconds
