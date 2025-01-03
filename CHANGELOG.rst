@@ -7,6 +7,18 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.5.1 (2025-01-03)
+--------------------------
+
+* Added: support for Python 3.13
+* Changed: when converting
+  a non wav, flac, ogg, or mp3 file to wav,
+  its sampling rate is first inspected
+  and then enforced during conversion
+* Fixed: reading of opus files with their correct sampling rate
+* Removed: support for Python 3.8
+
+
 Version 1.5.0 (2024-07-26)
 --------------------------
 
