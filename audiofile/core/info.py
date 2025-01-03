@@ -1,9 +1,10 @@
 """Read, write, and get information about audio files."""
 
+from __future__ import annotations
+
 import os
 import subprocess
 import tempfile
-import typing
 
 import soundfile
 
@@ -17,7 +18,7 @@ from audiofile.core.utils import file_extension
 from audiofile.core.utils import run
 
 
-def bit_depth(file: str) -> typing.Optional[int]:
+def bit_depth(file: str) -> int | None:
     r"""Bit depth of audio file.
 
     For lossy audio files,
