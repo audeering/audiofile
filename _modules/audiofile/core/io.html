@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                v1.5.0
+                v1.5.1
               </div>
             
           
@@ -141,9 +141,10 @@
            <div itemprop="articleBody">
             
   <h1>Source code for audiofile.core.io</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">typing</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">soundfile</span>
@@ -161,8 +162,8 @@
 <div class="viewcode-block" id="convert_to_wav"><a class="viewcode-back" href="../../../api/audiofile.convert_to_wav.html#audiofile.convert_to_wav">[docs]</a><span class="k">def</span> <span class="nf">convert_to_wav</span><span class="p">(</span>
     <span class="n">infile</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">outfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">offset</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">duration</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">bit_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
     <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -265,12 +266,12 @@
 
 <div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../api/audiofile.read.html#audiofile.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">duration</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">offset</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">always_2d</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read audio file.</span>
 
 <span class="sd">    It uses :func:`soundfile.read` for WAV, FLAC, MP3, and OGG files.</span>
@@ -396,6 +397,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
     <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">sampling_rate</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># Parse offset and duration values</span>
     <span class="k">if</span> <span class="p">(</span>
@@ -519,9 +521,6 @@
         <span class="c1"># the returned magnitude</span>
         <span class="c1"># (https://github.com/librosa/librosa/issues/811).</span>
         <span class="c1">#</span>
-        <span class="c1"># It might be the case that MP3 files will be supported by soundfile in</span>
-        <span class="c1"># the future as well. For a discussion on MP3 support in the underlying</span>
-        <span class="c1"># libsndfile see https://github.com/erikd/libsndfile/issues/258.</span>
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;audiofile&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
             <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s2">&quot;tmp.wav&quot;</span><span class="p">)</span>
             <span class="c1"># offset and duration have to be given in seconds</span>
@@ -529,7 +528,16 @@
                 <span class="n">offset</span> <span class="o">/=</span> <span class="n">sampling_rate</span>
             <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">duration</span> <span class="o">/=</span> <span class="n">sampling_rate</span>
-            <span class="n">convert</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">tmpfile</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sampling_rate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Infer sampling rate using mediainfo before conversion,</span>
+                <span class="c1"># as ffmpeg does ignore the original sampling rate for opus files,</span>
+                <span class="c1"># see:</span>
+                <span class="c1"># * https://trac.ffmpeg.org/ticket/5240</span>
+                <span class="c1"># * https://github.com/audeering/audiofile/issues/157</span>
+                <span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">sampling_rate</span> <span class="k">as</span> <span class="n">get_sampling_rate</span>
+
+                <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">get_sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="n">convert</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">tmpfile</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">)</span>
             <span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
                 <span class="n">tmpfile</span><span class="p">,</span>
                 <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
@@ -658,7 +666,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2024/07/26 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2025/01/03 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -666,7 +674,7 @@
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2024 audEERING GmbH
+      &copy; 2018-2025 audEERING GmbH
     </p>
   </div> 
 

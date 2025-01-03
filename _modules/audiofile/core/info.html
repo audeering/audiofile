@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                v1.5.0
+                v1.5.1
               </div>
             
           
@@ -142,10 +142,12 @@
             
   <h1>Source code for audiofile.core.info</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Read, write, and get information about audio files.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">typing</span>
 
 <span class="kn">import</span> <span class="nn">soundfile</span>
 
@@ -159,7 +161,7 @@
 <span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">run</span>
 
 
-<div class="viewcode-block" id="bit_depth"><a class="viewcode-back" href="../../../api/audiofile.bit_depth.html#audiofile.bit_depth">[docs]</a><span class="k">def</span> <span class="nf">bit_depth</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<div class="viewcode-block" id="bit_depth"><a class="viewcode-back" href="../../../api/audiofile.bit_depth.html#audiofile.bit_depth">[docs]</a><span class="k">def</span> <span class="nf">bit_depth</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bit depth of audio file.</span>
 
 <span class="sd">    For lossy audio files,</span>
@@ -461,7 +463,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2024/07/26 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2025/01/03 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -469,7 +471,7 @@
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2024 audEERING GmbH
+      &copy; 2018-2025 audEERING GmbH
     </p>
   </div> 
 
