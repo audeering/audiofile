@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import os
 import subprocess
-import typing
 
 import numpy as np
 
@@ -57,8 +58,8 @@ def broken_file_error(file: str) -> Exception:
 
 
 def duration_in_seconds(
-    duration: typing.Union[float, int, str, np.timedelta64],
-    sampling_rate: typing.Union[float, int],
+    duration: float | int | str | np.timedelta64,
+    sampling_rate: float | int,
 ) -> np.floating:
     r"""Duration in seconds.
 

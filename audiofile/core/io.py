@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import os
 import tempfile
-import typing
 
 import numpy as np
 import soundfile
@@ -18,8 +19,8 @@ from audiofile.core.utils import file_extension
 def convert_to_wav(
     infile: str,
     outfile: str = None,
-    offset: typing.Union[float, int, str, np.timedelta64] = None,
-    duration: typing.Union[float, int, str, np.timedelta64] = None,
+    offset: float | int | str | np.timedelta64 = None,
+    duration: float | int | str | np.timedelta64 = None,
     bit_depth: int = 16,
     normalize: bool = False,
     overwrite: bool = False,
@@ -122,12 +123,12 @@ def convert_to_wav(
 
 def read(
     file: str,
-    duration: typing.Union[float, int, str, np.timedelta64] = None,
-    offset: typing.Union[float, int, str, np.timedelta64] = None,
+    duration: float | int | str | np.timedelta64 = None,
+    offset: float | int | str | np.timedelta64 = None,
     always_2d: bool = False,
     dtype: str = "float32",
     **kwargs,
-) -> typing.Tuple[np.array, int]:
+) -> tuple[np.array, int]:
     """Read audio file.
 
     It uses :func:`soundfile.read` for WAV, FLAC, MP3, and OGG files.
