@@ -46,6 +46,26 @@ repository = 'https://github.com/audeering/audiofile/'
 documentation = 'https://audeering.github.io/audiofile/'
 
 
+# ===== Dependency groups =================================================
+[dependency-groups]
+dev = [
+    'audplot',
+    'audresample',
+    'ipykernel',
+    'jupyter-sphinx',
+    'pandas',
+    'pytest',
+    'pytest-cov',
+    'pytest-doctestplus',
+    'sox',
+    'sphinx',
+    'sphinx-audeering-theme >=1.2.1',
+    'sphinx-autodoc-typehints',
+    'sphinx-copybutton',
+    'toml',
+]
+
+
 # ===== BUILD-SYSTEM ======================================================
 #
 # Requirements for building the Python package

@@ -37,6 +37,9 @@ jobs:
     - name: Activate Python virtual environment
       run: micromamba activate venv
 
+    - name: Install uv
+      uses: astral-sh/setup-uv@3259c6206f993105e3a61b142c2d97bf4b9ef83d
+
     - name: Install sox with Micromamba
       run: micromamba install sox
       if: matrix.sox == 'sox'
@@ -63,20 +66,16 @@ jobs:
       run: choco install ffmpeg mediainfo-cli
       if: matrix.os == 'windows-latest'
 
-    - name: Install package
-      run: |
-        pip install -r requirements.txt
+    - name: Sync Python environment
+      run: uv sync
 
     # TESTS
-    - name: Install test requirements
-      run: pip install -r tests/requirements.txt
-
     - name: Show sox version
       run: |
         if $(which sox >/dev/null); then sox --version; else echo "No sox installed"; fi
 
     - name: Test with pytest
-      run: python -m pytest
+      run: uv run pytest
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
