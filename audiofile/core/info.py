@@ -1,7 +1,5 @@
 """Read, write, and get information about audio files."""
 
-from __future__ import annotations
-
 import os
 import subprocess
 import tempfile
