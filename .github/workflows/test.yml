@@ -38,7 +38,7 @@ jobs:
       run: micromamba activate venv
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v5
+      uses: astral-sh/setup-uv@3259c6206f993105e3a61b142c2d97bf4b9ef83d
 
     - name: Install sox with Micromamba
       run: micromamba install sox
