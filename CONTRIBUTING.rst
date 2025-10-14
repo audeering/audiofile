@@ -22,11 +22,7 @@ you should get the newest development version from Github_::
 
    git clone https://github.com/audeering/audiofile/
    cd audiofile
-   # Create virtual environment for this project
-   # e.g.
-   # virtualenv --python="python3"  $HOME/.envs/audiofile
-   # source $HOME/.envs/audiofile/bin/activate
-   pip install -r requirements.txt
+   uv sync
 
 
 This way,
@@ -50,25 +46,23 @@ are defined in :file:`pyproject.toml`.
 The checks are executed in the CI using `pre-commit`_.
 You can enable those checks locally by executing::
 
-    pip install pre-commit  # consider system wide installation
-    pre-commit install
-    pre-commit run --all-files
+    uvx pre-commit install
+    uvx pre-commit run --all-files
 
 Afterwards ruff_ and codespell_ are executed
 every time you create a commit.
 
-You can also install ruff_ and codespell_
-and call it directly::
+Alternatively,
+you can run ruff_ and codespell_ directly using ``uvx``::
 
-    pip install ruff codespell  # consider system wide installation
-    ruff check --fix .  # lint all Python files, and fix any fixable errors
-    ruff format .  # format code of all Python files
-    codespell
+    uvx ruff check --fix .  # lint all Python files, and fix any fixable errors
+    uvx ruff format .  # format code of all Python files
+    uvx codespell
 
 It can be restricted to specific folders::
 
-    ruff check audfoo/ tests/
-    codespell audfoo/ tests/
+    uvx ruff check audiofile/ tests/
+    uvx codespell audiofile/ tests/
 
 
 .. _codespell: https://github.com/codespell-project/codespell/
@@ -81,21 +75,16 @@ Building the Documentation
 --------------------------
 
 If you make changes to the documentation,
-you can re-create the HTML pages using Sphinx_.
-You can install it and a few other necessary packages with::
+you can re-create the HTML pages using Sphinx_::
 
-   pip install -r docs/requirements.txt
-
-To create the HTML pages, use::
-
-   python -m sphinx docs/ build/sphinx/html -b html
+    uv run python -m sphinx docs/ build/html -b html
 
 The generated files will be available
-in the directory :file:`build/sphinx/html/`.
+in the directory :file:`build/html/`.
 
 It is also possible to automatically check if all links are still valid::
 
-   python -m sphinx docs/ build/sphinx/html -b linkcheck
+    uv run python -m sphinx docs/ build/html -b linkcheck
 
 .. _Sphinx: http://sphinx-doc.org
 
@@ -103,14 +92,9 @@ It is also possible to automatically check if all links are still valid::
 Running the Tests
 -----------------
 
-You'll need pytest_ for that.
-It can be installed with::
+You can run tests with pytest_::
 
-   pip install -r tests/requirements.txt
-
-To execute the tests, simply run::
-
-   python -m pytest
+    uv run pytest
 
 .. _pytest: https://pytest.org
 

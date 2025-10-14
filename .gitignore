@@ -7,3 +7,4 @@ dist/
 coverage.xml
 docs/benchmark/AUDIO/
 docs/api/
+uv.lock
