@@ -245,6 +245,7 @@ def test_missing_file(tmpdir, ext):
         af.duration(missing_file, sloppy=True)
     with pytest.raises(expected_error):
         af.samples(missing_file)
+    # bit_depth is only applicable to 'wav' and 'flac' formats
     if ext in ["wav", "flac"]:
         with pytest.raises(expected_error):
             af.bit_depth(missing_file)
