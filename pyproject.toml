@@ -9,7 +9,8 @@ authors = [
 ]
 description = 'Fast reading of all kind of audio files'
 readme = 'README.rst'
-license = {file = 'LICENSE'}
+license = 'MIT'
+license-files = ['LICENSE']
 keywords = [
     'audio',
     'tools',
@@ -18,7 +19,6 @@ classifiers = [
     'Development Status :: 5 - Production/Stable',
     'Intended Audience :: Science/Research',
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: MIT License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
