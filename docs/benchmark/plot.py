@@ -105,5 +105,5 @@ for package in ["read", "info"]:
             plt.title(f"Access metadata, average over {number_of_files} files")
         else:
             plt.title(f"Read file, average over {number_of_files} files")
-        g.savefig(f'results/benchmark_{"-".join(exts)}_{package}.png')
+        g.savefig(f"results/benchmark_{'-'.join(exts)}_{package}.png")
         plt.close()

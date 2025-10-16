@@ -1308,6 +1308,6 @@ def test_write_errors():
     )
     with pytest.raises(RuntimeError, match=expected_error):
         write_and_read("test.ogg", np.zeros((256, 100)), sampling_rate)
-    expected_error = "The maximum number of allowed channels " "for 'wav' is 65535."
+    expected_error = "The maximum number of allowed channels for 'wav' is 65535."
     with pytest.raises(RuntimeError, match=expected_error):
         write_and_read("test.wav", np.zeros((65536, 100)), sampling_rate)

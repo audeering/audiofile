@@ -484,7 +484,7 @@ def write(
         if bit_depth not in bit_depths:
             raise RuntimeError(
                 f'"bit_depth" has to be one of '
-                f'{", ".join([str(b) for b in bit_depths])}.'
+                f"{', '.join([str(b) for b in bit_depths])}."
             )
         subtype = depth_mapping[bit_depth]
     else:
