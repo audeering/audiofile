@@ -38,7 +38,7 @@ to ensure that duration and number of samples match.
 .. _mediainfo: https://mediaarea.net/en/MediaInfo/
 .. _usage: https://audeering.github.io/audiofile/usage.html
 .. _reading speed: https://audeering.github.io/audiofile/benchmark.html
-.. _sox: http://sox.sourceforge.net/
+.. _sox: https://sourceforge.net/projects/sox/
 .. _virtualenv: https://virtualenv.pypa.io/
 .. _soundfile: https://python-soundfile.readthedocs.io/
 
