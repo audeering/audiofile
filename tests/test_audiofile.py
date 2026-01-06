@@ -1,3 +1,4 @@
+import io
 import os
 import re
 
@@ -1385,8 +1386,6 @@ class TestBytesIO:
 
     def test_read_bytesio(self, wav_bytes):
         """Test reading audio from BytesIO."""
-        import io
-
         audio_bytes, expected_signal, expected_sr = wav_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1399,8 +1398,6 @@ class TestBytesIO:
 
     def test_read_bytesio_flac(self, flac_bytes):
         """Test reading FLAC from BytesIO."""
-        import io
-
         audio_bytes, expected_signal, expected_sr = flac_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1412,8 +1409,6 @@ class TestBytesIO:
 
     def test_read_bytesio_mp3(self, mp3_bytes):
         """Test reading MP3 from BytesIO."""
-        import io
-
         audio_bytes, _, expected_sr = mp3_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1425,8 +1420,6 @@ class TestBytesIO:
 
     def test_read_bytesio_ogg(self, ogg_bytes):
         """Test reading OGG from BytesIO."""
-        import io
-
         audio_bytes, _, expected_sr = ogg_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1438,8 +1431,6 @@ class TestBytesIO:
 
     def test_read_bytesio_mp3_always_2d(self, mp3_bytes):
         """Test reading MP3 from BytesIO with always_2d=True."""
-        import io
-
         audio_bytes, _, expected_sr = mp3_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1451,8 +1442,6 @@ class TestBytesIO:
 
     def test_read_bytesio_ogg_always_2d(self, ogg_bytes):
         """Test reading OGG from BytesIO with always_2d=True."""
-        import io
-
         audio_bytes, _, expected_sr = ogg_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1464,8 +1453,6 @@ class TestBytesIO:
 
     def test_read_bytesio_mp3_with_offset_duration(self, mp3_bytes):
         """Test reading MP3 from BytesIO with offset and duration."""
-        import io
-
         audio_bytes, _, expected_sr = mp3_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1479,8 +1466,6 @@ class TestBytesIO:
 
     def test_read_bytesio_ogg_with_offset_duration(self, ogg_bytes):
         """Test reading OGG from BytesIO with offset and duration."""
-        import io
-
         audio_bytes, _, expected_sr = ogg_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1494,8 +1479,6 @@ class TestBytesIO:
 
     def test_read_bytesio_always_2d(self, flac_bytes):
         """Test reading from BytesIO with always_2d=True."""
-        import io
-
         audio_bytes, _, expected_sr = flac_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1507,8 +1490,6 @@ class TestBytesIO:
 
     def test_read_bytesio_with_offset_duration(self, wav_bytes):
         """Test reading from BytesIO with offset and duration."""
-        import io
-
         audio_bytes, expected_signal, expected_sr = wav_bytes
         offset = 0.1
         duration = 0.2
@@ -1522,8 +1503,6 @@ class TestBytesIO:
 
     def test_read_bytesio_reusable(self, wav_bytes):
         """Test that BytesIO can be reused after reading."""
-        import io
-
         audio_bytes, expected_signal, expected_sr = wav_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1537,8 +1516,6 @@ class TestBytesIO:
 
     def test_channels_bytesio(self, wav_bytes):
         """Test getting channels from BytesIO."""
-        import io
-
         audio_bytes, expected_signal, _ = wav_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1548,8 +1525,6 @@ class TestBytesIO:
 
     def test_duration_bytesio(self, wav_bytes):
         """Test getting duration from BytesIO."""
-        import io
-
         audio_bytes, expected_signal, expected_sr = wav_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1560,8 +1535,6 @@ class TestBytesIO:
 
     def test_sampling_rate_bytesio(self, wav_bytes):
         """Test getting sampling rate from BytesIO."""
-        import io
-
         audio_bytes, _, expected_sr = wav_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1571,8 +1544,6 @@ class TestBytesIO:
 
     def test_samples_bytesio(self, wav_bytes):
         """Test getting samples from BytesIO."""
-        import io
-
         audio_bytes, expected_signal, _ = wav_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1582,8 +1553,6 @@ class TestBytesIO:
 
     def test_bit_depth_bytesio(self, wav_bytes):
         """Test getting bit depth from BytesIO."""
-        import io
-
         audio_bytes, _, _ = wav_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1593,8 +1562,6 @@ class TestBytesIO:
 
     def test_bytesio_info_reusable(self, wav_bytes):
         """Test that BytesIO can be reused after info calls."""
-        import io
-
         audio_bytes, expected_signal, expected_sr = wav_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1613,8 +1580,6 @@ class TestBytesIO:
 
     def test_bit_depth_bytesio_flac(self, flac_bytes):
         """Test getting bit depth from FLAC BytesIO."""
-        import io
-
         audio_bytes, _, _ = flac_bytes
         buffer = io.BytesIO(audio_bytes)
 
@@ -1624,8 +1589,6 @@ class TestBytesIO:
 
     def test_bytesio_with_name_attribute(self, tmpdir):
         """Test BytesIO with name attribute for format detection."""
-        import io
-
         sampling_rate = 8000
         signal = sine(duration=0.1, sampling_rate=sampling_rate, channels=1)
         file = str(tmpdir.join("test.wav"))
@@ -1645,8 +1608,6 @@ class TestBytesIO:
 
     def test_bytesio_unsupported_format_error(self, wav_bytes):
         """Test error when BytesIO has unsupported format extension."""
-        import io
-
         audio_bytes, _, _ = wav_bytes
 
         # Create a BytesIO-like object with an unsupported format extension
@@ -1671,8 +1632,6 @@ class TestBytesIO:
 
     def test_bytesio_invalid_audio_data_error(self):
         """Test error when BytesIO contains invalid/non-audio data."""
-        import io
-
         # Create a bare BytesIO with random non-audio bytes
         buffer = io.BytesIO(b"This is not audio data at all")
 
