@@ -6,8 +6,8 @@ mkdir -p results
 ## now loop through the above array
 for i in "${exts[@]}"
 do
-    python benchmark_read.py --ext "$i"
-    python benchmark_info.py --ext "$i"
+    uv run --python 3.12 benchmark_read.py --ext "$i"
+    uv run --python 3.12 benchmark_info.py --ext "$i"
 done
 
-python plot.py
+uv run --python 3.12 plot.py
