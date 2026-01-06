@@ -125,7 +125,7 @@ But it can be easily achieved with :mod:`audresample`.
 
 .. _soundfile: https://python-soundfile.readthedocs.io/
 .. _ffmpeg: https://www.ffmpeg.org/
-.. _sox: http://sox.sourceforge.net/
+.. _sox: https://sourceforge.net/projects/sox/
 .. _mediainfo: https://mediaarea.net/en/MediaInfo/
 
 
