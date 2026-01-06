@@ -56,7 +56,7 @@ def _sf_info(file, file_like):
     return info
 
 
-def _ensure_soundfile_supported(file_like, file_ext):
+def _soundfile_supported(file_like, file_ext):
     """Check if file format is supported by soundfile for file-like objects.
 
     Args:
@@ -167,7 +167,7 @@ def channels(file: str | io.IOBase) -> int:
     """
     file, file_like, file_ext = _normalize_file_input(file)
 
-    if _ensure_soundfile_supported(file_like, file_ext):
+    if _soundfile_supported(file_like, file_ext):
         info = _sf_info(file, file_like)
         return info.channels
 
@@ -233,7 +233,7 @@ def duration(file: str | io.IOBase, sloppy=False) -> float:
     """
     file, file_like, file_ext = _normalize_file_input(file)
 
-    if _ensure_soundfile_supported(file_like, file_ext):
+    if _soundfile_supported(file_like, file_ext):
         info = _sf_info(file, file_like)
         return info.duration
 
@@ -336,7 +336,7 @@ def samples(file: str | io.IOBase) -> int:
 
     file, file_like, file_ext = _normalize_file_input(file)
 
-    if _ensure_soundfile_supported(file_like, file_ext):
+    if _soundfile_supported(file_like, file_ext):
         return samples_as_int(file, file_like)
 
     # Always convert to WAV for non SNDFORMATS
@@ -369,7 +369,7 @@ def sampling_rate(file: str | io.IOBase) -> int:
     """
     file, file_like, file_ext = _normalize_file_input(file)
 
-    if _ensure_soundfile_supported(file_like, file_ext):
+    if _soundfile_supported(file_like, file_ext):
         info = _sf_info(file, file_like)
         return info.samplerate
 
