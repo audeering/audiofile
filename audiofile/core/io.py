@@ -1,3 +1,4 @@
+import io
 import os
 import tempfile
 
@@ -12,6 +13,7 @@ from audiofile.core.utils import MAX_CHANNELS
 from audiofile.core.utils import SNDFORMATS
 from audiofile.core.utils import duration_in_seconds
 from audiofile.core.utils import file_extension
+from audiofile.core.utils import is_file_like
 
 
 def convert_to_wav(
@@ -120,7 +122,7 @@ def convert_to_wav(
 
 
 def read(
-    file: str,
+    file: str | io.IOBase,
     duration: float | int | str | np.timedelta64 = None,
     offset: float | int | str | np.timedelta64 = None,
     always_2d: bool = False,
@@ -132,6 +134,11 @@ def read(
     It uses :func:`soundfile.read` for WAV, FLAC, MP3, and OGG files.
     All other audio files are
     first converted to WAV by sox or ffmpeg.
+
+    ``file`` can also be a file-like object (e.g. :class:`io.BytesIO`).
+    In this case,
+    the audio data is read directly from the object.
+    This is only supported for WAV, FLAC, MP3, and OGG data.
 
     ``duration`` and ``offset``
     support all formats
@@ -158,6 +165,7 @@ def read(
 
     Args:
         file: file name of input audio file
+            or file-like object
         duration: return only the specified duration
         offset: start reading at offset
         always_2d: if ``True`` it always returns a two-dimensional signal
@@ -253,7 +261,9 @@ def read(
             >>> audplot.waveform(signal)
 
     """  # noqa: E501
-    file = audeer.safe_path(file)
+    file_like = is_file_like(file)
+    if not file_like:
+        file = audeer.safe_path(file)
     sampling_rate = None
 
     # Parse offset and duration values
@@ -370,7 +380,10 @@ def read(
         offset = 0
 
     tmpdir = None
-    if file_extension(file) not in SNDFORMATS:
+    file_ext = file_extension(file)
+    # For file-like objects without extension,
+    # assume soundfile can handle it
+    if file_ext not in SNDFORMATS and not (file_like and file_ext is None):
         # Convert file formats not recognized by soundfile to WAV first.
         #
         # NOTE: this is faster than loading them with librosa directly.
@@ -378,6 +391,11 @@ def read(
         # the returned magnitude
         # (https://github.com/librosa/librosa/issues/811).
         #
+        if file_like:
+            raise RuntimeError(
+                "File-like objects are only supported "
+                "for WAV, FLAC, MP3, and OGG files."
+            )
         with tempfile.TemporaryDirectory(prefix="audiofile") as tmpdir:
             tmpfile = os.path.join(tmpdir, "tmp.wav")
             # offset and duration have to be given in seconds
@@ -416,6 +434,8 @@ def read(
             always_2d=always_2d,
             **kwargs,
         )
+        if file_like:
+            file.seek(0)
     # [samples, channels] => [channels, samples]
     signal = signal.T
     return signal, sampling_rate

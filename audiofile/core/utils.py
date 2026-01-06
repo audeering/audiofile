@@ -6,6 +6,22 @@ import numpy as np
 import audmath
 
 
+def is_file_like(obj) -> bool:
+    r"""Check if object is a file-like object.
+
+    A file-like object is an object with a ``read`` method,
+    such as ``io.BytesIO``.
+
+    Args:
+        obj: object to check
+
+    Returns:
+        ``True`` if object is file-like
+
+    """
+    return hasattr(obj, "read")
+
+
 MAX_CHANNELS = {
     "wav": 65535,
     "ogg": 255,
@@ -74,9 +90,19 @@ def duration_in_seconds(
 
 
 def file_extension(path):
-    """Lower case file extension."""
+    """Lower case file extension.
+
+    For file-like objects,
+    try to get the extension from the ``name`` attribute.
+    Returns ``None`` if the extension cannot be determined.
+
+    """
     # We are not using `audeer.file_extension()` here,
     # to save another call to `audeer.safe_path()`
+    if is_file_like(path):
+        if hasattr(path, "name") and path.name:
+            return os.path.splitext(path.name)[-1][1:].lower()
+        return None
     return os.path.splitext(path)[-1][1:].lower()
 
 

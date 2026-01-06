@@ -1,5 +1,6 @@
 """Read, write, and get information about audio files."""
 
+import io
 import os
 import subprocess
 import tempfile
@@ -13,10 +14,11 @@ from audiofile.core.utils import SNDFORMATS
 from audiofile.core.utils import binary_missing_error
 from audiofile.core.utils import broken_file_error
 from audiofile.core.utils import file_extension
+from audiofile.core.utils import is_file_like
 from audiofile.core.utils import run
 
 
-def bit_depth(file: str) -> int | None:
+def bit_depth(file: str | io.IOBase) -> int | None:
     r"""Bit depth of audio file.
 
     For lossy audio files,
@@ -24,6 +26,7 @@ def bit_depth(file: str) -> int | None:
 
     Args:
         file: file name of input audio file
+            or file-like object
 
     Returns:
         bit depth of audio file
@@ -37,43 +40,61 @@ def bit_depth(file: str) -> int | None:
         16
 
     """
-    file = audeer.safe_path(file)
+    file_like = is_file_like(file)
+    if not file_like:
+        file = audeer.safe_path(file)
     file_type = file_extension(file)
+
+    # For file-like objects without extension,
+    # try to determine format from soundfile.info()
+    if file_like and file_type is None:
+        info = soundfile.info(file)
+        file.seek(0)
+        file_type = info.format.lower()
+
+    wav_precision_mapping = {
+        "PCM_16": 16,
+        "PCM_24": 24,
+        "PCM_32": 32,
+        "PCM_U8": 8,
+        "FLOAT": 32,
+        "DOUBLE": 64,
+        "ULAW": 8,
+        "ALAW": 8,
+        "IMA_ADPCM": 4,
+        "MS_ADPCM": 4,
+        "GSM610": 16,  # not sure if this could be variable?
+        "G721_32": 4,  # not sure if correct
+    }
+    flac_precision_mapping = {
+        "PCM_16": 16,
+        "PCM_24": 24,
+        "PCM_32": 32,
+        "PCM_S8": 8,
+    }
+
     if file_type == "wav":
-        precision_mapping = {
-            "PCM_16": 16,
-            "PCM_24": 24,
-            "PCM_32": 32,
-            "PCM_U8": 8,
-            "FLOAT": 32,
-            "DOUBLE": 64,
-            "ULAW": 8,
-            "ALAW": 8,
-            "IMA_ADPCM": 4,
-            "MS_ADPCM": 4,
-            "GSM610": 16,  # not sure if this could be variable?
-            "G721_32": 4,  # not sure if correct
-        }
+        info = soundfile.info(file)
+        if file_like:
+            file.seek(0)
+        depth = wav_precision_mapping[info.subtype]
     elif file_type == "flac":
-        precision_mapping = {
-            "PCM_16": 16,
-            "PCM_24": 24,
-            "PCM_32": 32,
-            "PCM_S8": 8,
-        }
-    if file_extension(file) in ["wav", "flac"]:
-        depth = precision_mapping[soundfile.info(file).subtype]
+        info = soundfile.info(file)
+        if file_like:
+            file.seek(0)
+        depth = flac_precision_mapping[info.subtype]
     else:
         depth = None
 
     return depth
 
 
-def channels(file: str) -> int:
+def channels(file: str | io.IOBase) -> int:
     """Number of channels in audio file.
 
     Args:
         file: file name of input audio file
+            or file-like object
 
     Returns:
         number of channels in audio file
@@ -89,10 +110,23 @@ def channels(file: str) -> int:
         2
 
     """
-    file = audeer.safe_path(file)
-    if file_extension(file) in SNDFORMATS:
-        return soundfile.info(file).channels
+    file_like = is_file_like(file)
+    if not file_like:
+        file = audeer.safe_path(file)
+    file_ext = file_extension(file)
+    # For file-like objects without extension,
+    # assume soundfile can handle it
+    if file_ext in SNDFORMATS or (file_like and file_ext is None):
+        info = soundfile.info(file)
+        if file_like:
+            file.seek(0)
+        return info.channels
     else:
+        if file_like:
+            raise RuntimeError(
+                "File-like objects are only supported "
+                "for WAV, FLAC, MP3, and OGG files."
+            )
         try:
             cmd = ["soxi", "-c", file]
             return int(run(cmd))
@@ -111,7 +145,7 @@ def channels(file: str) -> int:
                     raise broken_file_error(file)
 
 
-def duration(file: str, sloppy=False) -> float:
+def duration(file: str | io.IOBase, sloppy=False) -> float:
     """Duration in seconds of audio file.
 
     The default behavior (``sloppy=False``)
@@ -135,6 +169,7 @@ def duration(file: str, sloppy=False) -> float:
 
     Args:
         file: file name of input audio file
+            or file-like object
         sloppy: if ``True`` report duration
             as stored in the header
 
@@ -152,9 +187,22 @@ def duration(file: str, sloppy=False) -> float:
         1.5
 
     """
-    file = audeer.safe_path(file)
-    if file_extension(file) in SNDFORMATS:
-        return soundfile.info(file).duration
+    file_like = is_file_like(file)
+    if not file_like:
+        file = audeer.safe_path(file)
+    file_ext = file_extension(file)
+    # For file-like objects without extension,
+    # assume soundfile can handle it
+    if file_ext in SNDFORMATS or (file_like and file_ext is None):
+        info = soundfile.info(file)
+        if file_like:
+            file.seek(0)
+        return info.duration
+
+    if file_like:
+        raise RuntimeError(
+            "File-like objects are only supported for WAV, FLAC, MP3, and OGG files."
+        )
 
     if sloppy:
         try:
@@ -223,7 +271,7 @@ def has_video(file: str) -> bool:
             raise binary_missing_error("mediainfo")
 
 
-def samples(file: str) -> int:
+def samples(file: str | io.IOBase) -> int:
     """Number of samples in audio file.
 
     Audio files that are not WAV, FLAC, MP3, or OGG
@@ -232,6 +280,7 @@ def samples(file: str) -> int:
 
     Args:
         file: file name of input audio file
+            or file-like object
 
     Returns:
         number of samples in audio file
@@ -248,13 +297,26 @@ def samples(file: str) -> int:
 
     """
 
-    def samples_as_int(file):
-        return int(soundfile.info(file).duration * soundfile.info(file).samplerate)
+    def samples_as_int(file, file_like=False):
+        info = soundfile.info(file)
+        if file_like:
+            file.seek(0)
+        return int(info.duration * info.samplerate)
 
-    file = audeer.safe_path(file)
-    if file_extension(file) in SNDFORMATS:
-        return samples_as_int(file)
+    file_like = is_file_like(file)
+    if not file_like:
+        file = audeer.safe_path(file)
+    file_ext = file_extension(file)
+    # For file-like objects without extension,
+    # assume soundfile can handle it
+    if file_ext in SNDFORMATS or (file_like and file_ext is None):
+        return samples_as_int(file, file_like)
     else:
+        if file_like:
+            raise RuntimeError(
+                "File-like objects are only supported "
+                "for WAV, FLAC, MP3, and OGG files."
+            )
         # Always convert to WAV for non SNDFORMATS
         with tempfile.TemporaryDirectory(prefix="audiofile") as tmpdir:
             tmpfile = os.path.join(tmpdir, "tmp.wav")
@@ -262,11 +324,12 @@ def samples(file: str) -> int:
             return samples_as_int(tmpfile)
 
 
-def sampling_rate(file: str) -> int:
+def sampling_rate(file: str | io.IOBase) -> int:
     """Sampling rate of audio file.
 
     Args:
         file: file name of input audio file
+            or file-like object
 
     Returns:
         sampling rate of audio file
@@ -282,10 +345,23 @@ def sampling_rate(file: str) -> int:
         8000
 
     """
-    file = audeer.safe_path(file)
-    if file_extension(file) in SNDFORMATS:
-        return soundfile.info(file).samplerate
+    file_like = is_file_like(file)
+    if not file_like:
+        file = audeer.safe_path(file)
+    file_ext = file_extension(file)
+    # For file-like objects without extension,
+    # assume soundfile can handle it
+    if file_ext in SNDFORMATS or (file_like and file_ext is None):
+        info = soundfile.info(file)
+        if file_like:
+            file.seek(0)
+        return info.samplerate
     else:
+        if file_like:
+            raise RuntimeError(
+                "File-like objects are only supported "
+                "for WAV, FLAC, MP3, and OGG files."
+            )
         try:
             cmd = ["soxi", "-r", file]
             return int(run(cmd))
