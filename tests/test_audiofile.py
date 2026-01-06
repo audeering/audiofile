@@ -1566,6 +1566,7 @@ class TestBytesIO:
         buffer = io.BytesIO(audio_bytes)
 
         # Call info functions
+        # Call info functions
         _ = af.channels(buffer)
         _ = af.duration(buffer)
         _ = af.sampling_rate(buffer)
