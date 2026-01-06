@@ -7,19 +7,19 @@ import audmath
 
 
 def is_file_like(obj) -> bool:
-    r"""Check if object is a file-like object.
+    r"""Check if object is a seekable file-like object.
 
-    A file-like object is an object with a ``read`` method,
+    A file-like object is an object with ``read`` and ``seek`` methods,
     such as ``io.BytesIO``.
 
     Args:
         obj: object to check
 
     Returns:
-        ``True`` if object is file-like
+        ``True`` if object is a seekable file-like object
 
     """
-    return hasattr(obj, "read")
+    return hasattr(obj, "read") and hasattr(obj, "seek")
 
 
 MAX_CHANNELS = {
@@ -32,6 +32,11 @@ r"""Maximum number of channels per format."""
 
 SNDFORMATS = ["wav", "flac", "mp3", "ogg"]
 r"""File formats handled by soundfile"""
+
+FILE_LIKE_UNSUPPORTED_ERROR = (
+    "File-like objects are only supported for WAV, FLAC, MP3, and OGG files."
+)
+r"""Error message for unsupported file-like formats."""
 
 
 def binary_missing_error(binary: str) -> Exception:

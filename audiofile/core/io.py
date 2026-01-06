@@ -9,6 +9,7 @@ import audeer
 import audmath
 
 from audiofile.core.convert import convert
+from audiofile.core.utils import FILE_LIKE_UNSUPPORTED_ERROR
 from audiofile.core.utils import MAX_CHANNELS
 from audiofile.core.utils import SNDFORMATS
 from audiofile.core.utils import duration_in_seconds
@@ -392,10 +393,7 @@ def read(
         # (https://github.com/librosa/librosa/issues/811).
         #
         if file_like:
-            raise RuntimeError(
-                "File-like objects are only supported "
-                "for WAV, FLAC, MP3, and OGG files."
-            )
+            raise RuntimeError(FILE_LIKE_UNSUPPORTED_ERROR)
         with tempfile.TemporaryDirectory(prefix="audiofile") as tmpdir:
             tmpfile = os.path.join(tmpdir, "tmp.wav")
             # offset and duration have to be given in seconds

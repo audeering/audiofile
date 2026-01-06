@@ -1353,6 +1353,36 @@ class TestBytesIO:
             audio_bytes = f.read()
         return audio_bytes, signal, sampling_rate
 
+    @pytest.fixture
+    def mp3_bytes(self, tmpdir):
+        """Create MP3 audio data as bytes."""
+        sampling_rate = 8000
+        signal = sine(
+            duration=0.5,
+            sampling_rate=sampling_rate,
+            channels=1,
+        )
+        file = str(tmpdir.join("test.mp3"))
+        af.write(file, signal, sampling_rate)
+        with open(file, "rb") as f:
+            audio_bytes = f.read()
+        return audio_bytes, signal, sampling_rate
+
+    @pytest.fixture
+    def ogg_bytes(self, tmpdir):
+        """Create OGG audio data as bytes."""
+        sampling_rate = 8000
+        signal = sine(
+            duration=0.5,
+            sampling_rate=sampling_rate,
+            channels=1,
+        )
+        file = str(tmpdir.join("test.ogg"))
+        af.write(file, signal, sampling_rate)
+        with open(file, "rb") as f:
+            audio_bytes = f.read()
+        return audio_bytes, signal, sampling_rate
+
     def test_read_bytesio(self, wav_bytes):
         """Test reading audio from BytesIO."""
         import io
@@ -1379,6 +1409,88 @@ class TestBytesIO:
         assert sampling_rate == expected_sr
         # FLAC is lossless but has quantization
         np.testing.assert_allclose(signal, expected_signal, atol=1e-4)
+
+    def test_read_bytesio_mp3(self, mp3_bytes):
+        """Test reading MP3 from BytesIO."""
+        import io
+
+        audio_bytes, _, expected_sr = mp3_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer)
+
+        assert sampling_rate == expected_sr
+        # MP3 is lossy, just check we got audio data
+        assert signal.shape[0] > 0
+
+    def test_read_bytesio_ogg(self, ogg_bytes):
+        """Test reading OGG from BytesIO."""
+        import io
+
+        audio_bytes, _, expected_sr = ogg_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer)
+
+        assert sampling_rate == expected_sr
+        # OGG is lossy, just check we got audio data
+        assert signal.shape[0] > 0
+
+    def test_read_bytesio_mp3_always_2d(self, mp3_bytes):
+        """Test reading MP3 from BytesIO with always_2d=True."""
+        import io
+
+        audio_bytes, _, expected_sr = mp3_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer, always_2d=True)
+
+        assert sampling_rate == expected_sr
+        assert signal.ndim == 2
+        assert signal.shape[1] > 0
+
+    def test_read_bytesio_ogg_always_2d(self, ogg_bytes):
+        """Test reading OGG from BytesIO with always_2d=True."""
+        import io
+
+        audio_bytes, _, expected_sr = ogg_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer, always_2d=True)
+
+        assert sampling_rate == expected_sr
+        assert signal.ndim == 2
+        assert signal.shape[1] > 0
+
+    def test_read_bytesio_mp3_with_offset_duration(self, mp3_bytes):
+        """Test reading MP3 from BytesIO with offset and duration."""
+        import io
+
+        audio_bytes, _, expected_sr = mp3_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(
+            buffer, offset=0.1, duration=0.2, always_2d=True
+        )
+
+        assert sampling_rate == expected_sr
+        assert signal.ndim == 2
+        assert signal.shape[1] > 0
+
+    def test_read_bytesio_ogg_with_offset_duration(self, ogg_bytes):
+        """Test reading OGG from BytesIO with offset and duration."""
+        import io
+
+        audio_bytes, _, expected_sr = ogg_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(
+            buffer, offset=0.1, duration=0.2, always_2d=True
+        )
+
+        assert sampling_rate == expected_sr
+        assert signal.ndim == 2
+        assert signal.shape[1] > 0
 
     def test_read_bytesio_always_2d(self, flac_bytes):
         """Test reading from BytesIO with always_2d=True."""
@@ -1491,6 +1603,7 @@ class TestBytesIO:
         _ = af.duration(buffer)
         _ = af.sampling_rate(buffer)
         _ = af.samples(buffer)
+        _ = af.bit_depth(buffer)
 
         # Should still be able to read
         signal, sr = af.read(buffer)
@@ -1553,3 +1666,16 @@ class TestBytesIO:
             af.sampling_rate(buffer)
         with pytest.raises(RuntimeError, match=expected_error):
             af.samples(buffer)
+        with pytest.raises(RuntimeError, match=expected_error):
+            af.bit_depth(buffer)
+
+    def test_bytesio_invalid_audio_data_error(self):
+        """Test error when BytesIO contains invalid/non-audio data."""
+        import io
+
+        # Create a bare BytesIO with random non-audio bytes
+        buffer = io.BytesIO(b"This is not audio data at all")
+
+        # soundfile should raise an error for invalid data
+        with pytest.raises(Exception):
+            af.read(buffer)
