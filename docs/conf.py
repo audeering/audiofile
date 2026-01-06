@@ -75,6 +75,10 @@ plot_formats = ["png"]
 # https://github.com/sphinx-doc/sphinx/issues/6316
 toc_object_entries = False
 
+linkcheck_ignore = [
+    "https://sourceforge.net/projects/mad/",
+    "https://sourceforge.net/projects/sox/",
+]
 
 # HTML --------------------------------------------------------------------
 
