@@ -1637,5 +1637,15 @@ class TestBytesIO:
         buffer = io.BytesIO(b"This is not audio data at all")
 
         # soundfile should raise an error for invalid data
-        with pytest.raises(Exception):
+        with pytest.raises(soundfile.LibsndfileError):
             af.read(buffer)
+        with pytest.raises(soundfile.LibsndfileError):
+            af.channels(buffer)
+        with pytest.raises(soundfile.LibsndfileError):
+            af.duration(buffer)
+        with pytest.raises(soundfile.LibsndfileError):
+            af.sampling_rate(buffer)
+        with pytest.raises(soundfile.LibsndfileError):
+            af.samples(buffer)
+        with pytest.raises(soundfile.LibsndfileError):
+            af.bit_depth(buffer)
