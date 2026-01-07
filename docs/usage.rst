@@ -76,9 +76,7 @@ Convert a file
 You can convert any file to WAV using:
 
 >>> import audeer
->>> audiofile.convert_to_wav("noise.flac", "noise.wav")
->>> audeer.list_file_names(".", filetype="wav", basenames=True)
-['noise.wav']
+>>> wav_file = audiofile.convert_to_wav("noise.flac", "noise.wav")
 
 
 Resample/Remix a file
