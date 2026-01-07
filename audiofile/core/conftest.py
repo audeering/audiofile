@@ -4,7 +4,7 @@ import os
 
 import numpy as np
 import pytest
-import sybil
+from sybil import Sybil
 from sybil.parsers.rest import DocTestParser
 
 import audeer
@@ -90,11 +90,9 @@ def run_in_tmpdir(tmpdir_factory):
 
 
 # Collect doctests
-pytest_collect_file = sybil.Sybil(
-    parsers=[DocTestParser(optionflags=ELLIPSIS + NORMALIZE_WHITESPACE)],
+pytest_collect_file = Sybil(
+    parsers=[DocTestParser(optionflags=ELLIPSIS | NORMALIZE_WHITESPACE)],
     patterns=["*.py"],
-    fixtures=[
-        "run_in_tmpdir",
-    ],
+    fixtures=["run_in_tmpdir"],
     setup=imports,
 ).pytest()

@@ -10,7 +10,7 @@ from audiofile.core.conftest import run_in_tmpdir  # noqa: F401
 
 # Collect doctests
 parsers = [
-    DocTestParser(optionflags=ELLIPSIS + NORMALIZE_WHITESPACE),
+    DocTestParser(optionflags=ELLIPSIS | NORMALIZE_WHITESPACE),
     PythonCodeBlockParser(),
 ]
 pytest_collect_file = Sybil(
