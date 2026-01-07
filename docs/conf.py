@@ -66,7 +66,7 @@ copybutton_prompt_is_regexp = True
 plot_include_source = True
 plot_html_show_source_link = False
 plot_html_show_formats = False
-plot_pre_code = ""
+plot_pre_code = "import audiofile"
 plot_rcparams = {
     "figure.figsize": "5, 3.8",  # inch
 }
