@@ -1,5 +1,6 @@
 """Read, write, and get information about audio files."""
 
+import io
 import os
 import subprocess
 import tempfile
@@ -9,14 +10,74 @@ import soundfile
 import audeer
 
 from audiofile.core.io import convert_to_wav
+from audiofile.core.utils import FILE_LIKE_UNSUPPORTED_ERROR
 from audiofile.core.utils import SNDFORMATS
 from audiofile.core.utils import binary_missing_error
 from audiofile.core.utils import broken_file_error
 from audiofile.core.utils import file_extension
+from audiofile.core.utils import is_file_like
 from audiofile.core.utils import run
 
 
-def bit_depth(file: str) -> int | None:
+def _normalize_file_input(file):
+    """Normalize file input and detect file-like objects.
+
+    Args:
+        file: file path or file-like object
+
+    Returns:
+        tuple of (file, file_like, file_ext) where:
+        - file: normalized path or original file-like object
+        - file_like: True if file is a file-like object
+        - file_ext: file extension (lowercase) or None
+
+    """
+    file_like = is_file_like(file)
+    if not file_like:
+        file = audeer.safe_path(file)
+    file_ext = file_extension(file)
+    return file, file_like, file_ext
+
+
+def _sf_info(file, file_like):
+    """Get soundfile info and reset seek position for file-like objects.
+
+    Args:
+        file: file path or file-like object
+        file_like: True if file is a file-like object
+
+    Returns:
+        soundfile.info result
+
+    """
+    info = soundfile.info(file)
+    if file_like:
+        file.seek(0)
+    return info
+
+
+def _soundfile_supported(file_like, file_ext):
+    """Check if file format is supported by soundfile for file-like objects.
+
+    Args:
+        file_like: True if file is a file-like object
+        file_ext: file extension (lowercase) or None
+
+    Returns:
+        True if soundfile should be used
+
+    Raises:
+        RuntimeError: if file-like object has unsupported format
+
+    """
+    if file_ext in SNDFORMATS or (file_like and file_ext is None):
+        return True
+    if file_like:
+        raise RuntimeError(FILE_LIKE_UNSUPPORTED_ERROR)
+    return False
+
+
+def bit_depth(file: str | io.IOBase) -> int | None:
     r"""Bit depth of audio file.
 
     For lossy audio files,
@@ -24,6 +85,7 @@ def bit_depth(file: str) -> int | None:
 
     Args:
         file: file name of input audio file
+            or file-like object
 
     Returns:
         bit depth of audio file
@@ -37,43 +99,57 @@ def bit_depth(file: str) -> int | None:
         16
 
     """
-    file = audeer.safe_path(file)
-    file_type = file_extension(file)
+    file, file_like, file_type = _normalize_file_input(file)
+
+    # For file-like objects without extension,
+    # try to determine format from soundfile.info()
+    if file_like and file_type is None:
+        info = _sf_info(file, file_like)
+        file_type = info.format.lower()
+
+    # Raise error for unsupported file-like formats
+    if file_like and file_type not in SNDFORMATS:
+        raise RuntimeError(FILE_LIKE_UNSUPPORTED_ERROR)
+
+    wav_precision_mapping = {
+        "PCM_16": 16,
+        "PCM_24": 24,
+        "PCM_32": 32,
+        "PCM_U8": 8,
+        "FLOAT": 32,
+        "DOUBLE": 64,
+        "ULAW": 8,
+        "ALAW": 8,
+        "IMA_ADPCM": 4,
+        "MS_ADPCM": 4,
+        "GSM610": 16,  # not sure if this could be variable?
+        "G721_32": 4,  # not sure if correct
+    }
+    flac_precision_mapping = {
+        "PCM_16": 16,
+        "PCM_24": 24,
+        "PCM_32": 32,
+        "PCM_S8": 8,
+    }
+
     if file_type == "wav":
-        precision_mapping = {
-            "PCM_16": 16,
-            "PCM_24": 24,
-            "PCM_32": 32,
-            "PCM_U8": 8,
-            "FLOAT": 32,
-            "DOUBLE": 64,
-            "ULAW": 8,
-            "ALAW": 8,
-            "IMA_ADPCM": 4,
-            "MS_ADPCM": 4,
-            "GSM610": 16,  # not sure if this could be variable?
-            "G721_32": 4,  # not sure if correct
-        }
+        info = _sf_info(file, file_like)
+        depth = wav_precision_mapping[info.subtype]
     elif file_type == "flac":
-        precision_mapping = {
-            "PCM_16": 16,
-            "PCM_24": 24,
-            "PCM_32": 32,
-            "PCM_S8": 8,
-        }
-    if file_extension(file) in ["wav", "flac"]:
-        depth = precision_mapping[soundfile.info(file).subtype]
+        info = _sf_info(file, file_like)
+        depth = flac_precision_mapping[info.subtype]
     else:
         depth = None
 
     return depth
 
 
-def channels(file: str) -> int:
+def channels(file: str | io.IOBase) -> int:
     """Number of channels in audio file.
 
     Args:
         file: file name of input audio file
+            or file-like object
 
     Returns:
         number of channels in audio file
@@ -89,29 +165,31 @@ def channels(file: str) -> int:
         2
 
     """
-    file = audeer.safe_path(file)
-    if file_extension(file) in SNDFORMATS:
-        return soundfile.info(file).channels
-    else:
+    file, file_like, file_ext = _normalize_file_input(file)
+
+    if _soundfile_supported(file_like, file_ext):
+        info = _sf_info(file, file_like)
+        return info.channels
+
+    try:
+        cmd = ["soxi", "-c", file]
+        return int(run(cmd))
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        # For MP4 stored and returned number of channels can be different
+        cmd1 = ["mediainfo", "--Inform=Audio;%Channel(s)_Original%", file]
+        cmd2 = ["mediainfo", "--Inform=Audio;%Channel(s)%", file]
         try:
-            cmd = ["soxi", "-c", file]
-            return int(run(cmd))
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            # For MP4 stored and returned number of channels can be different
-            cmd1 = ["mediainfo", "--Inform=Audio;%Channel(s)_Original%", file]
-            cmd2 = ["mediainfo", "--Inform=Audio;%Channel(s)%", file]
+            return int(run(cmd1))
+        except FileNotFoundError:
+            raise binary_missing_error("mediainfo")
+        except (ValueError, subprocess.CalledProcessError):
             try:
-                return int(run(cmd1))
-            except FileNotFoundError:
-                raise binary_missing_error("mediainfo")
+                return int(run(cmd2))
             except (ValueError, subprocess.CalledProcessError):
-                try:
-                    return int(run(cmd2))
-                except (ValueError, subprocess.CalledProcessError):
-                    raise broken_file_error(file)
+                raise broken_file_error(file)
 
 
-def duration(file: str, sloppy=False) -> float:
+def duration(file: str | io.IOBase, sloppy=False) -> float:
     """Duration in seconds of audio file.
 
     The default behavior (``sloppy=False``)
@@ -135,6 +213,7 @@ def duration(file: str, sloppy=False) -> float:
 
     Args:
         file: file name of input audio file
+            or file-like object
         sloppy: if ``True`` report duration
             as stored in the header
 
@@ -152,9 +231,11 @@ def duration(file: str, sloppy=False) -> float:
         1.5
 
     """
-    file = audeer.safe_path(file)
-    if file_extension(file) in SNDFORMATS:
-        return soundfile.info(file).duration
+    file, file_like, file_ext = _normalize_file_input(file)
+
+    if _soundfile_supported(file_like, file_ext):
+        info = _sf_info(file, file_like)
+        return info.duration
 
     if sloppy:
         try:
@@ -223,7 +304,7 @@ def has_video(file: str) -> bool:
             raise binary_missing_error("mediainfo")
 
 
-def samples(file: str) -> int:
+def samples(file: str | io.IOBase) -> int:
     """Number of samples in audio file.
 
     Audio files that are not WAV, FLAC, MP3, or OGG
@@ -232,6 +313,7 @@ def samples(file: str) -> int:
 
     Args:
         file: file name of input audio file
+            or file-like object
 
     Returns:
         number of samples in audio file
@@ -248,25 +330,28 @@ def samples(file: str) -> int:
 
     """
 
-    def samples_as_int(file):
-        return int(soundfile.info(file).duration * soundfile.info(file).samplerate)
+    def samples_as_int(file, file_like=False):
+        info = _sf_info(file, file_like)
+        return int(info.duration * info.samplerate)
 
-    file = audeer.safe_path(file)
-    if file_extension(file) in SNDFORMATS:
-        return samples_as_int(file)
-    else:
-        # Always convert to WAV for non SNDFORMATS
-        with tempfile.TemporaryDirectory(prefix="audiofile") as tmpdir:
-            tmpfile = os.path.join(tmpdir, "tmp.wav")
-            convert_to_wav(file, tmpfile)
-            return samples_as_int(tmpfile)
+    file, file_like, file_ext = _normalize_file_input(file)
+
+    if _soundfile_supported(file_like, file_ext):
+        return samples_as_int(file, file_like)
+
+    # Always convert to WAV for non SNDFORMATS
+    with tempfile.TemporaryDirectory(prefix="audiofile") as tmpdir:
+        tmpfile = os.path.join(tmpdir, "tmp.wav")
+        convert_to_wav(file, tmpfile)
+        return samples_as_int(tmpfile)
 
 
-def sampling_rate(file: str) -> int:
+def sampling_rate(file: str | io.IOBase) -> int:
     """Sampling rate of audio file.
 
     Args:
         file: file name of input audio file
+            or file-like object
 
     Returns:
         sampling rate of audio file
@@ -282,24 +367,26 @@ def sampling_rate(file: str) -> int:
         8000
 
     """
-    file = audeer.safe_path(file)
-    if file_extension(file) in SNDFORMATS:
-        return soundfile.info(file).samplerate
-    else:
+    file, file_like, file_ext = _normalize_file_input(file)
+
+    if _soundfile_supported(file_like, file_ext):
+        info = _sf_info(file, file_like)
+        return info.samplerate
+
+    try:
+        cmd = ["soxi", "-r", file]
+        return int(run(cmd))
+    except (FileNotFoundError, subprocess.CalledProcessError):
         try:
-            cmd = ["soxi", "-r", file]
-            return int(run(cmd))
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            try:
-                cmd = ["mediainfo", "--Inform=Audio;%SamplingRate%", file]
-                sampling_rate = run(cmd)
-                if sampling_rate:
-                    return int(sampling_rate)
-                else:
-                    # Raise CalledProcessError
-                    # to align coverage under Windows and Linux
-                    raise subprocess.CalledProcessError(-2, cmd)
-            except FileNotFoundError:
-                raise binary_missing_error("mediainfo")
-            except subprocess.CalledProcessError:
-                raise broken_file_error(file)
+            cmd = ["mediainfo", "--Inform=Audio;%SamplingRate%", file]
+            sampling_rate = run(cmd)
+            if sampling_rate:
+                return int(sampling_rate)
+            else:
+                # Raise CalledProcessError
+                # to align coverage under Windows and Linux
+                raise subprocess.CalledProcessError(-2, cmd)
+        except FileNotFoundError:
+            raise binary_missing_error("mediainfo")
+        except subprocess.CalledProcessError:
+            raise broken_file_error(file)
