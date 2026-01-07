@@ -32,6 +32,7 @@ exclude_patterns = [
     "Thumbs.db",
     ".DS_Store",
     "api-src",
+    "benchmark/*",
 ]
 templates_path = ["_templates"]
 pygments_style = None

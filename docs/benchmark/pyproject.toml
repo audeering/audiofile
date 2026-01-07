@@ -1,0 +1,19 @@
+# ===== PROJECT ===========================================================
+#
+[project]
+name = 'audiofile-benchmark'
+version = '1.0.0'
+requires-python = '>=3.12'
+dependencies = [
+    'audiofile',
+    'audioread',
+    'librosa',
+    'pandas',
+    'pedalboard',
+    'pygobject==3.42.1',
+    'pymad',
+    'scipy',
+    'seaborn',
+    'soundfile',
+    'sox',
+]
