@@ -17,9 +17,6 @@ To install :mod:`audiofile` run:
 
 .. code-block:: bash
 
-    $ # Create and activate Python virtual environment, e.g.
-    $ # virtualenv --no-download --python=python3 ${HOME}/.envs/audiofile
-    $ # source ${HOME}/.envs/audiofile/bin/activate
     $ pip install audiofile
 
 
