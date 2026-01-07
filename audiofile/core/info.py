@@ -33,7 +33,7 @@ def bit_depth(file: str) -> int | None:
             broken or format is not supported
 
     Examples:
-        >>> bit_depth("stereo.wav")
+        >>> audiofile.bit_depth("stereo.wav")
         16
 
     """
@@ -85,7 +85,7 @@ def channels(file: str) -> int:
             broken or format is not supported
 
     Examples:
-        >>> channels("stereo.wav")
+        >>> audiofile.channels("stereo.wav")
         2
 
     """
@@ -148,7 +148,7 @@ def duration(file: str, sloppy=False) -> float:
             broken or format is not supported
 
     Examples:
-        >>> duration("stereo.wav")
+        >>> audiofile.duration("stereo.wav")
         1.5
 
     """
@@ -202,7 +202,7 @@ def has_video(file: str) -> bool:
             and does not end with ``"wav"``, ``"flac"``, ``"mp3"``, ``"ogg"``
 
     Examples:
-        >>> has_video("stereo.wav")
+        >>> audiofile.has_video("stereo.wav")
         False
 
     """
@@ -243,7 +243,7 @@ def samples(file: str) -> int:
             broken or format is not supported
 
     Examples:
-        >>> samples("stereo.wav")
+        >>> audiofile.samples("stereo.wav")
         12000
 
     """
@@ -278,7 +278,7 @@ def sampling_rate(file: str) -> int:
             broken or format is not supported
 
     Examples:
-        >>> sampling_rate("stereo.wav")
+        >>> audiofile.sampling_rate("stereo.wav")
         8000
 
     """
