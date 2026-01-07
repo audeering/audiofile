@@ -37,7 +37,6 @@ exclude_patterns = [
 templates_path = ["_templates"]
 pygments_style = None
 extensions = [
-    "jupyter_sphinx",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",  # support for Google-style docstrings
