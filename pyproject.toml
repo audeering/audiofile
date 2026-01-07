@@ -51,17 +51,15 @@ documentation = 'https://audeering.github.io/audiofile/'
 dev = [
     'audplot',
     'audresample',
-    'ipykernel',
-    'jupyter-sphinx',
     'pandas',
     'pytest',
     'pytest-cov',
-    'pytest-doctestplus',
     'sox',
     'sphinx',
     'sphinx-audeering-theme >=1.2.1',
     'sphinx-autodoc-typehints',
     'sphinx-copybutton',
+    'sybil',
     'toml',
 ]
 
@@ -90,12 +88,12 @@ uri-ignore-words-list = 'master,ba'
 cache_dir = '.cache/pytest'
 xfail_strict = true
 addopts = '''
-    --doctest-plus
+    -p no:doctest
     --cov=audiofile
     --cov-fail-under=100
     --cov-report term-missing
     --cov-report xml
-    --ignore=docs/
+    --ignore=docs/benchmark
 '''
 
 

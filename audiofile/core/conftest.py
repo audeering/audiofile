@@ -1,29 +1,20 @@
+from doctest import ELLIPSIS
+from doctest import NORMALIZE_WHITESPACE
 import os
 
 import numpy as np
 import pytest
+from sybil import Sybil
+from sybil.parsers.rest import DocTestParser
 
 import audeer
 
 import audiofile
 
 
-np.random.seed(1)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def audio_file():
-    create_audio_files(".")
-
-    yield
-
-    # Clean up
-    for file in audeer.list_file_names(".", filetype="wav"):
-        if os.path.exists(file):
-            os.remove(file)
-    for file in audeer.list_file_names(".", filetype="flac"):
-        if os.path.exists(file):
-            os.remove(file)
+def imports(namespace):
+    """Provide Python modules to namespace."""
+    namespace["audiofile"] = audiofile
 
 
 def create_audio_files(
@@ -81,3 +72,27 @@ def am_fm_synth(
             ph_am += omega_am / 2
             ph_fm += omega0_car + omega_dev * np.cos(omega_mod * t)
     return sig
+
+
+@pytest.fixture(scope="module")
+def run_in_tmpdir(tmpdir_factory):
+    """Move to a persistent tmpdir for execution of a whole file."""
+    tmpdir = tmpdir_factory.mktemp("tmp")
+    current_dir = os.getcwd()
+    os.chdir(tmpdir)
+
+    # Create test signals
+    create_audio_files(tmpdir)
+
+    yield
+
+    os.chdir(current_dir)
+
+
+# Collect doctests
+pytest_collect_file = Sybil(
+    parsers=[DocTestParser(optionflags=ELLIPSIS | NORMALIZE_WHITESPACE)],
+    patterns=["*.py"],
+    fixtures=["run_in_tmpdir"],
+    setup=imports,
+).pytest()

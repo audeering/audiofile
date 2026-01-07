@@ -87,7 +87,7 @@ def convert_to_wav(
             or the provided unit is not supported
 
     Examples:
-        >>> path = convert_to_wav("stereo.flac")
+        >>> path = audiofile.convert_to_wav("stereo.flac")
         >>> os.path.basename(path)
         'stereo.wav'
 
@@ -198,7 +198,7 @@ def read(
         .. plot::
             :context: close-figs
 
-            >>> signal, sampling_rate = read("mono.wav", always_2d=True)
+            >>> signal, sampling_rate = audiofile.read("mono.wav", always_2d=True)
             >>> sampling_rate
             8000
             >>> signal.shape
@@ -212,7 +212,7 @@ def read(
         .. plot::
             :context: close-figs
 
-            >>> signal, sampling_rate = read("mono.wav", duration=0.5)
+            >>> signal, sampling_rate = audiofile.read("mono.wav", duration=0.5)
             >>> # Extend signal to original length
             >>> signal = np.pad(signal, (0, 8000))
             >>> audplot.waveform(signal)
@@ -220,7 +220,7 @@ def read(
         .. plot::
             :context: close-figs
 
-            >>> signal, sampling_rate = read("mono.wav", duration=-0.5)
+            >>> signal, sampling_rate = audiofile.read("mono.wav", duration=-0.5)
             >>> # Extend signal to original length
             >>> signal = np.pad(signal, (8000, 0))
             >>> audplot.waveform(signal)
@@ -228,7 +228,9 @@ def read(
         .. plot::
             :context: close-figs
 
-            >>> signal, sampling_rate = read("mono.wav", offset="4000", duration="4000")
+            >>> signal, sampling_rate = audiofile.read(
+            ...     "mono.wav", offset="4000", duration="4000"
+            ... )
             >>> # Extend signal to original length
             >>> signal = np.pad(signal, (4000, 4000))
             >>> audplot.waveform(signal)
@@ -238,7 +240,7 @@ def read(
 
             >>> # Use audresample for resampling and remixing
             >>> import audresample
-            >>> signal, sampling_rate = read("stereo.wav")
+            >>> signal, sampling_rate = audiofile.read("stereo.wav")
             >>> signal.shape
             (2, 12000)
             >>> target_rate = 16000
@@ -457,9 +459,9 @@ def write(
     Examples:
         >>> sampling_rate = 8000
         >>> signal = np.random.uniform(-1, 1, (1, 1000))
-        >>> write("mono.wav", signal, sampling_rate)
+        >>> audiofile.write("mono.wav", signal, sampling_rate)
         >>> signal = np.random.uniform(-1.2, 1.2, (2, 1000))
-        >>> write("stereo.flac", signal, sampling_rate, normalize=True)
+        >>> audiofile.write("stereo.flac", signal, sampling_rate, normalize=True)
 
     """  # noqa: E501
     file = audeer.safe_path(file)
