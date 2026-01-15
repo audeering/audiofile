@@ -28,8 +28,6 @@
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/css/audeering.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/jupyter-sphinx.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/thebelab.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/plot_directive.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -66,7 +64,7 @@
             
             
               <div class="version">
-                v1.5.1
+                v1.6.0
               </div>
             
           
@@ -143,25 +141,86 @@
   <h1>Source code for audiofile.core.info</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Read, write, and get information about audio files.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">soundfile</span>
 
-<span class="kn">import</span> <span class="nn">soundfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">audeer</span>
 
-<span class="kn">import</span> <span class="nn">audeer</span>
-
-<span class="kn">from</span> <span class="nn">audiofile.core.io</span> <span class="kn">import</span> <span class="n">convert_to_wav</span>
-<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">SNDFORMATS</span>
-<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">binary_missing_error</span>
-<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">broken_file_error</span>
-<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">file_extension</span>
-<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">run</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_to_wav</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FILE_LIKE_UNSUPPORTED_ERROR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">SNDFORMATS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">binary_missing_error</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">broken_file_error</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">file_extension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_file_like</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">run</span>
 
 
-<div class="viewcode-block" id="bit_depth"><a class="viewcode-back" href="../../../api/audiofile.bit_depth.html#audiofile.bit_depth">[docs]</a><span class="k">def</span> <span class="nf">bit_depth</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_file_input</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize file input and detect file-like objects.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file: file path or file-like object</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple of (file, file_like, file_ext) where:</span>
+<span class="sd">        - file: normalized path or original file-like object</span>
+<span class="sd">        - file_like: True if file is a file-like object</span>
+<span class="sd">        - file_ext: file extension (lowercase) or None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_like</span> <span class="o">=</span> <span class="n">is_file_like</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_like</span><span class="p">:</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">file_ext</span> <span class="o">=</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">,</span> <span class="n">file_ext</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sf_info</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get soundfile info and reset seek position for file-like objects.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file: file path or file-like object</span>
+<span class="sd">        file_like: True if file is a file-like object</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        soundfile.info result</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">file_like</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">info</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_soundfile_supported</span><span class="p">(</span><span class="n">file_like</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if file format is supported by soundfile for file-like objects.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        file_like: True if file is a file-like object</span>
+<span class="sd">        file_ext: file extension (lowercase) or None</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if soundfile should be used</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: if file-like object has unsupported format</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span> <span class="ow">or</span> <span class="p">(</span><span class="n">file_like</span> <span class="ow">and</span> <span class="n">file_ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">file_like</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">FILE_LIKE_UNSUPPORTED_ERROR</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="bit_depth">
+<a class="viewcode-back" href="../../../api/audiofile.bit_depth.html#audiofile.bit_depth">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">bit_depth</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bit depth of audio file.</span>
 
 <span class="sd">    For lossy audio files,</span>
@@ -169,6 +228,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
+<span class="sd">            or file-like object</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        bit depth of audio file</span>
@@ -178,47 +238,64 @@
 <span class="sd">            broken or format is not supported</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; bit_depth(&quot;stereo.wav&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; audiofile.bit_depth(&quot;stereo.wav&quot;)</span>
 <span class="sd">        16</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="n">file_type</span> <span class="o">=</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">,</span> <span class="n">file_type</span> <span class="o">=</span> <span class="n">_normalize_file_input</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="c1"># For file-like objects without extension,</span>
+    <span class="c1"># try to determine format from soundfile.info()</span>
+    <span class="k">if</span> <span class="n">file_like</span> <span class="ow">and</span> <span class="n">file_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">_sf_info</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">)</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="c1"># Raise error for unsupported file-like formats</span>
+    <span class="k">if</span> <span class="n">file_like</span> <span class="ow">and</span> <span class="n">file_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">FILE_LIKE_UNSUPPORTED_ERROR</span><span class="p">)</span>
+
+    <span class="n">wav_precision_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;PCM_16&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+        <span class="s2">&quot;PCM_24&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+        <span class="s2">&quot;PCM_32&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;PCM_U8&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="s2">&quot;FLOAT&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;DOUBLE&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+        <span class="s2">&quot;ULAW&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="s2">&quot;ALAW&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="s2">&quot;IMA_ADPCM&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;MS_ADPCM&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s2">&quot;GSM610&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>  <span class="c1"># not sure if this could be variable?</span>
+        <span class="s2">&quot;G721_32&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># not sure if correct</span>
+    <span class="p">}</span>
+    <span class="n">flac_precision_mapping</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;PCM_16&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+        <span class="s2">&quot;PCM_24&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
+        <span class="s2">&quot;PCM_32&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;PCM_S8&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="p">}</span>
+
     <span class="k">if</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;wav&quot;</span><span class="p">:</span>
-        <span class="n">precision_mapping</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;PCM_16&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
-            <span class="s2">&quot;PCM_24&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
-            <span class="s2">&quot;PCM_32&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-            <span class="s2">&quot;PCM_U8&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-            <span class="s2">&quot;FLOAT&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-            <span class="s2">&quot;DOUBLE&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
-            <span class="s2">&quot;ULAW&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-            <span class="s2">&quot;ALAW&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-            <span class="s2">&quot;IMA_ADPCM&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="s2">&quot;MS_ADPCM&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-            <span class="s2">&quot;GSM610&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>  <span class="c1"># not sure if this could be variable?</span>
-            <span class="s2">&quot;G721_32&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>  <span class="c1"># not sure if correct</span>
-        <span class="p">}</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">_sf_info</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">)</span>
+        <span class="n">depth</span> <span class="o">=</span> <span class="n">wav_precision_mapping</span><span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">subtype</span><span class="p">]</span>
     <span class="k">elif</span> <span class="n">file_type</span> <span class="o">==</span> <span class="s2">&quot;flac&quot;</span><span class="p">:</span>
-        <span class="n">precision_mapping</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;PCM_16&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
-            <span class="s2">&quot;PCM_24&quot;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span>
-            <span class="s2">&quot;PCM_32&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-            <span class="s2">&quot;PCM_S8&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;wav&quot;</span><span class="p">,</span> <span class="s2">&quot;flac&quot;</span><span class="p">]:</span>
-        <span class="n">depth</span> <span class="o">=</span> <span class="n">precision_mapping</span><span class="p">[</span><span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">subtype</span><span class="p">]</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">_sf_info</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">)</span>
+        <span class="n">depth</span> <span class="o">=</span> <span class="n">flac_precision_mapping</span><span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">subtype</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">depth</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">return</span> <span class="n">depth</span></div>
 
 
-<div class="viewcode-block" id="channels"><a class="viewcode-back" href="../../../api/audiofile.channels.html#audiofile.channels">[docs]</a><span class="k">def</span> <span class="nf">channels</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+<div class="viewcode-block" id="channels">
+<a class="viewcode-back" href="../../../api/audiofile.channels.html#audiofile.channels">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">channels</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Number of channels in audio file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
+<span class="sd">            or file-like object</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        number of channels in audio file</span>
@@ -230,33 +307,38 @@
 <span class="sd">            broken or format is not supported</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; channels(&quot;stereo.wav&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; audiofile.channels(&quot;stereo.wav&quot;)</span>
 <span class="sd">        2</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">channels</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">,</span> <span class="n">file_ext</span> <span class="o">=</span> <span class="n">_normalize_file_input</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_soundfile_supported</span><span class="p">(</span><span class="n">file_like</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">):</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">_sf_info</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">info</span><span class="o">.</span><span class="n">channels</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;soxi&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
+        <span class="c1"># For MP4 stored and returned number of channels can be different</span>
+        <span class="n">cmd1</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">,</span> <span class="s2">&quot;--Inform=Audio;%Channel(s)_Original%&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
+        <span class="n">cmd2</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">,</span> <span class="s2">&quot;--Inform=Audio;%Channel(s)%&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;soxi&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
-            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
-            <span class="c1"># For MP4 stored and returned number of channels can be different</span>
-            <span class="n">cmd1</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">,</span> <span class="s2">&quot;--Inform=Audio;%Channel(s)_Original%&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
-            <span class="n">cmd2</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">,</span> <span class="s2">&quot;--Inform=Audio;%Channel(s)%&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd1</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">binary_missing_error</span><span class="p">(</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd1</span><span class="p">))</span>
-            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">binary_missing_error</span><span class="p">(</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd2</span><span class="p">))</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd2</span><span class="p">))</span>
-                <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
+                <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="duration"><a class="viewcode-back" href="../../../api/audiofile.duration.html#audiofile.duration">[docs]</a><span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sloppy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+
+<div class="viewcode-block" id="duration">
+<a class="viewcode-back" href="../../../api/audiofile.duration.html#audiofile.duration">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">duration</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">,</span> <span class="n">sloppy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Duration in seconds of audio file.</span>
 
 <span class="sd">    The default behavior (``sloppy=False``)</span>
@@ -280,6 +362,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
+<span class="sd">            or file-like object</span>
 <span class="sd">        sloppy: if ``True`` report duration</span>
 <span class="sd">            as stored in the header</span>
 
@@ -293,13 +376,15 @@
 <span class="sd">            broken or format is not supported</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; duration(&quot;stereo.wav&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; audiofile.duration(&quot;stereo.wav&quot;)</span>
 <span class="sd">        1.5</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">duration</span>
+    <span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">,</span> <span class="n">file_ext</span> <span class="o">=</span> <span class="n">_normalize_file_input</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_soundfile_supported</span><span class="p">(</span><span class="n">file_like</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">):</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">_sf_info</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">info</span><span class="o">.</span><span class="n">duration</span>
 
     <span class="k">if</span> <span class="n">sloppy</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -327,7 +412,10 @@
     <span class="k">return</span> <span class="n">samples</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">/</span> <span class="n">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="has_video"><a class="viewcode-back" href="../../../api/audiofile.has_video.html#audiofile.has_video">[docs]</a><span class="k">def</span> <span class="nf">has_video</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="has_video">
+<a class="viewcode-back" href="../../../api/audiofile.has_video.html#audiofile.has_video">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">has_video</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;If file contains video.</span>
 
 <span class="sd">    For WAV, FLAC, MP3, or OGG files</span>
@@ -347,7 +435,7 @@
 <span class="sd">            and does not end with ``&quot;wav&quot;``, ``&quot;flac&quot;``, ``&quot;mp3&quot;``, ``&quot;ogg&quot;``</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; has_video(&quot;stereo.wav&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; audiofile.has_video(&quot;stereo.wav&quot;)</span>
 <span class="sd">        False</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -368,7 +456,10 @@
             <span class="k">raise</span> <span class="n">binary_missing_error</span><span class="p">(</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="samples"><a class="viewcode-back" href="../../../api/audiofile.samples.html#audiofile.samples">[docs]</a><span class="k">def</span> <span class="nf">samples</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+<div class="viewcode-block" id="samples">
+<a class="viewcode-back" href="../../../api/audiofile.samples.html#audiofile.samples">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">samples</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Number of samples in audio file.</span>
 
 <span class="sd">    Audio files that are not WAV, FLAC, MP3, or OGG</span>
@@ -377,6 +468,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
+<span class="sd">            or file-like object</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        number of samples in audio file</span>
@@ -388,30 +480,36 @@
 <span class="sd">            broken or format is not supported</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; samples(&quot;stereo.wav&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; audiofile.samples(&quot;stereo.wav&quot;)</span>
 <span class="sd">        12000</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">samples_as_int</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">duration</span> <span class="o">*</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">samplerate</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">samples_as_int</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">_sf_info</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">duration</span> <span class="o">*</span> <span class="n">info</span><span class="o">.</span><span class="n">samplerate</span><span class="p">)</span>
 
-    <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">samples_as_int</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Always convert to WAV for non SNDFORMATS</span>
-        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;audiofile&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
-            <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s2">&quot;tmp.wav&quot;</span><span class="p">)</span>
-            <span class="n">convert_to_wav</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">tmpfile</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">samples_as_int</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">)</span></div>
+    <span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">,</span> <span class="n">file_ext</span> <span class="o">=</span> <span class="n">_normalize_file_input</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_soundfile_supported</span><span class="p">(</span><span class="n">file_like</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">samples_as_int</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">)</span>
+
+    <span class="c1"># Always convert to WAV for non SNDFORMATS</span>
+    <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;audiofile&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+        <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s2">&quot;tmp.wav&quot;</span><span class="p">)</span>
+        <span class="n">convert_to_wav</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">tmpfile</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">samples_as_int</span><span class="p">(</span><span class="n">tmpfile</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="sampling_rate"><a class="viewcode-back" href="../../../api/audiofile.sampling_rate.html#audiofile.sampling_rate">[docs]</a><span class="k">def</span> <span class="nf">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+<div class="viewcode-block" id="sampling_rate">
+<a class="viewcode-back" href="../../../api/audiofile.sampling_rate.html#audiofile.sampling_rate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Sampling rate of audio file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
+<span class="sd">            or file-like object</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        sampling rate of audio file</span>
@@ -423,31 +521,34 @@
 <span class="sd">            broken or format is not supported</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; sampling_rate(&quot;stereo.wav&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; audiofile.sampling_rate(&quot;stereo.wav&quot;)</span>
 <span class="sd">        8000</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">soundfile</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="o">.</span><span class="n">samplerate</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">,</span> <span class="n">file_ext</span> <span class="o">=</span> <span class="n">_normalize_file_input</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_soundfile_supported</span><span class="p">(</span><span class="n">file_like</span><span class="p">,</span> <span class="n">file_ext</span><span class="p">):</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">_sf_info</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">file_like</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">info</span><span class="o">.</span><span class="n">samplerate</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;soxi&quot;</span><span class="p">,</span> <span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;soxi&quot;</span><span class="p">,</span> <span class="s2">&quot;-r&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
-            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">,</span> <span class="s2">&quot;--Inform=Audio;%SamplingRate%&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
-                <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">sampling_rate</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sampling_rate</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># Raise CalledProcessError</span>
-                    <span class="c1"># to align coverage under Windows and Linux</span>
-                    <span class="k">raise</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">binary_missing_error</span><span class="p">(</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">,</span> <span class="s2">&quot;--Inform=Audio;%SamplingRate%&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">]</span>
+            <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sampling_rate</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sampling_rate</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Raise CalledProcessError</span>
+                <span class="c1"># to align coverage under Windows and Linux</span>
+                <span class="k">raise</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">binary_missing_error</span><span class="p">(</span><span class="s2">&quot;mediainfo&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">broken_file_error</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>
@@ -463,7 +564,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2025/01/03 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2026/01/15 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -471,7 +572,7 @@
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2025 audEERING GmbH
+      &copy; 2018-2026 audEERING GmbH
     </p>
   </div> 
 
@@ -495,17 +596,11 @@
     
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
-        <script src="../../../_static/thebelab-helper.js"></script>
-        <script src="../../../_static/clipboard.min.js"></script>
-        <script src="../../../_static/copybutton.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
     
 
   

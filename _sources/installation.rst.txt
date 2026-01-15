@@ -17,13 +17,10 @@ To install :mod:`audiofile` run:
 
 .. code-block:: bash
 
-    $ # Create and activate Python virtual environment, e.g.
-    $ # virtualenv --no-download --python=python3 ${HOME}/.envs/audiofile
-    $ # source ${HOME}/.envs/audiofile/bin/activate
     $ pip install audiofile
 
 
 .. _virtualenv: https://virtualenv.pypa.io/
 .. _ffmpeg: https://www.ffmpeg.org/
-.. _sox: http://sox.sourceforge.net/
+.. _sox: https://sourceforge.net/projects/sox/
 .. _mediainfo: https://mediaarea.net/en/MediaInfo/

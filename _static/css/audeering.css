@@ -46,7 +46,7 @@ body {
 }
 /* Fix bottom margin of nested bullet points */
 /* https://github.com/audeering/sphinx-audeering-theme/pull/56 */
-.rst-content .section ol p, .rst-content .section ul p {
+.rst-content section ol p, .rst-content section ul p {
     margin-bottom: 0;
 }
 
@@ -229,7 +229,7 @@ dl.property dt em {
 }
 
 /* Remove bullet points from parameter lists */
-.rst-content .section dl.field-list.simple ul li {
+.rst-content section dl.field-list.simple ul li {
     list-style: none;
     margin-left: 24px;
     /* Don't indent first line of text, see */

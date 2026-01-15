@@ -30,13 +30,13 @@ Python packages
 
 The following Python packages are benchmarked against each other:
 
-* audioread_ 3.0.1
-* :mod:`audiofile` 1.4.0
-* librosa_ 0.10.1
-* pedalboard_ 0.8.7
-* scipy_ 1.11.4
-* soundfile_ 0.12.1
-* sox_ 1.4.1
+* audioread_ 3.1.0
+* :mod:`audiofile` 1.5.1
+* librosa_ 0.11.0
+* pedalboard_ 0.9.19
+* scipy_ 1.16.3
+* soundfile_ 0.13.1
+* sox_ 1.5.0
 
 scipy_ and librosa_ are only tested for reading files,
 whereas sox_ is only tested for accessing metadata information.
@@ -73,8 +73,8 @@ The benchmark was executed on the following machine:
 * CPU: 13th Gen Intel Core i7-1355U, 10-core (2-mt/8-st)
 * RAM: 15.29 GiB
 * Hard drive: KIOXIA KXG8AZNV1T02
-* Linux: Ubuntu 22.04.3
-* Python: 3.10.12
+* Linux: Ubuntu 22.04.5
+* Python: 3.12.12
 
 To rerun the benchmark yourself,
 clone the repository
@@ -87,8 +87,7 @@ and execute:
     $ bash generate_audio.sh
     $ bash run.sh
 
-This requires that Python 3.10 is installed
-and will ask for a sudo password
+This will ask for a sudo password
 to install missing apt packages.
 
 

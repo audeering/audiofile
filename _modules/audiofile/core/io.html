@@ -28,8 +28,6 @@
   <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/css/audeering.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/jupyter-sphinx.css" type="text/css" />
-  <link rel="stylesheet" href="../../../_static/thebelab.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
   <link rel="stylesheet" href="../../../_static/plot_directive.css" type="text/css" />
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -66,7 +64,7 @@
             
             
               <div class="version">
-                v1.5.1
+                v1.6.0
               </div>
             
           
@@ -141,25 +139,28 @@
            <div itemprop="articleBody">
             
   <h1>Source code for audiofile.core.io</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">soundfile</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">soundfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">audeer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">audmath</span>
 
-<span class="kn">import</span> <span class="nn">audeer</span>
-<span class="kn">import</span> <span class="nn">audmath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.convert</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FILE_LIKE_UNSUPPORTED_ERROR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAX_CHANNELS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">SNDFORMATS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">duration_in_seconds</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">file_extension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_file_like</span>
 
-<span class="kn">from</span> <span class="nn">audiofile.core.convert</span> <span class="kn">import</span> <span class="n">convert</span>
-<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">MAX_CHANNELS</span>
-<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">SNDFORMATS</span>
-<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">duration_in_seconds</span>
-<span class="kn">from</span> <span class="nn">audiofile.core.utils</span> <span class="kn">import</span> <span class="n">file_extension</span>
 
-
-<div class="viewcode-block" id="convert_to_wav"><a class="viewcode-back" href="../../../api/audiofile.convert_to_wav.html#audiofile.convert_to_wav">[docs]</a><span class="k">def</span> <span class="nf">convert_to_wav</span><span class="p">(</span>
+<div class="viewcode-block" id="convert_to_wav">
+<a class="viewcode-back" href="../../../api/audiofile.convert_to_wav.html#audiofile.convert_to_wav">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_wav</span><span class="p">(</span>
     <span class="n">infile</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">outfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -232,7 +233,7 @@
 <span class="sd">            or the provided unit is not supported</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; path = convert_to_wav(&quot;stereo.flac&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; path = audiofile.convert_to_wav(&quot;stereo.flac&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; os.path.basename(path)</span>
 <span class="sd">        &#39;stereo.wav&#39;</span>
 
@@ -264,8 +265,11 @@
     <span class="k">return</span> <span class="n">outfile</span></div>
 
 
-<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../api/audiofile.read.html#audiofile.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span>
-    <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+
+<div class="viewcode-block" id="read">
+<a class="viewcode-back" href="../../../api/audiofile.read.html#audiofile.read">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span>
+    <span class="n">file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">IOBase</span><span class="p">,</span>
     <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">offset</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">always_2d</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -277,6 +281,11 @@
 <span class="sd">    It uses :func:`soundfile.read` for WAV, FLAC, MP3, and OGG files.</span>
 <span class="sd">    All other audio files are</span>
 <span class="sd">    first converted to WAV by sox or ffmpeg.</span>
+
+<span class="sd">    ``file`` can also be a file-like object (e.g. :class:`io.BytesIO`).</span>
+<span class="sd">    In this case,</span>
+<span class="sd">    the audio data is read directly from the object.</span>
+<span class="sd">    This is only supported for WAV, FLAC, MP3, and OGG data.</span>
 
 <span class="sd">    ``duration`` and ``offset``</span>
 <span class="sd">    support all formats</span>
@@ -303,6 +312,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        file: file name of input audio file</span>
+<span class="sd">            or file-like object</span>
 <span class="sd">        duration: return only the specified duration</span>
 <span class="sd">        offset: start reading at offset</span>
 <span class="sd">        always_2d: if ``True`` it always returns a two-dimensional signal</span>
@@ -343,7 +353,7 @@
 <span class="sd">        .. plot::</span>
 <span class="sd">            :context: close-figs</span>
 
-<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&quot;mono.wav&quot;, always_2d=True)</span>
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = audiofile.read(&quot;mono.wav&quot;, always_2d=True)</span>
 <span class="sd">            &gt;&gt;&gt; sampling_rate</span>
 <span class="sd">            8000</span>
 <span class="sd">            &gt;&gt;&gt; signal.shape</span>
@@ -357,7 +367,7 @@
 <span class="sd">        .. plot::</span>
 <span class="sd">            :context: close-figs</span>
 
-<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&quot;mono.wav&quot;, duration=0.5)</span>
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = audiofile.read(&quot;mono.wav&quot;, duration=0.5)</span>
 <span class="sd">            &gt;&gt;&gt; # Extend signal to original length</span>
 <span class="sd">            &gt;&gt;&gt; signal = np.pad(signal, (0, 8000))</span>
 <span class="sd">            &gt;&gt;&gt; audplot.waveform(signal)</span>
@@ -365,7 +375,7 @@
 <span class="sd">        .. plot::</span>
 <span class="sd">            :context: close-figs</span>
 
-<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&quot;mono.wav&quot;, duration=-0.5)</span>
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = audiofile.read(&quot;mono.wav&quot;, duration=-0.5)</span>
 <span class="sd">            &gt;&gt;&gt; # Extend signal to original length</span>
 <span class="sd">            &gt;&gt;&gt; signal = np.pad(signal, (8000, 0))</span>
 <span class="sd">            &gt;&gt;&gt; audplot.waveform(signal)</span>
@@ -373,7 +383,9 @@
 <span class="sd">        .. plot::</span>
 <span class="sd">            :context: close-figs</span>
 
-<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&quot;mono.wav&quot;, offset=&quot;4000&quot;, duration=&quot;4000&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = audiofile.read(</span>
+<span class="sd">            ...     &quot;mono.wav&quot;, offset=&quot;4000&quot;, duration=&quot;4000&quot;</span>
+<span class="sd">            ... )</span>
 <span class="sd">            &gt;&gt;&gt; # Extend signal to original length</span>
 <span class="sd">            &gt;&gt;&gt; signal = np.pad(signal, (4000, 4000))</span>
 <span class="sd">            &gt;&gt;&gt; audplot.waveform(signal)</span>
@@ -383,7 +395,7 @@
 
 <span class="sd">            &gt;&gt;&gt; # Use audresample for resampling and remixing</span>
 <span class="sd">            &gt;&gt;&gt; import audresample</span>
-<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = read(&quot;stereo.wav&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; signal, sampling_rate = audiofile.read(&quot;stereo.wav&quot;)</span>
 <span class="sd">            &gt;&gt;&gt; signal.shape</span>
 <span class="sd">            (2, 12000)</span>
 <span class="sd">            &gt;&gt;&gt; target_rate = 16000</span>
@@ -396,7 +408,9 @@
 <span class="sd">            &gt;&gt;&gt; audplot.waveform(signal)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
-    <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">file_like</span> <span class="o">=</span> <span class="n">is_file_like</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_like</span><span class="p">:</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="n">sampling_rate</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># Parse offset and duration values</span>
@@ -407,7 +421,7 @@
         <span class="ow">or</span> <span class="p">(</span><span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
     <span class="p">):</span>
         <span class="c1"># Import sampling_rate here to avoid circular imports</span>
-        <span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">sampling_rate</span> <span class="k">as</span> <span class="n">get_sampling_rate</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.info</span><span class="w"> </span><span class="kn">import</span> <span class="n">sampling_rate</span> <span class="k">as</span> <span class="n">get_sampling_rate</span>
 
         <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">get_sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -424,7 +438,7 @@
     <span class="c1">#</span>
     <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">offset</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># Import duration here to avoid circular imports</span>
-        <span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">duration</span> <span class="k">as</span> <span class="n">get_duration</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.info</span><span class="w"> </span><span class="kn">import</span> <span class="n">duration</span> <span class="k">as</span> <span class="n">get_duration</span>
 
         <span class="n">signal_duration</span> <span class="o">=</span> <span class="n">get_duration</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="c1"># offset | duration</span>
@@ -499,7 +513,7 @@
     <span class="k">if</span> <span class="n">duration</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">duration</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">duration</span> <span class="o">=</span> <span class="n">audmath</span><span class="o">.</span><span class="n">samples</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">duration</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">channels</span> <span class="k">as</span> <span class="n">get_channels</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.info</span><span class="w"> </span><span class="kn">import</span> <span class="n">channels</span> <span class="k">as</span> <span class="n">get_channels</span>
 
         <span class="n">channels</span> <span class="o">=</span> <span class="n">get_channels</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">channels</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">always_2d</span><span class="p">:</span>
@@ -513,7 +527,10 @@
         <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="n">tmpdir</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span><span class="p">:</span>
+    <span class="n">file_ext</span> <span class="o">=</span> <span class="n">file_extension</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="c1"># For file-like objects without extension,</span>
+    <span class="c1"># assume soundfile can handle it</span>
+    <span class="k">if</span> <span class="n">file_ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SNDFORMATS</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">file_like</span> <span class="ow">and</span> <span class="n">file_ext</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Convert file formats not recognized by soundfile to WAV first.</span>
         <span class="c1">#</span>
         <span class="c1"># NOTE: this is faster than loading them with librosa directly.</span>
@@ -521,6 +538,8 @@
         <span class="c1"># the returned magnitude</span>
         <span class="c1"># (https://github.com/librosa/librosa/issues/811).</span>
         <span class="c1">#</span>
+        <span class="k">if</span> <span class="n">file_like</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">FILE_LIKE_UNSUPPORTED_ERROR</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;audiofile&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
             <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s2">&quot;tmp.wav&quot;</span><span class="p">)</span>
             <span class="c1"># offset and duration have to be given in seconds</span>
@@ -534,7 +553,7 @@
                 <span class="c1"># see:</span>
                 <span class="c1"># * https://trac.ffmpeg.org/ticket/5240</span>
                 <span class="c1"># * https://github.com/audeering/audiofile/issues/157</span>
-                <span class="kn">from</span> <span class="nn">audiofile.core.info</span> <span class="kn">import</span> <span class="n">sampling_rate</span> <span class="k">as</span> <span class="n">get_sampling_rate</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">audiofile.core.info</span><span class="w"> </span><span class="kn">import</span> <span class="n">sampling_rate</span> <span class="k">as</span> <span class="n">get_sampling_rate</span>
 
                 <span class="n">sampling_rate</span> <span class="o">=</span> <span class="n">get_sampling_rate</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
             <span class="n">convert</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">tmpfile</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">)</span>
@@ -559,12 +578,17 @@
             <span class="n">always_2d</span><span class="o">=</span><span class="n">always_2d</span><span class="p">,</span>
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="k">if</span> <span class="n">file_like</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="c1"># [samples, channels] =&gt; [channels, samples]</span>
     <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">T</span>
     <span class="k">return</span> <span class="n">signal</span><span class="p">,</span> <span class="n">sampling_rate</span></div>
 
 
-<div class="viewcode-block" id="write"><a class="viewcode-back" href="../../../api/audiofile.write.html#audiofile.write">[docs]</a><span class="k">def</span> <span class="nf">write</span><span class="p">(</span>
+
+<div class="viewcode-block" id="write">
+<a class="viewcode-back" href="../../../api/audiofile.write.html#audiofile.write">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
     <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">signal</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
     <span class="n">sampling_rate</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -602,9 +626,9 @@
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; sampling_rate = 8000</span>
 <span class="sd">        &gt;&gt;&gt; signal = np.random.uniform(-1, 1, (1, 1000))</span>
-<span class="sd">        &gt;&gt;&gt; write(&quot;mono.wav&quot;, signal, sampling_rate)</span>
+<span class="sd">        &gt;&gt;&gt; audiofile.write(&quot;mono.wav&quot;, signal, sampling_rate)</span>
 <span class="sd">        &gt;&gt;&gt; signal = np.random.uniform(-1.2, 1.2, (2, 1000))</span>
-<span class="sd">        &gt;&gt;&gt; write(&quot;stereo.flac&quot;, signal, sampling_rate, normalize=True)</span>
+<span class="sd">        &gt;&gt;&gt; audiofile.write(&quot;stereo.flac&quot;, signal, sampling_rate, normalize=True)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
     <span class="n">file</span> <span class="o">=</span> <span class="n">audeer</span><span class="o">.</span><span class="n">safe_path</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
@@ -629,7 +653,7 @@
         <span class="k">if</span> <span class="n">bit_depth</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bit_depths</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s1">&#39;&quot;bit_depth&quot; has to be one of &#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">bit_depths</span><span class="p">])</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">bit_depths</span><span class="p">])</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
         <span class="n">subtype</span> <span class="o">=</span> <span class="n">depth_mapping</span><span class="p">[</span><span class="n">bit_depth</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
@@ -651,6 +675,7 @@
     <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
         <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span>
     <span class="n">soundfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">sampling_rate</span><span class="p">,</span> <span class="n">subtype</span><span class="o">=</span><span class="n">subtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>
@@ -666,7 +691,7 @@
         
         
         
-          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2025/01/03 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2026/01/15 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -674,7 +699,7 @@
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2025 audEERING GmbH
+      &copy; 2018-2026 audEERING GmbH
     </p>
   </div> 
 
@@ -698,17 +723,11 @@
     
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../../_static/doctools.js"></script>
-        <script src="../../../_static/sphinx_highlight.js"></script>
-        <script src="../../../_static/thebelab-helper.js"></script>
-        <script src="../../../_static/clipboard.min.js"></script>
-        <script src="../../../_static/copybutton.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+        <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../../_static/copybutton.js?v=fd10adb8"></script>
     
 
   

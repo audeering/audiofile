@@ -5,7 +5,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Installation &mdash; Documentation</title>
@@ -28,8 +29,6 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/css/audeering.css" type="text/css" />
-  <link rel="stylesheet" href="_static/jupyter-sphinx.css" type="text/css" />
-  <link rel="stylesheet" href="_static/thebelab.css" type="text/css" />
   <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
   <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
@@ -68,7 +67,7 @@
             
             
               <div class="version">
-                v1.5.1
+                v1.6.0
               </div>
             
           
@@ -142,26 +141,23 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h1>
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
 <p><a class="reference internal" href="api/audiofile.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a> supports WAV, FLAC, MP3, OGG out of the box.
 In order to handle other audio formats,
 please make sure <a class="reference external" href="https://www.ffmpeg.org/">ffmpeg</a>,
 <a class="reference external" href="https://mediaarea.net/en/MediaInfo/">mediainfo</a>,
-and optionally <a class="reference external" href="http://sox.sourceforge.net/">sox</a>
+and optionally <a class="reference external" href="https://sourceforge.net/projects/sox/">sox</a>
 are installed on your system.
 e.g.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>ffmpeg<span class="w"> </span>mediainfo<span class="w"> </span>sox
 </pre></div>
 </div>
 <p>To install <a class="reference internal" href="api/audiofile.html#module-audiofile" title="audiofile"><code class="xref py py-mod docutils literal notranslate"><span class="pre">audiofile</span></code></a> run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="c1"># Create and activate Python virtual environment, e.g.</span>
-$<span class="w"> </span><span class="c1"># virtualenv --no-download --python=python3 ${HOME}/.envs/audiofile</span>
-$<span class="w"> </span><span class="c1"># source ${HOME}/.envs/audiofile/bin/activate</span>
-$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>audiofile
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>audiofile
 </pre></div>
 </div>
-</div>
+</section>
 
 
            </div>
@@ -186,7 +182,7 @@ $<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </sp
         
         
         
-          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2025/01/03 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
+          Built with <a href="https://www.sphinx-doc.org">Sphinx</a> on 2026/01/15 using the <a href="https://github.com/audeering/sphinx-audeering-theme/">audEERING theme</a>
         
     </p>
   </div>
@@ -194,7 +190,7 @@ $<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </sp
   <div role="contentinfo">
     <p>
         
-      &copy; 2018-2025 audEERING GmbH
+      &copy; 2018-2026 audEERING GmbH
     </p>
   </div> 
 
@@ -218,17 +214,11 @@ $<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </sp
     
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="_static/thebelab-helper.js"></script>
-        <script src="_static/clipboard.min.js"></script>
-        <script src="_static/copybutton.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=fd6eb6e6"></script>
+        <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+        <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="_static/copybutton.js?v=fd10adb8"></script>
     
 
   
