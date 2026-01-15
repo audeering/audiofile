@@ -14,6 +14,174 @@ from audiofile.core.utils import duration_in_seconds
 from audiofile.core.utils import file_extension
 
 
+def _parse_time_value(
+    value: float | int | str | np.timedelta64,
+    sampling_rate: int,
+) -> float | None:
+    """Parse a time value (offset or duration) to seconds.
+
+    Args:
+        value: time value to parse
+        sampling_rate: sampling rate for conversion
+
+    Returns:
+        time value in seconds, or None if NaN
+
+    """
+    if value is None:
+        return None
+    parsed = duration_in_seconds(value, sampling_rate)
+    if np.isnan(parsed):
+        return None
+    return parsed
+
+
+def _needs_sampling_rate(
+    duration: float | int | str | np.timedelta64,
+    offset: float | int | str | np.timedelta64,
+) -> bool:
+    """Check if sampling rate is needed for parsing offset/duration.
+
+    Args:
+        duration: duration value
+        offset: offset value
+
+    Returns:
+        True if sampling rate is needed
+
+    """
+    if duration is not None or isinstance(duration, str):
+        return True
+    if offset is not None and isinstance(offset, str):
+        return True
+    if offset is not None and offset != 0:
+        return True
+    return False
+
+
+def _normalize_offset_duration(
+    offset: float | None,
+    duration: float | None,
+    signal_duration: float,
+) -> tuple[float, float | None]:
+    """Normalize offset and duration to handle negative values.
+
+    Converts negative offset/duration values (counted from end)
+    to positive values (counted from start).
+
+    Args:
+        offset: offset in seconds (can be negative or None)
+        duration: duration in seconds (can be negative or None)
+        signal_duration: total duration of signal in seconds
+
+    Returns:
+        tuple of (normalized_offset, normalized_duration)
+        where offset is >= 0 and duration is >= 0 or None
+
+    """
+    # Handle: offset=None, duration < 0
+    if offset is None and duration is not None and duration < 0:
+        return max(0, signal_duration + duration), None
+
+    # Handle: offset=None, duration >= 0
+    if offset is None and duration is not None and duration >= 0:
+        if np.isinf(duration):
+            return 0, None
+        return 0, duration
+
+    # Guard: offset is None at this point means both are None
+    if offset is None:
+        return 0, None
+
+    # Handle: offset >= 0, duration < 0
+    if offset >= 0 and duration is not None and duration < 0:
+        if np.isinf(offset) and np.isinf(duration):
+            return 0, None
+        if np.isinf(offset):
+            return 0, 0.0
+        if np.isinf(duration):
+            offset = min(offset, signal_duration)
+            duration = np.sign(duration) * signal_duration
+        orig_offset = offset
+        offset = max(0, offset + duration)
+        duration = min(-duration, orig_offset)
+        return offset, duration
+
+    # Handle: offset >= 0, duration >= 0
+    if offset >= 0 and duration is not None and duration >= 0:
+        if np.isinf(offset):
+            return 0, 0.0
+        if np.isinf(duration):
+            return offset, None
+        return offset, duration
+
+    # Handle: offset < 0, duration=None
+    if offset < 0 and duration is None:
+        return max(0, signal_duration + offset), None
+
+    # Handle: offset >= 0, duration=None
+    if offset >= 0 and duration is None:
+        if np.isinf(offset):
+            return 0, 0.0
+        return offset, None
+
+    # Handle: offset < 0, duration > 0
+    if offset < 0 and duration is not None and duration > 0:
+        if np.isinf(offset) and np.isinf(duration):
+            return 0, None
+        if np.isinf(offset):
+            return 0, 0.0
+        if np.isinf(duration):
+            offset = signal_duration + offset
+            offset = max(0, offset)
+            return offset, None
+        offset = signal_duration + offset
+        if offset < 0:
+            duration = max(0, duration + offset)
+            offset = 0
+        else:
+            duration = min(duration, signal_duration - offset)
+        return offset, duration
+
+    # Handle: offset < 0, duration < 0
+    if offset < 0 and duration < 0:
+        if np.isinf(offset):
+            return 0, 0.0
+        if np.isinf(duration):
+            duration = -signal_duration
+        else:
+            orig_offset = offset
+            offset = max(0, signal_duration + offset + duration)
+            duration = min(-duration, signal_duration + orig_offset)
+            duration = max(0, duration)
+        return offset, duration
+
+    # Fallback (should not reach here)
+    return offset if offset >= 0 else 0, duration
+
+
+def _create_empty_signal(
+    file: str,
+    always_2d: bool,
+) -> np.array:
+    """Create an empty signal array with correct shape.
+
+    Args:
+        file: audio file path
+        always_2d: if True, return 2D array even for mono
+
+    Returns:
+        empty numpy array with correct shape
+
+    """
+    from audiofile.core.info import channels as get_channels
+
+    channels = get_channels(file)
+    if channels > 1 or always_2d:
+        return np.zeros((channels, 0))
+    return np.zeros((0,))
+
+
 def convert_to_wav(
     infile: str,
     outfile: str = None,
@@ -257,113 +425,33 @@ def read(
     sampling_rate = None
 
     # Parse offset and duration values
-    if (
-        duration is not None
-        or isinstance(duration, str)
-        or (offset is not None and isinstance(offset, str))
-        or (offset is not None and offset != 0)
-    ):
+    if _needs_sampling_rate(duration, offset):
         # Import sampling_rate here to avoid circular imports
         from audiofile.core.info import sampling_rate as get_sampling_rate
 
         sampling_rate = get_sampling_rate(file)
-    if duration is not None:
-        duration = duration_in_seconds(duration, sampling_rate)
-        if np.isnan(duration):
-            duration = None
-    if offset is not None and offset != 0:
-        offset = duration_in_seconds(offset, sampling_rate)
-        if np.isnan(offset):
-            offset = None
 
-    # Support for negative offset/duration values
-    # by counting them from end of signal
-    #
-    if offset is not None and offset < 0 or duration is not None and duration < 0:
+    duration = _parse_time_value(duration, sampling_rate)
+    offset = _parse_time_value(offset, sampling_rate)
+
+    # Normalize offset/duration values (handles negative values and infinity)
+    needs_normalization = (offset is not None and (offset < 0 or np.isinf(offset))) or (
+        duration is not None and (duration < 0 or np.isinf(duration))
+    )
+    if needs_normalization:
         # Import duration here to avoid circular imports
         from audiofile.core.info import duration as get_duration
 
         signal_duration = get_duration(file)
-    # offset | duration
-    # None   | < 0
-    if offset is None and duration is not None and duration < 0:
-        offset = max([0, signal_duration + duration])
-        duration = None
-    # None   | >= 0
-    if offset is None and duration is not None and duration >= 0:
-        if np.isinf(duration):
-            duration = None
-    # >= 0   | < 0
-    elif offset is not None and offset >= 0 and duration is not None and duration < 0:
-        if np.isinf(offset) and np.isinf(duration):
-            offset = 0
-            duration = None
-        elif np.isinf(offset):
-            duration = 0
-        else:
-            if np.isinf(duration):
-                offset = min([offset, signal_duration])
-                duration = np.sign(duration) * signal_duration
-            orig_offset = offset
-            offset = max([0, offset + duration])
-            duration = min([-duration, orig_offset])
-    # >= 0   | >= 0
-    elif offset is not None and offset >= 0 and duration is not None and duration >= 0:
-        if np.isinf(offset):
-            duration = 0
-        elif np.isinf(duration):
-            duration = None
-    # < 0    | None
-    elif offset is not None and offset < 0 and duration is None:
-        offset = max([0, signal_duration + offset])
-    # >= 0    | None
-    elif offset is not None and offset >= 0 and duration is None:
-        if np.isinf(offset):
-            duration = 0
-    # < 0    | > 0
-    elif offset is not None and offset < 0 and duration is not None and duration > 0:
-        if np.isinf(offset) and np.isinf(duration):
-            offset = 0
-            duration = None
-        elif np.isinf(offset):
-            duration = 0
-        elif np.isinf(duration):
-            duration = None
-        else:
-            offset = signal_duration + offset
-            if offset < 0:
-                duration = max([0, duration + offset])
-            else:
-                duration = min([duration, signal_duration - offset])
-            offset = max([0, offset])
-    # < 0    | < 0
-    elif offset is not None and offset < 0 and duration is not None and duration < 0:
-        if np.isinf(offset):
-            duration = 0
-        elif np.isinf(duration):
-            duration = -signal_duration
-        else:
-            orig_offset = offset
-            offset = max([0, signal_duration + offset + duration])
-            duration = min([-duration, signal_duration + orig_offset])
-            duration = max([0, duration])
+        offset, duration = _normalize_offset_duration(offset, duration, signal_duration)
 
-    # Convert to samples
-    #
-    # Handle duration first
-    # and returned immediately
-    # if duration == 0
+    # Convert to samples and handle early return if duration == 0
     if duration is not None and duration != 0:
         duration = audmath.samples(duration, sampling_rate)
     if duration == 0:
-        from audiofile.core.info import channels as get_channels
-
-        channels = get_channels(file)
-        if channels > 1 or always_2d:
-            signal = np.zeros((channels, 0))
-        else:
-            signal = np.zeros((0,))
+        signal = _create_empty_signal(file, always_2d)
         return signal, sampling_rate
+
     if offset is not None and offset != 0:
         offset = audmath.samples(offset, sampling_rate)
     else:
