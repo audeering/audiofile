@@ -1,3 +1,4 @@
+import io
 import os
 import re
 
@@ -1317,3 +1318,334 @@ def test_write_errors():
     expected_error = "The maximum number of allowed channels for 'wav' is 65535."
     with pytest.raises(RuntimeError, match=expected_error):
         write_and_read("test.wav", np.zeros((65536, 100)), sampling_rate)
+
+
+class TestBytesIO:
+    """Tests for reading from file-like objects (BytesIO)."""
+
+    @pytest.fixture
+    def wav_bytes(self, tmpdir):
+        """Create WAV audio data as bytes."""
+        sampling_rate = 8000
+        signal = sine(
+            duration=0.5,
+            sampling_rate=sampling_rate,
+            channels=2,
+        )
+        # Write to file, then read as bytes
+        file = str(tmpdir.join("test.wav"))
+        af.write(file, signal, sampling_rate)
+        with open(file, "rb") as f:
+            audio_bytes = f.read()
+        return audio_bytes, signal, sampling_rate
+
+    @pytest.fixture
+    def flac_bytes(self, tmpdir):
+        """Create FLAC audio data as bytes."""
+        sampling_rate = 16000
+        signal = sine(
+            duration=0.25,
+            sampling_rate=sampling_rate,
+            channels=1,
+        )
+        file = str(tmpdir.join("test.flac"))
+        af.write(file, signal, sampling_rate)
+        with open(file, "rb") as f:
+            audio_bytes = f.read()
+        return audio_bytes, signal, sampling_rate
+
+    @pytest.fixture
+    def mp3_bytes(self, tmpdir):
+        """Create MP3 audio data as bytes."""
+        sampling_rate = 8000
+        signal = sine(
+            duration=0.5,
+            sampling_rate=sampling_rate,
+            channels=1,
+        )
+        file = str(tmpdir.join("test.mp3"))
+        af.write(file, signal, sampling_rate)
+        with open(file, "rb") as f:
+            audio_bytes = f.read()
+        return audio_bytes, signal, sampling_rate
+
+    @pytest.fixture
+    def ogg_bytes(self, tmpdir):
+        """Create OGG audio data as bytes."""
+        sampling_rate = 8000
+        signal = sine(
+            duration=0.5,
+            sampling_rate=sampling_rate,
+            channels=1,
+        )
+        file = str(tmpdir.join("test.ogg"))
+        af.write(file, signal, sampling_rate)
+        with open(file, "rb") as f:
+            audio_bytes = f.read()
+        return audio_bytes, signal, sampling_rate
+
+    def test_read_bytesio(self, wav_bytes):
+        """Test reading audio from BytesIO."""
+        audio_bytes, expected_signal, expected_sr = wav_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer)
+
+        assert sampling_rate == expected_sr
+        assert signal.shape == expected_signal.shape
+        # Use tolerance for 16-bit quantization
+        np.testing.assert_allclose(signal, expected_signal, atol=1e-4)
+
+    def test_read_bytesio_flac(self, flac_bytes):
+        """Test reading FLAC from BytesIO."""
+        audio_bytes, expected_signal, expected_sr = flac_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer)
+
+        assert sampling_rate == expected_sr
+        # FLAC is lossless but has quantization
+        np.testing.assert_allclose(signal, expected_signal, atol=1e-4)
+
+    def test_read_bytesio_mp3(self, mp3_bytes):
+        """Test reading MP3 from BytesIO."""
+        audio_bytes, _, expected_sr = mp3_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer)
+
+        assert sampling_rate == expected_sr
+        # MP3 is lossy, just check we got audio data
+        assert signal.shape[0] > 0
+
+    def test_read_bytesio_ogg(self, ogg_bytes):
+        """Test reading OGG from BytesIO."""
+        audio_bytes, _, expected_sr = ogg_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer)
+
+        assert sampling_rate == expected_sr
+        # OGG is lossy, just check we got audio data
+        assert signal.shape[0] > 0
+
+    def test_read_bytesio_mp3_always_2d(self, mp3_bytes):
+        """Test reading MP3 from BytesIO with always_2d=True."""
+        audio_bytes, _, expected_sr = mp3_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer, always_2d=True)
+
+        assert sampling_rate == expected_sr
+        assert signal.ndim == 2
+        assert signal.shape[1] > 0
+
+    def test_read_bytesio_ogg_always_2d(self, ogg_bytes):
+        """Test reading OGG from BytesIO with always_2d=True."""
+        audio_bytes, _, expected_sr = ogg_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer, always_2d=True)
+
+        assert sampling_rate == expected_sr
+        assert signal.ndim == 2
+        assert signal.shape[1] > 0
+
+    def test_read_bytesio_mp3_with_offset_duration(self, mp3_bytes):
+        """Test reading MP3 from BytesIO with offset and duration."""
+        audio_bytes, _, expected_sr = mp3_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(
+            buffer, offset=0.1, duration=0.2, always_2d=True
+        )
+
+        assert sampling_rate == expected_sr
+        assert signal.ndim == 2
+        assert signal.shape[1] > 0
+
+    def test_read_bytesio_ogg_with_offset_duration(self, ogg_bytes):
+        """Test reading OGG from BytesIO with offset and duration."""
+        audio_bytes, _, expected_sr = ogg_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(
+            buffer, offset=0.1, duration=0.2, always_2d=True
+        )
+
+        assert sampling_rate == expected_sr
+        assert signal.ndim == 2
+        assert signal.shape[1] > 0
+
+    def test_read_bytesio_always_2d(self, flac_bytes):
+        """Test reading from BytesIO with always_2d=True."""
+        audio_bytes, _, expected_sr = flac_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        signal, sampling_rate = af.read(buffer, always_2d=True)
+
+        assert sampling_rate == expected_sr
+        assert signal.ndim == 2
+        assert signal.shape[0] == 1
+
+    def test_read_bytesio_with_offset_duration(self, wav_bytes):
+        """Test reading from BytesIO with offset and duration."""
+        audio_bytes, expected_signal, expected_sr = wav_bytes
+        offset = 0.1
+        duration = 0.2
+
+        buffer = io.BytesIO(audio_bytes)
+        signal, sampling_rate = af.read(buffer, offset=offset, duration=duration)
+
+        expected_samples = int(duration * expected_sr)
+        assert sampling_rate == expected_sr
+        assert signal.shape[1] == expected_samples
+
+    def test_read_bytesio_reusable(self, wav_bytes):
+        """Test that BytesIO can be reused after reading."""
+        audio_bytes, expected_signal, expected_sr = wav_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        # Read first time
+        signal1, sr1 = af.read(buffer)
+        # Read second time (should work because seek(0) is called)
+        signal2, sr2 = af.read(buffer)
+
+        np.testing.assert_array_equal(signal1, signal2)
+        assert sr1 == sr2
+
+    def test_channels_bytesio(self, wav_bytes):
+        """Test getting channels from BytesIO."""
+        audio_bytes, expected_signal, _ = wav_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        channels = af.channels(buffer)
+
+        assert channels == expected_signal.shape[0]
+
+    def test_duration_bytesio(self, wav_bytes):
+        """Test getting duration from BytesIO."""
+        audio_bytes, expected_signal, expected_sr = wav_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        duration = af.duration(buffer)
+
+        expected_duration = expected_signal.shape[1] / expected_sr
+        assert_allclose(duration, expected_duration, rtol=1e-5)
+
+    def test_sampling_rate_bytesio(self, wav_bytes):
+        """Test getting sampling rate from BytesIO."""
+        audio_bytes, _, expected_sr = wav_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        sampling_rate = af.sampling_rate(buffer)
+
+        assert sampling_rate == expected_sr
+
+    def test_samples_bytesio(self, wav_bytes):
+        """Test getting samples from BytesIO."""
+        audio_bytes, expected_signal, _ = wav_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        samples = af.samples(buffer)
+
+        assert samples == expected_signal.shape[1]
+
+    def test_bit_depth_bytesio(self, wav_bytes):
+        """Test getting bit depth from BytesIO."""
+        audio_bytes, _, _ = wav_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        bit_depth = af.bit_depth(buffer)
+
+        assert bit_depth == 16  # default bit depth
+
+    def test_bytesio_info_reusable(self, wav_bytes):
+        """Test that BytesIO can be reused after info calls."""
+        audio_bytes, expected_signal, expected_sr = wav_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        # Call info functions
+        # Call info functions
+        _ = af.channels(buffer)
+        _ = af.duration(buffer)
+        _ = af.sampling_rate(buffer)
+        _ = af.samples(buffer)
+        _ = af.bit_depth(buffer)
+
+        # Should still be able to read
+        signal, sr = af.read(buffer)
+        assert sr == expected_sr
+        # Use tolerance for 16-bit quantization
+        np.testing.assert_allclose(signal, expected_signal, atol=1e-4)
+
+    def test_bit_depth_bytesio_flac(self, flac_bytes):
+        """Test getting bit depth from FLAC BytesIO."""
+        audio_bytes, _, _ = flac_bytes
+        buffer = io.BytesIO(audio_bytes)
+
+        bit_depth = af.bit_depth(buffer)
+
+        assert bit_depth == 16  # default bit depth
+
+    def test_bytesio_with_name_attribute(self, tmpdir):
+        """Test BytesIO with name attribute for format detection."""
+        sampling_rate = 8000
+        signal = sine(duration=0.1, sampling_rate=sampling_rate, channels=1)
+        file = str(tmpdir.join("test.wav"))
+        af.write(file, signal, sampling_rate)
+
+        with open(file, "rb") as f:
+            audio_bytes = f.read()
+
+        # Create a BytesIO-like object with a name attribute
+        class NamedBytesIO(io.BytesIO):
+            name = "test.wav"
+
+        buffer = NamedBytesIO(audio_bytes)
+        sig, sr = af.read(buffer)
+        assert sr == sampling_rate
+        assert sig.shape == signal.shape
+
+    def test_bytesio_unsupported_format_error(self, wav_bytes):
+        """Test error when BytesIO has unsupported format extension."""
+        audio_bytes, _, _ = wav_bytes
+
+        # Create a BytesIO-like object with an unsupported format extension
+        class NamedBytesIO(io.BytesIO):
+            name = "test.m4a"
+
+        buffer = NamedBytesIO(audio_bytes)
+
+        expected_error = "File-like objects are only supported"
+        with pytest.raises(RuntimeError, match=expected_error):
+            af.read(buffer)
+        with pytest.raises(RuntimeError, match=expected_error):
+            af.channels(buffer)
+        with pytest.raises(RuntimeError, match=expected_error):
+            af.duration(buffer)
+        with pytest.raises(RuntimeError, match=expected_error):
+            af.sampling_rate(buffer)
+        with pytest.raises(RuntimeError, match=expected_error):
+            af.samples(buffer)
+        with pytest.raises(RuntimeError, match=expected_error):
+            af.bit_depth(buffer)
+
+    def test_bytesio_invalid_audio_data_error(self):
+        """Test error when BytesIO contains invalid/non-audio data."""
+        # Create a bare BytesIO with random non-audio bytes
+        buffer = io.BytesIO(b"This is not audio data at all")
+
+        # soundfile should raise an error for invalid data
+        with pytest.raises(soundfile.LibsndfileError):
+            af.read(buffer)
+        with pytest.raises(soundfile.LibsndfileError):
+            af.channels(buffer)
+        with pytest.raises(soundfile.LibsndfileError):
+            af.duration(buffer)
+        with pytest.raises(soundfile.LibsndfileError):
+            af.sampling_rate(buffer)
+        with pytest.raises(soundfile.LibsndfileError):
+            af.samples(buffer)
+        with pytest.raises(soundfile.LibsndfileError):
+            af.bit_depth(buffer)
