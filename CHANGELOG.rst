@@ -7,6 +7,14 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.6.0 (2026-01-15)
+--------------------------
+
+* Added: read and info for file-like objects (``io.BytesIO``)
+* Added: support for Python 3.14
+* Removed: support for Python 3.9
+
+
 Version 1.5.1 (2025-01-03)
 --------------------------
 
