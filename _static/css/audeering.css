@@ -319,11 +319,13 @@ dl.property dt em {
 }
 /* Allow for line breaks in Tables.
  * See: https://stackoverflow.com/a/40650120 */
-.wy-table-responsive table td {
+.wy-table-responsive table td,
+.rst-content table td {
     white-space: normal;
 }
 /* Fix vertical placement in tables */
-.wy-table-responsive table td ol.arabic {
+.wy-table-responsive table td ol.arabic,
+.rst-content table td ol.arabic {
     margin-bottom: 12px;
     margin-top: 12px;
 }
@@ -334,13 +336,16 @@ dl.property dt em {
     margin-bottom: 0 !important;
 }
 /* Fix table headers margin */
-.wy-table-responsive thead th p {
+.wy-table-responsive thead th p,
+.rst-content table thead th p {
     margin-bottom: 0 !important;
 }
 /* Fix table row headers margin */
-.wy-table-responsive tbody tr th p {
+.wy-table-responsive tbody tr th p,
+.rst-content table tbody tr th p {
     margin-bottom: 0 !important;
 }
+
 
 /***** TABLE PREVIEW in AUDBCARDS ****************************************/
 .rst-content table.docutils:not(.field-list) tr.clickable table.preview tr:nth-child(2n-1) td {
