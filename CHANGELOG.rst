@@ -7,6 +7,12 @@ The format is based on `Keep a Changelog`_,
 and this project adheres to `Semantic Versioning`_.
 
 
+Version 1.6.1 (2026-05-20)
+--------------------------
+
+* Changed: exclude ``tests/`` and ``docs/`` folders from the Python package
+
+
 Version 1.6.0 (2026-01-15)
 --------------------------
 
