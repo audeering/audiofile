@@ -78,6 +78,8 @@ toc_object_entries = False
 linkcheck_ignore = [
     "https://sourceforge.net/projects/mad/",
     "https://sourceforge.net/projects/sox/",
+    "https://gstreamer.freedesktop.org/",
+    "https://docs.scipy.org/",
 ]
 
 # HTML --------------------------------------------------------------------
