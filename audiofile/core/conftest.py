@@ -1,6 +1,6 @@
+import contextlib
 from doctest import ELLIPSIS
 from doctest import NORMALIZE_WHITESPACE
-import os
 
 import numpy as np
 import pytest
@@ -78,15 +78,10 @@ def am_fm_synth(
 def run_in_tmpdir(tmpdir_factory):
     """Move to a persistent tmpdir for execution of a whole file."""
     tmpdir = tmpdir_factory.mktemp("tmp")
-    current_dir = os.getcwd()
-    os.chdir(tmpdir)
-
-    # Create test signals
-    create_audio_files(tmpdir)
-
-    yield
-
-    os.chdir(current_dir)
+    with contextlib.chdir(tmpdir):
+        # Create test signals
+        create_audio_files(tmpdir)
+        yield
 
 
 # Collect doctests

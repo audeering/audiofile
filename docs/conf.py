@@ -1,15 +1,15 @@
 from datetime import datetime
 import os
 import shutil
-
-import toml
+import tomllib
 
 import audeer
 
 from audiofile.core.conftest import create_audio_files
 
 
-config = toml.load(audeer.path("..", "pyproject.toml"))
+with open(audeer.path("..", "pyproject.toml"), "rb") as fp:
+    config = tomllib.load(fp)
 
 
 # Project -----------------------------------------------------------------
