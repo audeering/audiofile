@@ -65,7 +65,19 @@ jobs:
       if: matrix.os == 'macOS-latest'
 
     - name: Windows - install ffmpeg/mediainfo
-      run: choco install ffmpeg mediainfo-cli
+      # Chocolatey feed is flaky (e.g. 504 Gateway Timeout)
+      # and choco may still exit with 0 when a package is skipped,
+      # so retry and verify the binaries are available
+      run: |
+        for i in 1 2 3; do
+          choco install -y ffmpeg mediainfo-cli
+          if command -v ffmpeg && command -v mediainfo; then break; fi
+          echo "Retry $i failed, retrying in 10 s..."
+          sleep 10
+        done
+        set -e
+        ffmpeg -version
+        mediainfo --version
       if: matrix.os == 'windows-latest'
 
     - name: Sync Python environment
