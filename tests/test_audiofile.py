@@ -450,6 +450,36 @@ def test_wav(tmpdir, bit_depth, duration, sampling_rate, channels, always_2d):
         assert _samples(sig) == round(duration * sampling_rate)
 
 
+@pytest.mark.parametrize(
+    "sampling_rate,samples",
+    [
+        (8000, 1001),
+        (16000, 1001),
+        (22050, 15),
+        (44100, 15),
+        (48000, 27),
+        (44100, 1),
+        (44100, 16),
+    ],
+)
+@pytest.mark.parametrize("channels", [1, 2])
+@pytest.mark.parametrize("file_format", ["WAV", "FLAC"])
+@pytest.mark.parametrize("file_like", [False, True])
+def test_samples_exact(
+    tmpdir, sampling_rate, samples, channels, file_format, file_like
+):
+    if file_like:
+        file = io.BytesIO()
+    else:
+        file = str(tmpdir.join(f"signal.{file_format.lower()}"))
+    signal = np.zeros((samples, channels))
+    soundfile.write(file, signal, sampling_rate, format=file_format)
+    if file_like:
+        file.seek(0)
+
+    assert af.samples(file) == samples
+
+
 @pytest.mark.parametrize("magnitude", [0.01, 0.1, 1])
 @pytest.mark.parametrize("normalize", [False, True])
 @pytest.mark.parametrize("bit_depth", [16, 24, 32])
