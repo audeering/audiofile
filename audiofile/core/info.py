@@ -332,7 +332,7 @@ def samples(file: str | io.IOBase) -> int:
 
     def samples_as_int(file, file_like=False):
         info = _sf_info(file, file_like)
-        return int(info.duration * info.samplerate)
+        return info.frames
 
     file, file_like, file_ext = _normalize_file_input(file)
 
